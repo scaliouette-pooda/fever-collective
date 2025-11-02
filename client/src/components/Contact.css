@@ -1,0 +1,150 @@
+.contact-page {
+  padding: 8rem 3rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.contact-subtitle {
+  font-size: 1.2rem;
+  color: rgba(232, 232, 232, 0.7);
+  margin-top: 1rem;
+}
+
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 6rem;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.info-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #c9a86a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.info-section p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(232, 232, 232, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.info-section a {
+  color: #e8e8e8;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.info-section a:hover {
+  color: #c9a86a;
+}
+
+.social-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.social-links a {
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.contact-form-wrapper {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem;
+  position: relative;
+}
+
+.success-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(201, 168, 106, 0.1);
+  border: 1px solid #c9a86a;
+  padding: 2rem 3rem;
+  text-align: center;
+  z-index: 10;
+}
+
+.success-message p {
+  font-size: 1.2rem;
+  color: #c9a86a;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.contact-form .form-group {
+  margin-bottom: 0;
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 150px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Arial', sans-serif;
+}
+
+.contact-form button {
+  align-self: flex-start;
+  padding: 1.25rem 3rem;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .contact-page {
+    padding: 6rem 1.5rem 2rem;
+  }
+
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .contact-form-wrapper {
+    padding: 2rem;
+  }
+
+  .contact-form button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .success-message {
+    width: 80%;
+    padding: 1.5rem;
+  }
+}
