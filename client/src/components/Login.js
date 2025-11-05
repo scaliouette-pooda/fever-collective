@@ -23,7 +23,7 @@ function Login() {
       const response = await api.post('/api/auth/login', formData);
       localStorage.setItem('token', response.data.token);
       alert('Login successful!');
-      navigate('/schedule');
+      navigate('/admin');
     } catch (error) {
       console.error('Error logging in:', error);
       alert('Login failed. Please check your credentials.');
