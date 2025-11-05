@@ -148,3 +148,140 @@ p {
   color: rgba(232, 232, 232, 0.9);
   letter-spacing: 0.5px;
 }
+
+/* ========================================
+   MOBILE OPTIMIZATION (iOS & Android)
+   ======================================== */
+
+@media (max-width: 968px) {
+  /* Navigation */
+  nav {
+    padding: 1rem 1.5rem;
+  }
+
+  .nav-logo {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+
+  nav ul {
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  nav a {
+    font-size: 0.75rem;
+  }
+
+  /* Container */
+  .container {
+    padding: 5rem 1.5rem 2rem;
+  }
+
+  /* Typography - Mobile Optimized */
+  h1 {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    letter-spacing: 1.5px;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  /* Buttons - Touch Optimized */
+  button {
+    padding: 1.25rem 2rem;
+    font-size: 0.85rem;
+    min-height: 48px; /* iOS & Android touch target */
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  /* Forms - Touch Optimized */
+  input, textarea, select {
+    font-size: 16px; /* Prevents iOS zoom */
+    padding: 1.25rem;
+    min-height: 48px; /* Touch target size */
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Extra small devices */
+  nav {
+    padding: 0.75rem 1rem;
+  }
+
+  .nav-logo {
+    font-size: 1rem;
+  }
+
+  nav ul {
+    gap: 1rem;
+  }
+
+  nav a {
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+  }
+
+  .container {
+    padding: 4.5rem 1rem 1.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  /* Improved touch targets for mobile */
+  a, button, input, select, textarea {
+    -webkit-tap-highlight-color: rgba(201, 168, 106, 0.3);
+  }
+}
+
+/* iOS Specific */
+@supports (-webkit-overflow-scrolling: touch) {
+  /* Smooth scrolling for iOS */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Remove iOS input shadows */
+  input, textarea, select {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* iOS button fix */
+  button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+/* Android Specific */
+@media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+  /* Android-specific styles if needed */
+  input, textarea, select {
+    font-size: 16px; /* Prevent zoom on focus */
+  }
+}
