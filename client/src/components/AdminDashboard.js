@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('events');
   const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
