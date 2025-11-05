@@ -1,38 +1,63 @@
 # The Fever Collective
 
-Pilates popup event booking platform with event registration, scheduling, and payment processing.
+A sophisticated pilates popup event booking platform with admin dashboard, event management, and payment processing capabilities.
 
 ## Features
 
-- Event schedule display
-- User registration and authentication
-- Booking system with real-time availability
-- Stripe payment integration
-- Admin event management
-- Responsive design
+✅ **Event Management**
+- Browse upcoming pilates popup events
+- Filter by skill level (beginner, intermediate, advanced, all levels)
+- Detailed event pages with location, pricing, and instructor info
+
+✅ **Booking System**
+- Real-time availability tracking
+- Secure booking flow
+- Payment processing ready (Stripe integration)
+
+✅ **Admin Dashboard**
+- Full CRUD operations for events
+- Booking management
+- Analytics and revenue tracking
+- Image upload for events (Cloudinary integration)
+
+✅ **User Authentication**
+- JWT-based secure authentication
+- Role-based access control
+- User registration and login
+
+✅ **Responsive Design**
+- Dark, luxury wellness aesthetic inspired by Astral Studio
+- Mobile-first responsive design
+- Smooth animations and transitions
 
 ## Tech Stack
 
-**Frontend:**
+### Frontend
 - React 18
-- React Router
-- Axios
+- React Router v6
+- Axios for API calls
+- CSS3 with custom styling
 
-**Backend:**
-- Node.js
-- Express
+### Backend
+- Node.js & Express
 - MongoDB with Mongoose
 - JWT authentication
-- Stripe payments
+- Bcrypt password hashing
 - Winston logging
+- Multer + Cloudinary for image uploads
 
-## Setup
+### Deployment
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
+- Images: Cloudinary
+
+## Quick Start (Local Development)
 
 ### Prerequisites
-
-- Node.js (v14+)
-- MongoDB
-- Stripe account
+- Node.js 16+ and npm
+- MongoDB (local or Atlas)
+- Git
 
 ### Installation
 
