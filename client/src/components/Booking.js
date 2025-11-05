@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import './Booking.css';
 
 function Booking() {
@@ -21,7 +21,7 @@ function Booking() {
 
   const fetchEvent = async () => {
     try {
-      const response = await axios.get(`/api/events/${eventId}`);
+      const response = await api.get(`/api/events/${eventId}`);
       setEvent(response.data);
     } catch (error) {
       console.error('Error fetching event:', error);
@@ -40,7 +40,7 @@ function Booking() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/bookings', {
+      const response = await api.post('/api/bookings', {
         ...formData,
         eventId
       });

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import './Auth.css';
 
 function Login() {
@@ -20,7 +20,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/auth/login', formData);
+      const response = await api.post('/api/auth/login', formData);
       localStorage.setItem('token', response.data.token);
       alert('Login successful!');
       navigate('/schedule');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
@@ -39,10 +39,10 @@ function AdminDashboard() {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       if (activeTab === 'events') {
-        const res = await axios.get('/api/events', config);
+        const res = await api.get('/api/events', config);
         setEvents(res.data);
       } else if (activeTab === 'bookings') {
-        const res = await axios.get('/api/bookings', config);
+        const res = await api.get('/api/bookings', config);
         setBookings(res.data);
       }
     } catch (error) {
@@ -79,7 +79,7 @@ function AdminDashboard() {
     formData.append('image', imageFile);
 
     try {
-      const response = await axios.post('/api/events/upload-image', formData, {
+      const response = await api.post('/api/events/upload-image', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -108,12 +108,12 @@ function AdminDashboard() {
       };
 
       if (editingEvent) {
-        await axios.put(`/api/events/${editingEvent._id}`, eventData, {
+        await api.put(`/api/events/${editingEvent._id}`, eventData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert('Event updated successfully!');
       } else {
-        await axios.post('/api/events', eventData, {
+        await api.post('/api/events', eventData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert('Event created successfully!');
@@ -155,7 +155,7 @@ function AdminDashboard() {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/events/${eventId}`, {
+      await api.delete(`/api/events/${eventId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('Event deleted successfully!');
