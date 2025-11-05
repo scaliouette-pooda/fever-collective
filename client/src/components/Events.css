@@ -66,6 +66,18 @@
 .event-item-image {
   height: 100%;
   min-height: 350px;
+  overflow: hidden;
+}
+
+.event-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.event-item:hover .event-item-image img {
+  transform: scale(1.05);
 }
 
 .placeholder-event-img {

@@ -10,8 +10,8 @@ function Home() {
           <h1>The Fever Collective</h1>
           <p className="tagline">A pilates & wellness community that's out of this world</p>
           <div className="hero-actions">
-            <Link to="/schedule">
-              <button>View Schedule</button>
+            <Link to="/events">
+              <button>View Events</button>
             </Link>
           </div>
         </div>
@@ -43,7 +43,7 @@ function Home() {
         <div className="cta-content">
           <h2>Ready to Experience the Fever?</h2>
           <p>Join us for our next popup event</p>
-          <Link to="/schedule">
+          <Link to="/events">
             <button>Book Your Spot</button>
           </Link>
         </div>

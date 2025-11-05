@@ -80,9 +80,13 @@ function Events() {
           {filteredEvents.map(event => (
             <div key={event._id} className="event-item">
               <div className="event-item-image">
-                <div className="placeholder-event-img">
-                  <span>{event.level}</span>
-                </div>
+                {event.imageUrl ? (
+                  <img src={event.imageUrl} alt={event.title} />
+                ) : (
+                  <div className="placeholder-event-img">
+                    <span>{event.level}</span>
+                  </div>
+                )}
               </div>
               <div className="event-item-content">
                 <div className="event-item-header">

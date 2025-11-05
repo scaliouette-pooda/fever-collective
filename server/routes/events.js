@@ -4,6 +4,7 @@ const { body } = require('express-validator');
 const Event = require('../models/Event');
 const { authenticateUser } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
+const { upload } = require('../config/cloudinary');
 
 router.get('/', async (req, res) => {
   try {
@@ -103,6 +104,28 @@ router.delete('/:id',
     } catch (error) {
       console.error('Error deleting event:', error);
       res.status(500).json({ error: 'Failed to delete event' });
+    }
+  }
+);
+
+// Image upload endpoint
+router.post('/upload-image',
+  authenticateUser,
+  upload.single('image'),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No image file provided' });
+      }
+
+      res.json({
+        message: 'Image uploaded successfully',
+        imageUrl: req.file.path,
+        imageId: req.file.filename
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      res.status(500).json({ error: 'Failed to upload image' });
     }
   }
 );

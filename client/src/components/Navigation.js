@@ -8,9 +8,7 @@ function Navigation() {
         <Link to="/" className="nav-logo">The Fever Collective</Link>
         <ul>
           <li><Link to="/about">About</Link></li>
-          <li><Link to="/schedule">Schedule</Link></li>
           <li><Link to="/events">Events</Link></li>
-          <li><Link to="/pricing">Pricing</Link></li>
           <li><Link to="/contact">Contact</Link></li>
           <li><Link to="/login">Login</Link></li>
         </ul>

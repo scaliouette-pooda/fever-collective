@@ -103,8 +103,8 @@ function About() {
       <section className="about-cta">
         <h2>Join The Collective</h2>
         <p>Experience wellness that's out of this world</p>
-        <Link to="/schedule">
-          <button>View Schedule</button>
+        <Link to="/events">
+          <button>View Events</button>
         </Link>
       </section>
     </div>

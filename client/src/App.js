@@ -4,13 +4,12 @@ import './App.css';
 import Navigation from './components/Navigation';
 import Home from './components/Home';
 import About from './components/About';
-import Schedule from './components/Schedule';
 import Events from './components/Events';
-import Pricing from './components/Pricing';
 import Contact from './components/Contact';
 import Booking from './components/Booking';
 import Registration from './components/Registration';
 import Login from './components/Login';
+import AdminDashboard from './components/AdminDashboard';
 
 function App() {
   return (
@@ -20,13 +19,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/schedule" element={<Schedule />} />
           <Route path="/events" element={<Events />} />
-          <Route path="/pricing" element={<Pricing />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/booking/:eventId" element={<Booking />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </div>
     </Router>

@@ -45,7 +45,7 @@ function Contact() {
 
           <div className="info-section">
             <h3>Email</h3>
-            <p><a href="mailto:hello@fevercollective.com">hello@fevercollective.com</a></p>
+            <p><a href="mailto:info@thefevercollective.com">info@thefevercollective.com</a></p>
           </div>
 
           <div className="info-section">
