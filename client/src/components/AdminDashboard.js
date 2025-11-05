@@ -30,6 +30,14 @@ function AdminDashboard() {
   });
 
   useEffect(() => {
+    // Check if user is admin
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.role || user.role !== 'admin') {
+      alert('Access denied. Admin privileges required.');
+      navigate('/events');
+      return;
+    }
+
     fetchData();
     // eslint-disable-next-line
   }, [activeTab]);
