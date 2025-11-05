@@ -88,6 +88,9 @@ function AdminDashboard() {
       return response.data.imageUrl;
     } catch (error) {
       console.error('Error uploading image:', error);
+      if (error.response?.status === 501) {
+        alert('Image upload is not configured on the server. Event will be created without image.');
+      }
       return null;
     }
   };

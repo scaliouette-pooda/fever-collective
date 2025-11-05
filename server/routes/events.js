@@ -111,17 +111,32 @@ router.delete('/:id',
 // Image upload endpoint
 router.post('/upload-image',
   authenticateUser,
-  upload.single('image'),
   async (req, res) => {
     try {
-      if (!req.file) {
-        return res.status(400).json({ error: 'No image file provided' });
+      // Check if Cloudinary is configured
+      if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY) {
+        return res.status(501).json({
+          error: 'Image upload not configured',
+          message: 'Cloudinary credentials not set. Contact admin to enable image uploads.'
+        });
       }
 
-      res.json({
-        message: 'Image uploaded successfully',
-        imageUrl: req.file.path,
-        imageId: req.file.filename
+      // Use multer upload middleware
+      upload.single('image')(req, res, async (err) => {
+        if (err) {
+          console.error('Upload error:', err);
+          return res.status(500).json({ error: 'Failed to upload image' });
+        }
+
+        if (!req.file) {
+          return res.status(400).json({ error: 'No image file provided' });
+        }
+
+        res.json({
+          message: 'Image uploaded successfully',
+          imageUrl: req.file.path,
+          imageId: req.file.filename
+        });
       });
     } catch (error) {
       console.error('Error uploading image:', error);

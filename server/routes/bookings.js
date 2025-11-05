@@ -32,6 +32,33 @@ router.post('/',
 
       const totalAmount = event.price * spots;
 
+      // Check if Stripe is configured
+      if (!process.env.STRIPE_SECRET_KEY) {
+        // Demo mode - create booking without payment
+        const booking = new Booking({
+          event: eventId,
+          name,
+          email,
+          phone,
+          spots,
+          totalAmount,
+          paymentIntentId: 'demo_' + Date.now(),
+          paymentStatus: 'demo',
+          status: 'confirmed'
+        });
+
+        await booking.save();
+
+        event.availableSpots -= spots;
+        await event.save();
+
+        return res.status(201).json({
+          booking,
+          message: 'Demo booking created (payment processing not configured)',
+          paymentUrl: `${process.env.CLIENT_URL}/confirmation/${booking._id}`
+        });
+      }
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(totalAmount * 100),
         currency: 'usd',

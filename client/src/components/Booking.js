@@ -45,7 +45,12 @@ function Booking() {
         eventId
       });
 
-      // Redirect to payment
+      // Show message if demo mode
+      if (response.data.message) {
+        alert(response.data.message + '\n\nBooking ID: ' + response.data.booking._id);
+      }
+
+      // Redirect to payment or confirmation
       window.location.href = response.data.paymentUrl;
     } catch (error) {
       console.error('Error creating booking:', error);
