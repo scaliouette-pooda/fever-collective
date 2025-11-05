@@ -33,7 +33,7 @@ router.post('/register',
       await user.save();
 
       const token = jwt.sign(
-        { userId: user._id, email: user.email },
+        { userId: user._id, email: user.email, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
@@ -44,7 +44,8 @@ router.post('/register',
         user: {
           id: user._id,
           name: user.name,
-          email: user.email
+          email: user.email,
+          role: user.role
         }
       });
     } catch (error) {
@@ -76,7 +77,7 @@ router.post('/login',
       }
 
       const token = jwt.sign(
-        { userId: user._id, email: user.email },
+        { userId: user._id, email: user.email, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
@@ -87,7 +88,8 @@ router.post('/login',
         user: {
           id: user._id,
           name: user.name,
-          email: user.email
+          email: user.email,
+          role: user.role
         }
       });
     } catch (error) {

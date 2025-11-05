@@ -3,7 +3,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
-const { authenticateUser } = require('../middleware/auth');
+const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -98,7 +98,7 @@ router.post('/',
   }
 );
 
-router.get('/', authenticateUser, async (req, res) => {
+router.get('/', authenticateUser, requireAdmin, async (req, res) => {
   try {
     const bookings = await Booking.find()
       .populate('event')

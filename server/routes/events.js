@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const Event = require('../models/Event');
-const { authenticateUser } = require('../middleware/auth');
+const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const { upload } = require('../config/cloudinary');
 
@@ -32,6 +32,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/',
   authenticateUser,
+  requireAdmin,
   sanitizeInput,
   [
     body('title').trim().notEmpty().withMessage('Title is required'),
@@ -65,6 +66,7 @@ router.post('/',
 
 router.put('/:id',
   authenticateUser,
+  requireAdmin,
   sanitizeInput,
   async (req, res) => {
     try {
@@ -88,6 +90,7 @@ router.put('/:id',
 
 router.delete('/:id',
   authenticateUser,
+  requireAdmin,
   async (req, res) => {
     try {
       const event = await Event.findByIdAndUpdate(
@@ -111,6 +114,7 @@ router.delete('/:id',
 // Image upload endpoint
 router.post('/upload-image',
   authenticateUser,
+  requireAdmin,
   async (req, res) => {
     try {
       // Check if Cloudinary is configured
