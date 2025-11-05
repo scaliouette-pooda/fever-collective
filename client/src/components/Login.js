@@ -22,8 +22,16 @@ function Login() {
     try {
       const response = await api.post('/api/auth/login', formData);
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+
       alert('Login successful!');
-      navigate('/admin');
+
+      // Redirect based on role
+      if (response.data.user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/events');
+      }
     } catch (error) {
       console.error('Error logging in:', error);
       alert('Login failed. Please check your credentials.');
