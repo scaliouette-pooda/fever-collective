@@ -167,6 +167,33 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Update booking status (admin only)
+router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const { status, paymentStatus } = req.body;
+
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    if (status) {
+      booking.status = status;
+    }
+    if (paymentStatus) {
+      booking.paymentStatus = paymentStatus;
+    }
+
+    await booking.save();
+    await booking.populate('event');
+
+    res.json({ message: 'Booking updated successfully', booking });
+  } catch (error) {
+    console.error('Error updating booking:', error);
+    res.status(500).json({ error: 'Failed to update booking' });
+  }
+});
+
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;

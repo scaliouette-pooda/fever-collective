@@ -197,6 +197,22 @@ function AdminDashboard() {
     setImagePreview(null);
   };
 
+  const handleUpdateBookingStatus = async (bookingId, status, paymentStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      await api.patch(`/api/bookings/${bookingId}/status`,
+        { status, paymentStatus },
+        { headers: { Authorization: `Bearer ${token}` }}
+      );
+
+      alert('Booking status updated!');
+      fetchData();
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      alert('Failed to update booking status');
+    }
+  };
+
   if (loading) return <div className="admin-loading">Loading...</div>;
 
   return (
@@ -437,8 +453,10 @@ function AdminDashboard() {
                     <th>Event</th>
                     <th>Spots</th>
                     <th>Amount</th>
-                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Booking</th>
                     <th>Date</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -454,7 +472,32 @@ function AdminDashboard() {
                           {booking.paymentStatus}
                         </span>
                       </td>
+                      <td>
+                        <span className={`status-badge ${booking.status}`}>
+                          {booking.status}
+                        </span>
+                      </td>
                       <td>{new Date(booking.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        {booking.paymentStatus === 'pending' && (
+                          <button
+                            onClick={() => handleUpdateBookingStatus(booking._id, 'confirmed', 'completed')}
+                            className="btn-confirm"
+                            style={{ marginRight: '5px', padding: '5px 10px', fontSize: '0.85rem' }}
+                          >
+                            Confirm Payment
+                          </button>
+                        )}
+                        {booking.status === 'pending' && booking.paymentStatus === 'completed' && (
+                          <button
+                            onClick={() => handleUpdateBookingStatus(booking._id, 'confirmed', booking.paymentStatus)}
+                            className="btn-confirm"
+                            style={{ padding: '5px 10px', fontSize: '0.85rem' }}
+                          >
+                            Confirm Booking
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
