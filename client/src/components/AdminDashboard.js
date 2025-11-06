@@ -17,6 +17,13 @@ function AdminDashboard() {
   const [editingBooking, setEditingBooking] = useState(null);
   const [showBookingEditForm, setShowBookingEditForm] = useState(false);
 
+  const [bookingForm, setBookingForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    spots: 1
+  });
+
   const [eventForm, setEventForm] = useState({
     title: '',
     description: '',
@@ -234,6 +241,43 @@ function AdminDashboard() {
     }
   };
 
+  const handleEditBooking = (booking) => {
+    setEditingBooking(booking);
+    setBookingForm({
+      name: booking.name,
+      email: booking.email,
+      phone: booking.phone,
+      spots: booking.spots
+    });
+    setShowBookingEditForm(true);
+  };
+
+  const handleBookingFormChange = (e) => {
+    setBookingForm({
+      ...bookingForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleUpdateBooking = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      await api.put(`/api/bookings/${editingBooking._id}`, bookingForm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('Booking updated successfully!');
+      setShowBookingEditForm(false);
+      setEditingBooking(null);
+      setBookingForm({ name: '', email: '', phone: '', spots: 1 });
+      fetchData();
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      alert(error.response?.data?.error || 'Failed to update booking');
+    }
+  };
+
   if (loading) return <div className="admin-loading">Loading...</div>;
 
   return (
@@ -269,13 +313,18 @@ function AdminDashboard() {
           <div className="events-section">
             <div className="section-header">
               <h2>Manage Events</h2>
-              <button onClick={() => {
-                setShowEventForm(true);
-                setEditingEvent(null);
-                resetEventForm();
-              }}>
-                Create New Event
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button onClick={fetchData} style={{ backgroundColor: '#2196F3' }}>
+                  Refresh Events
+                </button>
+                <button onClick={() => {
+                  setShowEventForm(true);
+                  setEditingEvent(null);
+                  resetEventForm();
+                }}>
+                  Create New Event
+                </button>
+              </div>
             </div>
 
             {showEventForm && (
@@ -520,6 +569,20 @@ function AdminDashboard() {
                             </button>
                           )}
                           <button
+                            onClick={() => handleEditBooking(booking)}
+                            style={{
+                              padding: '5px 10px',
+                              fontSize: '0.85rem',
+                              backgroundColor: '#2196F3',
+                              color: 'white',
+                              border: 'none',
+                              cursor: 'pointer',
+                              borderRadius: '3px'
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
                             onClick={() => handleDeleteBooking(booking._id)}
                             style={{
                               padding: '5px 10px',
@@ -540,6 +603,91 @@ function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+
+            {showBookingEditForm && editingBooking && (
+              <div className="event-form-modal">
+                <div className="event-form-container">
+                  <h3>Edit Booking</h3>
+                  <form onSubmit={handleUpdateBooking}>
+                    <div className="form-group">
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={bookingForm.name}
+                        onChange={handleBookingFormChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={bookingForm.email}
+                        onChange={handleBookingFormChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Phone</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={bookingForm.phone}
+                        onChange={handleBookingFormChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Spots</label>
+                      <input
+                        type="number"
+                        name="spots"
+                        value={bookingForm.spots}
+                        onChange={handleBookingFormChange}
+                        min="1"
+                        required
+                      />
+                      <small style={{ color: '#666', fontSize: '0.85rem' }}>
+                        Event: {editingBooking.event?.title} |
+                        Current: {editingBooking.spots} spots |
+                        Available: {editingBooking.event?.availableSpots} spots
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Payment Status</label>
+                      <input
+                        type="text"
+                        value={editingBooking.paymentStatus}
+                        disabled
+                        style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
+                      />
+                      <small style={{ color: '#666', fontSize: '0.85rem' }}>
+                        Use "Confirm Payment" button to update payment status
+                      </small>
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="button" onClick={() => {
+                        setShowBookingEditForm(false);
+                        setEditingBooking(null);
+                        setBookingForm({ name: '', email: '', phone: '', spots: 1 });
+                      }}>
+                        Cancel
+                      </button>
+                      <button type="submit">
+                        Update Booking
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

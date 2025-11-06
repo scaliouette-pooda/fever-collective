@@ -204,6 +204,66 @@ router.delete('/:id', authenticateUser, requireAdmin, async (req, res) => {
   }
 });
 
+// Update booking details (admin only)
+router.put('/:id', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const { name, email, phone, spots } = req.body;
+
+    const booking = await Booking.findById(req.params.id).populate('event');
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    const oldSpots = booking.spots;
+    const newSpots = spots || oldSpots;
+    const spotsDifference = newSpots - oldSpots;
+
+    // If spots changed and payment is completed, adjust event availability
+    if (spotsDifference !== 0 && booking.paymentStatus === 'completed') {
+      const event = await Event.findById(booking.event._id);
+      if (!event) {
+        return res.status(404).json({ error: 'Associated event not found' });
+      }
+
+      // If increasing spots, check availability
+      if (spotsDifference > 0) {
+        if (event.availableSpots < spotsDifference) {
+          return res.status(400).json({
+            error: `Not enough spots available. Only ${event.availableSpots} spots remaining.`
+          });
+        }
+        event.availableSpots -= spotsDifference;
+      } else {
+        // Decreasing spots, return them to event
+        event.availableSpots += Math.abs(spotsDifference);
+      }
+
+      await event.save();
+      console.log(`Adjusted ${spotsDifference} spots for event ${event.title} (booking ${booking._id})`);
+    }
+
+    // Update booking fields
+    if (name) booking.name = name;
+    if (email) booking.email = email;
+    if (phone) booking.phone = phone;
+    if (spots) {
+      booking.spots = spots;
+      booking.totalAmount = spots * (booking.event?.price || 0);
+    }
+
+    await booking.save();
+
+    res.json({
+      message: 'Booking updated successfully',
+      booking,
+      spotsAdjusted: spotsDifference
+    });
+  } catch (error) {
+    console.error('Error updating booking:', error);
+    res.status(500).json({ error: 'Failed to update booking' });
+  }
+});
+
 // User confirms they completed payment (no auth required - public endpoint)
 router.post('/:id/confirm-payment', async (req, res) => {
   try {

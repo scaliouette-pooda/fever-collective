@@ -39,7 +39,7 @@ function Contact() {
         <div className="contact-info">
           <div className="info-section">
             <h3>Location</h3>
-            <p>Los Gatos, CA</p>
+            <p>San Ramon, CA</p>
             <p>Popup events across the Bay Area</p>
           </div>
 
