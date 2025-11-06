@@ -14,12 +14,13 @@ router.post('/',
     body('name').trim().notEmpty().withMessage('Name is required'),
     body('email').isEmail().withMessage('Valid email is required'),
     body('phone').notEmpty().withMessage('Phone is required'),
-    body('spots').isInt({ min: 1 }).withMessage('At least 1 spot required')
+    body('spots').isInt({ min: 1 }).withMessage('At least 1 spot required'),
+    body('paymentMethod').isIn(['paypal', 'venmo', 'stripe']).withMessage('Valid payment method required')
   ],
   validateRequestBody(),
   async (req, res) => {
     try {
-      const { eventId, name, email, phone, spots } = req.body;
+      const { eventId, name, email, phone, spots, paymentMethod } = req.body;
 
       const event = await Event.findById(eventId);
       if (!event) {
@@ -32,9 +33,8 @@ router.post('/',
 
       const totalAmount = event.price * spots;
 
-      // Check if Stripe is configured
-      if (!process.env.STRIPE_SECRET_KEY) {
-        // Demo mode - create booking without payment
+      // Handle Venmo payments
+      if (paymentMethod === 'venmo') {
         const booking = new Booking({
           event: eventId,
           name,
@@ -42,9 +42,80 @@ router.post('/',
           phone,
           spots,
           totalAmount,
-          paymentIntentId: 'demo_' + Date.now(),
-          paymentStatus: 'demo',
-          status: 'confirmed'
+          paymentIntentId: 'venmo_' + Date.now(),
+          paymentStatus: 'pending',
+          status: 'pending'
+        });
+
+        await booking.save();
+
+        event.availableSpots -= spots;
+        await event.save();
+
+        const venmoUsername = process.env.VENMO_USERNAME || 'YourVenmoUsername';
+        const venmoUrl = `https://venmo.com/${venmoUsername}?txn=pay&amount=${totalAmount}&note=${encodeURIComponent(`${event.title} - ${spots} spot(s)`)}&audience=private`;
+
+        return res.status(201).json({
+          booking,
+          paymentMethod: 'venmo',
+          paymentUrl: venmoUrl,
+          instructions: `Please pay $${totalAmount} via Venmo to complete your booking. Include booking ID: ${booking._id}`
+        });
+      }
+
+      // Handle PayPal payments
+      if (paymentMethod === 'paypal') {
+        const booking = new Booking({
+          event: eventId,
+          name,
+          email,
+          phone,
+          spots,
+          totalAmount,
+          paymentIntentId: 'paypal_' + Date.now(),
+          paymentStatus: 'pending',
+          status: 'pending'
+        });
+
+        await booking.save();
+
+        event.availableSpots -= spots;
+        await event.save();
+
+        // PayPal.me link or you can integrate PayPal SDK later
+        const paypalEmail = process.env.PAYPAL_EMAIL || 'your-email@example.com';
+        const paypalUrl = `https://www.paypal.com/paypalme/${paypalEmail.split('@')[0]}/${totalAmount}`;
+
+        return res.status(201).json({
+          booking,
+          paymentMethod: 'paypal',
+          paymentUrl: paypalUrl,
+          instructions: `Please pay $${totalAmount} via PayPal to complete your booking. Include booking ID: ${booking._id}`
+        });
+      }
+
+      // Handle Stripe payments (if configured)
+      if (paymentMethod === 'stripe' && process.env.STRIPE_SECRET_KEY) {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(totalAmount * 100),
+          currency: 'usd',
+          metadata: {
+            eventId: event._id.toString(),
+            eventTitle: event.title,
+            customerName: name,
+            customerEmail: email,
+            spots: spots.toString()
+          }
+        });
+
+        const booking = new Booking({
+          event: eventId,
+          name,
+          email,
+          phone,
+          spots,
+          totalAmount,
+          paymentIntentId: paymentIntent.id
         });
 
         await booking.save();
@@ -54,42 +125,15 @@ router.post('/',
 
         return res.status(201).json({
           booking,
-          message: 'Demo booking created (payment processing not configured)',
-          paymentUrl: `${process.env.CLIENT_URL}/confirmation/${booking._id}`
+          clientSecret: paymentIntent.client_secret,
+          paymentUrl: `${process.env.CLIENT_URL}/payment/${booking._id}`
         });
       }
 
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(totalAmount * 100),
-        currency: 'usd',
-        metadata: {
-          eventId: event._id.toString(),
-          eventTitle: event.title,
-          customerName: name,
-          customerEmail: email,
-          spots: spots.toString()
-        }
-      });
-
-      const booking = new Booking({
-        event: eventId,
-        name,
-        email,
-        phone,
-        spots,
-        totalAmount,
-        paymentIntentId: paymentIntent.id
-      });
-
-      await booking.save();
-
-      event.availableSpots -= spots;
-      await event.save();
-
-      res.status(201).json({
-        booking,
-        clientSecret: paymentIntent.client_secret,
-        paymentUrl: `${process.env.CLIENT_URL}/payment/${booking._id}`
+      // Fallback if no valid payment method
+      return res.status(400).json({
+        error: 'Payment method not available',
+        message: 'Selected payment method is not configured'
       });
     } catch (error) {
       console.error('Error creating booking:', error);

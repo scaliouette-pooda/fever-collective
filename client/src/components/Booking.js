@@ -11,7 +11,8 @@ function Booking() {
     name: '',
     email: '',
     phone: '',
-    spots: 1
+    spots: 1,
+    paymentMethod: 'venmo'
   });
 
   useEffect(() => {
@@ -45,12 +46,12 @@ function Booking() {
         eventId
       });
 
-      // Show message if demo mode
-      if (response.data.message) {
-        alert(response.data.message + '\n\nBooking ID: ' + response.data.booking._id);
+      // Show instructions
+      if (response.data.instructions) {
+        alert(response.data.instructions);
       }
 
-      // Redirect to payment or confirmation
+      // Redirect to payment
       window.location.href = response.data.paymentUrl;
     } catch (error) {
       console.error('Error creating booking:', error);
@@ -164,6 +165,19 @@ function Booking() {
                 {[...Array(Math.min(event.availableSpots, 5))].map((_, i) => (
                   <option key={i + 1} value={i + 1}>{i + 1}</option>
                 ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Payment Method</label>
+              <select
+                name="paymentMethod"
+                value={formData.paymentMethod}
+                onChange={handleChange}
+                required
+              >
+                <option value="venmo">Venmo</option>
+                <option value="paypal">PayPal</option>
               </select>
             </div>
 
