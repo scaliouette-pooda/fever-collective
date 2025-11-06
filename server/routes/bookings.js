@@ -177,18 +177,27 @@ router.delete('/:id', authenticateUser, requireAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    // If payment was completed, return the spots to the event
+    // Return spots to event ONLY if payment was completed
+    // Logic: Spots are reduced when paymentStatus becomes 'completed'
+    // So we only return spots if paymentStatus is currently 'completed'
+    // Pending bookings never had spots reduced, so nothing to return
     if (booking.paymentStatus === 'completed') {
       const event = await Event.findById(booking.event._id);
       if (event) {
         event.availableSpots += booking.spots;
         await event.save();
+        console.log(`Returned ${booking.spots} spots to event ${event.title} (deleted booking ${booking._id})`);
       }
+    } else {
+      console.log(`No spots returned for pending booking ${booking._id}`);
     }
 
     await Booking.findByIdAndDelete(req.params.id);
 
-    res.json({ message: 'Booking deleted successfully' });
+    res.json({
+      message: 'Booking deleted successfully',
+      spotsReturned: booking.paymentStatus === 'completed' ? booking.spots : 0
+    });
   } catch (error) {
     console.error('Error deleting booking:', error);
     res.status(500).json({ error: 'Failed to delete booking' });
