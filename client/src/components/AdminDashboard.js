@@ -330,9 +330,7 @@ function AdminDashboard() {
             <div className="section-header">
               <h2>Manage Events</h2>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={fetchData} style={{ backgroundColor: '#2196F3' }}>
-                  Refresh Events
-                </button>
+               
                 <button onClick={() => {
                   setShowEventForm(true);
                   setEditingEvent(null);
