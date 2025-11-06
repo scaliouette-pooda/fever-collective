@@ -46,19 +46,49 @@ function Booking() {
         eventId
       });
 
-      const { booking, paymentUrl, returnUrl } = response.data;
+      const { booking, paymentUrl } = response.data;
 
-      // Store booking ID and payment URL for confirmation page
-      localStorage.setItem('pendingBooking', JSON.stringify({
-        bookingId: booking._id,
-        returnUrl: returnUrl,
-        paymentUrl: paymentUrl,
-        paymentMethod: formData.paymentMethod
-      }));
+      // Open payment in popup window
+      const width = 600;
+      const height = 700;
+      const left = (window.screen.width - width) / 2;
+      const top = (window.screen.height - height) / 2;
 
-      // Redirect directly to confirmation page
-      // User will see payment instructions and button there
-      window.location.href = returnUrl;
+      const popup = window.open(
+        paymentUrl,
+        'PaymentWindow',
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+      );
+
+      if (!popup) {
+        alert('Please allow popups for this site to complete payment.');
+        return;
+      }
+
+      popup.focus();
+
+      // Show success message with confirmation prompt
+      const userConfirmed = window.confirm(
+        `Booking created!\n\nBooking ID: ${booking._id}\nAmount: $${booking.totalAmount}\n\nA payment window has opened. After completing payment, click OK to confirm.\n\nClick Cancel to confirm payment later.`
+      );
+
+      if (userConfirmed) {
+        // User says they completed payment
+        try {
+          const confirmResponse = await api.post(`/api/bookings/${booking._id}/confirm-payment`);
+          const confirmationNumber = confirmResponse.data.confirmationNumber || `FC${booking._id.substring(0, 6).toUpperCase()}`;
+
+          alert(`✅ Payment Confirmed!\n\nConfirmation Number: ${confirmationNumber}\n\nYou will receive an email receipt shortly with your booking details.`);
+        } catch (err) {
+          console.error('Error confirming payment:', err);
+          alert('Failed to confirm payment. Please contact support with your booking ID: ' + booking._id);
+        }
+      } else {
+        alert(`Booking saved!\n\nBooking ID: ${booking._id}\n\nPlease complete payment and contact us to confirm. Check your email for details.`);
+      }
+
+      // Redirect to events page
+      navigate('/events');
     } catch (error) {
       console.error('Error creating booking:', error);
       alert('Failed to create booking. Please try again.');

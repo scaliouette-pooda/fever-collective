@@ -12,7 +12,6 @@ import Registration from './components/Registration';
 import Login from './components/Login';
 import Profile from './components/Profile';
 import AdminDashboard from './components/AdminDashboard';
-import PaymentConfirmation from './components/PaymentConfirmation';
 
 function App() {
   return (
@@ -25,7 +24,6 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/booking/:eventId" element={<Booking />} />
-          <Route path="/payment-confirmation/:bookingId" element={<PaymentConfirmation />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />

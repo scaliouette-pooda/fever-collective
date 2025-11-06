@@ -54,13 +54,11 @@ router.post('/',
 
         const venmoUsername = process.env.VENMO_USERNAME || 'YourVenmoUsername';
         const venmoUrl = `https://venmo.com/${venmoUsername}?txn=pay&amount=${totalAmount}&note=${encodeURIComponent(`${event.title} - ${spots} spot(s) - ID:${booking._id.toString().substring(0, 8)}`)}&audience=private`;
-        const returnUrl = `${process.env.CLIENT_URL}/payment-confirmation/${booking._id}`;
 
         return res.status(201).json({
           booking,
           paymentMethod: 'venmo',
-          paymentUrl: venmoUrl,
-          returnUrl: returnUrl
+          paymentUrl: venmoUrl
         });
       }
 
@@ -85,14 +83,11 @@ router.post('/',
         // PayPal.me link or you can integrate PayPal SDK later
         const paypalEmail = process.env.PAYPAL_EMAIL || 'your-email@example.com';
         const paypalUrl = `https://www.paypal.com/paypalme/${paypalEmail.split('@')[0]}/${totalAmount}`;
-        const returnUrl = `${process.env.CLIENT_URL}/payment-confirmation/${booking._id}`;
 
         return res.status(201).json({
           booking,
           paymentMethod: 'paypal',
-          paymentUrl: paypalUrl,
-          returnUrl: returnUrl,
-          instructions: `Please pay $${totalAmount} via PayPal to complete your booking. Include booking ID: ${booking._id.toString().substring(0, 8)}`
+          paymentUrl: paypalUrl
         });
       }
 
