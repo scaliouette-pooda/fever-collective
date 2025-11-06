@@ -53,13 +53,14 @@ router.post('/',
         // Don't reduce spots yet - wait for payment confirmation
 
         const venmoUsername = process.env.VENMO_USERNAME || 'YourVenmoUsername';
-        const venmoUrl = `https://venmo.com/${venmoUsername}?txn=pay&amount=${totalAmount}&note=${encodeURIComponent(`${event.title} - ${spots} spot(s)`)}&audience=private`;
+        const venmoUrl = `https://venmo.com/${venmoUsername}?txn=pay&amount=${totalAmount}&note=${encodeURIComponent(`${event.title} - ${spots} spot(s) - ID:${booking._id.toString().substring(0, 8)}`)}&audience=private`;
+        const returnUrl = `${process.env.CLIENT_URL}/payment-confirmation/${booking._id}`;
 
         return res.status(201).json({
           booking,
           paymentMethod: 'venmo',
           paymentUrl: venmoUrl,
-
+          returnUrl: returnUrl
         });
       }
 
@@ -84,12 +85,14 @@ router.post('/',
         // PayPal.me link or you can integrate PayPal SDK later
         const paypalEmail = process.env.PAYPAL_EMAIL || 'your-email@example.com';
         const paypalUrl = `https://www.paypal.com/paypalme/${paypalEmail.split('@')[0]}/${totalAmount}`;
+        const returnUrl = `${process.env.CLIENT_URL}/payment-confirmation/${booking._id}`;
 
         return res.status(201).json({
           booking,
           paymentMethod: 'paypal',
           paymentUrl: paypalUrl,
-          instructions: `Please pay $${totalAmount} via PayPal to complete your booking. Include booking ID: ${booking._id}`
+          returnUrl: returnUrl,
+          instructions: `Please pay $${totalAmount} via PayPal to complete your booking. Include booking ID: ${booking._id.toString().substring(0, 8)}`
         });
       }
 
@@ -189,6 +192,38 @@ router.delete('/:id', authenticateUser, requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error deleting booking:', error);
     res.status(500).json({ error: 'Failed to delete booking' });
+  }
+});
+
+// User confirms they completed payment (no auth required - public endpoint)
+router.post('/:id/confirm-payment', async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate('event');
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    if (booking.paymentStatus === 'completed') {
+      return res.json({ message: 'Payment already confirmed', booking });
+    }
+
+    // Update to "pending review" status
+    booking.paymentStatus = 'pending';
+    booking.status = 'pending';
+    await booking.save();
+
+    // Send notification email to user
+    sendPaymentConfirmation(booking).catch(err =>
+      console.error('Payment confirmation email failed:', err)
+    );
+
+    res.json({
+      message: 'Payment confirmation received. Your booking will be reviewed shortly.',
+      booking
+    });
+  } catch (error) {
+    console.error('Error confirming payment:', error);
+    res.status(500).json({ error: 'Failed to confirm payment' });
   }
 });
 

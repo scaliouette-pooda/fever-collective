@@ -46,13 +46,23 @@ function Booking() {
         eventId
       });
 
-      // Show instructions
-      if (response.data.instructions) {
-        alert(response.data.instructions);
-      }
+      const { booking, paymentUrl, returnUrl } = response.data;
 
-      // Redirect to payment
-      window.location.href = response.data.paymentUrl;
+      // Store booking ID and return URL for later
+      localStorage.setItem('pendingBooking', JSON.stringify({
+        bookingId: booking._id,
+        returnUrl: returnUrl
+      }));
+
+      // For Venmo, open in new tab so user can return easily
+      if (formData.paymentMethod === 'venmo') {
+        window.open(paymentUrl, '_blank');
+        // Redirect to confirmation page immediately
+        window.location.href = returnUrl;
+      } else {
+        // For PayPal, redirect directly
+        window.location.href = paymentUrl;
+      }
     } catch (error) {
       console.error('Error creating booking:', error);
       alert('Failed to create booking. Please try again.');
