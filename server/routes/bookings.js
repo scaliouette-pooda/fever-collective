@@ -317,14 +317,21 @@ router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => 
 
     await booking.save();
 
-    // Reduce available spots ONLY when payment is confirmed for the first time
-    // Check if we're transitioning from 'pending' to 'completed'
-    if (oldPaymentStatus === 'pending' && paymentStatus === 'completed') {
-      const event = await Event.findById(booking.event._id);
-      if (event) {
+    // Handle spot management based on payment status transitions
+    const event = await Event.findById(booking.event._id);
+    if (event) {
+      // Reduce available spots ONLY when payment is confirmed for the first time
+      if (oldPaymentStatus === 'pending' && paymentStatus === 'completed') {
         event.availableSpots -= booking.spots;
         await event.save();
         console.log(`Reduced ${booking.spots} spots for event ${event.title} (booking ${booking._id} payment confirmed)`);
+      }
+
+      // Return spots when refunding a completed payment
+      if (oldPaymentStatus === 'completed' && paymentStatus === 'refunded') {
+        event.availableSpots += booking.spots;
+        await event.save();
+        console.log(`Returned ${booking.spots} spots to event ${event.title} (booking ${booking._id} refunded)`);
       }
     }
 
@@ -338,7 +345,11 @@ router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => 
       sendBookingConfirmation(booking).catch(err => console.error('Booking email failed:', err));
     }
 
-    res.json({ message: 'Booking updated successfully', booking });
+    res.json({
+      message: 'Booking updated successfully',
+      booking,
+      spotsReturned: (oldPaymentStatus === 'completed' && paymentStatus === 'refunded') ? booking.spots : 0
+    });
   } catch (error) {
     console.error('Error updating booking:', error);
     res.status(500).json({ error: 'Failed to update booking' });

@@ -21,7 +21,8 @@ function AdminDashboard() {
     name: '',
     email: '',
     phone: '',
-    spots: 1
+    spots: 1,
+    paymentStatus: 'pending'
   });
 
   const [eventForm, setEventForm] = useState({
@@ -263,7 +264,8 @@ function AdminDashboard() {
       name: booking.name,
       email: booking.email,
       phone: booking.phone,
-      spots: booking.spots
+      spots: booking.spots,
+      paymentStatus: booking.paymentStatus
     });
     setShowBookingEditForm(true);
   };
@@ -279,14 +281,40 @@ function AdminDashboard() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await api.put(`/api/bookings/${editingBooking._id}`, bookingForm, {
+
+      // Check if payment status changed
+      const paymentStatusChanged = bookingForm.paymentStatus !== editingBooking.paymentStatus;
+
+      // Update booking details (name, email, phone, spots)
+      await api.put(`/api/bookings/${editingBooking._id}`, {
+        name: bookingForm.name,
+        email: bookingForm.email,
+        phone: bookingForm.phone,
+        spots: bookingForm.spots
+      }, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert('Booking updated successfully!');
+      // If payment status changed, update it separately to trigger spot management
+      if (paymentStatusChanged) {
+        const response = await api.patch(`/api/bookings/${editingBooking._id}/status`, {
+          paymentStatus: bookingForm.paymentStatus
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (response.data.spotsReturned > 0) {
+          alert(`Booking updated successfully!\n\n${response.data.spotsReturned} spots returned to event (refunded).`);
+        } else {
+          alert('Booking updated successfully!');
+        }
+      } else {
+        alert('Booking updated successfully!');
+      }
+
       setShowBookingEditForm(false);
       setEditingBooking(null);
-      setBookingForm({ name: '', email: '', phone: '', spots: 1 });
+      setBookingForm({ name: '', email: '', phone: '', spots: 1, paymentStatus: 'pending' });
       fetchData();
     } catch (error) {
       console.error('Error updating booking:', error);
@@ -685,14 +713,29 @@ function AdminDashboard() {
 
                     <div className="form-group">
                       <label>Payment Status</label>
-                      <input
-                        type="text"
-                        value={editingBooking.paymentStatus}
-                        disabled
-                        style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
-                      />
+                      <select
+                        name="paymentStatus"
+                        value={bookingForm.paymentStatus}
+                        onChange={handleBookingFormChange}
+                        style={{
+                          backgroundColor: bookingForm.paymentStatus === 'refunded' ? '#ffebee' :
+                                         bookingForm.paymentStatus === 'completed' ? '#e8f5e9' :
+                                         '#fff3cd'
+                        }}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="failed">Failed</option>
+                        <option value="refunded">Refunded</option>
+                      </select>
                       <small style={{ color: '#666', fontSize: '0.85rem' }}>
-                        Use "Confirm Payment" button to update payment status
+                        {editingBooking.paymentStatus === 'completed' && bookingForm.paymentStatus === 'refunded' ? (
+                          <strong style={{ color: '#d32f2f' }}>⚠️ Changing to "Refunded" will automatically return {editingBooking.spots} spots to the event</strong>
+                        ) : editingBooking.paymentStatus === 'pending' && bookingForm.paymentStatus === 'completed' ? (
+                          <strong style={{ color: '#388e3c' }}>✓ Changing to "Completed" will reduce available spots by {editingBooking.spots}</strong>
+                        ) : (
+                          'Select payment status. Refunding automatically releases spots.'
+                        )}
                       </small>
                     </div>
 
@@ -700,7 +743,7 @@ function AdminDashboard() {
                       <button type="button" onClick={() => {
                         setShowBookingEditForm(false);
                         setEditingBooking(null);
-                        setBookingForm({ name: '', email: '', phone: '', spots: 1 });
+                        setBookingForm({ name: '', email: '', phone: '', spots: 1, paymentStatus: 'pending' });
                       }}>
                         Cancel
                       </button>
