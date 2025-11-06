@@ -14,6 +14,8 @@ function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [editingBooking, setEditingBooking] = useState(null);
+  const [showBookingEditForm, setShowBookingEditForm] = useState(false);
 
   const [eventForm, setEventForm] = useState({
     title: '',
@@ -210,6 +212,25 @@ function AdminDashboard() {
     } catch (error) {
       console.error('Error updating booking:', error);
       alert('Failed to update booking status');
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/api/bookings/${bookingId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('Booking deleted successfully!');
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      alert('Failed to delete booking');
     }
   };
 
@@ -479,24 +500,40 @@ function AdminDashboard() {
                       </td>
                       <td>{new Date(booking.createdAt).toLocaleDateString()}</td>
                       <td>
-                        {booking.paymentStatus === 'pending' && (
+                        <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                          {booking.paymentStatus === 'pending' && (
+                            <button
+                              onClick={() => handleUpdateBookingStatus(booking._id, 'confirmed', 'completed')}
+                              className="btn-confirm"
+                              style={{ padding: '5px 10px', fontSize: '0.85rem', backgroundColor: '#4CAF50' }}
+                            >
+                              Confirm Payment
+                            </button>
+                          )}
+                          {booking.status === 'pending' && booking.paymentStatus === 'completed' && (
+                            <button
+                              onClick={() => handleUpdateBookingStatus(booking._id, 'confirmed', booking.paymentStatus)}
+                              className="btn-confirm"
+                              style={{ padding: '5px 10px', fontSize: '0.85rem', backgroundColor: '#4CAF50' }}
+                            >
+                              Confirm Booking
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleUpdateBookingStatus(booking._id, 'confirmed', 'completed')}
-                            className="btn-confirm"
-                            style={{ marginRight: '5px', padding: '5px 10px', fontSize: '0.85rem' }}
+                            onClick={() => handleDeleteBooking(booking._id)}
+                            style={{
+                              padding: '5px 10px',
+                              fontSize: '0.85rem',
+                              backgroundColor: '#f44336',
+                              color: 'white',
+                              border: 'none',
+                              cursor: 'pointer',
+                              borderRadius: '3px'
+                            }}
                           >
-                            Confirm Payment
+                            Delete
                           </button>
-                        )}
-                        {booking.status === 'pending' && booking.paymentStatus === 'completed' && (
-                          <button
-                            onClick={() => handleUpdateBookingStatus(booking._id, 'confirmed', booking.paymentStatus)}
-                            className="btn-confirm"
-                            style={{ padding: '5px 10px', fontSize: '0.85rem' }}
-                          >
-                            Confirm Booking
-                          </button>
-                        )}
+                        </div>
                       </td>
                     </tr>
                   ))}

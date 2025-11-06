@@ -50,8 +50,7 @@ router.post('/',
 
         await booking.save();
 
-        event.availableSpots -= spots;
-        await event.save();
+        // Don't reduce spots yet - wait for payment confirmation
 
         const venmoUsername = process.env.VENMO_USERNAME || 'YourVenmoUsername';
         const venmoUrl = `https://venmo.com/${venmoUsername}?txn=pay&amount=${totalAmount}&note=${encodeURIComponent(`${event.title} - ${spots} spot(s)`)}&audience=private`;
@@ -60,7 +59,7 @@ router.post('/',
           booking,
           paymentMethod: 'venmo',
           paymentUrl: venmoUrl,
-          
+
         });
       }
 
@@ -80,8 +79,7 @@ router.post('/',
 
         await booking.save();
 
-        event.availableSpots -= spots;
-        await event.save();
+        // Don't reduce spots yet - wait for payment confirmation
 
         // PayPal.me link or you can integrate PayPal SDK later
         const paypalEmail = process.env.PAYPAL_EMAIL || 'your-email@example.com';
@@ -168,15 +166,43 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Delete booking (admin only)
+router.delete('/:id', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate('event');
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // If payment was completed, return the spots to the event
+    if (booking.paymentStatus === 'completed') {
+      const event = await Event.findById(booking.event._id);
+      if (event) {
+        event.availableSpots += booking.spots;
+        await event.save();
+      }
+    }
+
+    await Booking.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Booking deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting booking:', error);
+    res.status(500).json({ error: 'Failed to delete booking' });
+  }
+});
+
 // Update booking status (admin only)
 router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => {
   try {
     const { status, paymentStatus } = req.body;
 
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findById(req.params.id).populate('event');
     if (!booking) {
       return res.status(404).json({ error: 'Booking not found' });
     }
+
+    const wasPaymentPending = booking.paymentStatus === 'pending';
 
     if (status) {
       booking.status = status;
@@ -186,7 +212,15 @@ router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => 
     }
 
     await booking.save();
-    await booking.populate('event');
+
+    // Reduce available spots ONLY when payment is confirmed for the first time
+    if (wasPaymentPending && paymentStatus === 'completed') {
+      const event = await Event.findById(booking.event._id);
+      if (event) {
+        event.availableSpots -= booking.spots;
+        await event.save();
+      }
+    }
 
     // Send email if payment was just confirmed
     if (paymentStatus === 'completed' && booking.paymentStatus === 'completed') {
