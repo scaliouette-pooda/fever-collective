@@ -1,48 +1,68 @@
 const mongoose = require('mongoose');
-const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-const createAdmin = async () => {
+// Import User model
+const User = require('../models/User');
+
+const createAdminUser = async () => {
   try {
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'admin@fevercollective.com' });
+    const email = 'info@thefevercollective.com';
+    const name = 'The Fever Collective';
+    const phone = '555-0100'; // Placeholder phone
+    const password = 'FeverDesigner2025!'; // Different password for new admin
 
-    if (existingAdmin) {
-      console.log('Admin user already exists');
-
-      // Update to admin role if not already
-      if (existingAdmin.role !== 'admin') {
-        existingAdmin.role = 'admin';
-        await existingAdmin.save();
-        console.log('Updated existing user to admin role');
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.log('⚠️  User already exists!');
+      console.log('Current role:', existingUser.role);
+      
+      if (existingUser.role !== 'admin') {
+        console.log('Updating to admin role...');
+        existingUser.role = 'admin';
+        await existingUser.save();
+        console.log('✅ User updated to admin role!');
+      } else {
+        console.log('✅ User is already an admin. No changes needed.');
       }
+      
+      console.log('\n📧 Existing Admin Account:');
+      console.log('Email:', email);
+      console.log('Password: [Already set - not changed]');
+      console.log('Login URL: https://fever-collective.vercel.app/admin');
+    } else {
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-      process.exit(0);
+      // Create admin user
+      const adminUser = new User({
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+        role: 'admin'
+      });
+
+      await adminUser.save();
+      console.log('✅ New admin user created successfully!');
+      console.log('\n📧 New Admin Credentials:');
+      console.log('Email:', email);
+      console.log('Password:', password);
+      console.log('Login URL: https://fever-collective.vercel.app/admin');
+      console.log('\n⚠️  IMPORTANT: Have them change their password after first login!');
     }
-
-    // Create new admin user
-    const adminUser = new User({
-      name: 'Admin',
-      email: 'admin@fevercollective.com',
-      password: 'fever2025',
-      phone: '(000) 000-0000',
-      role: 'admin'
-    });
-
-    await adminUser.save();
-    console.log('✅ Admin user created successfully!');
-    console.log('Email: admin@fevercollective.com');
-    console.log('Password: fever2025');
 
     process.exit(0);
   } catch (error) {
-    console.error('Error creating admin user:', error);
+    console.error('❌ Error:', error.message);
     process.exit(1);
   }
 };
 
-createAdmin();
+createAdminUser();
