@@ -306,7 +306,7 @@ router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => 
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    const wasPaymentPending = booking.paymentStatus === 'pending';
+    const oldPaymentStatus = booking.paymentStatus;
 
     if (status) {
       booking.status = status;
@@ -318,11 +318,13 @@ router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => 
     await booking.save();
 
     // Reduce available spots ONLY when payment is confirmed for the first time
-    if (wasPaymentPending && paymentStatus === 'completed') {
+    // Check if we're transitioning from 'pending' to 'completed'
+    if (oldPaymentStatus === 'pending' && paymentStatus === 'completed') {
       const event = await Event.findById(booking.event._id);
       if (event) {
         event.availableSpots -= booking.spots;
         await event.save();
+        console.log(`Reduced ${booking.spots} spots for event ${event.title} (booking ${booking._id} payment confirmed)`);
       }
     }
 

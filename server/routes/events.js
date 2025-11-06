@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 const Event = require('../models/Event');
+const Booking = require('../models/Booking');
 const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const { upload } = require('../config/cloudinary');
@@ -148,5 +149,45 @@ router.post('/upload-image',
     }
   }
 );
+
+// Recalculate available spots for an event based on completed bookings (admin only)
+router.post('/:id/recalculate-spots', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Get all bookings with completed payment for this event
+    const completedBookings = await Booking.find({
+      event: event._id,
+      paymentStatus: 'completed'
+    });
+
+    // Calculate total spots booked
+    const totalBooked = completedBookings.reduce((sum, booking) => sum + booking.spots, 0);
+
+    // Calculate correct available spots
+    const correctAvailableSpots = event.capacity - totalBooked;
+
+    const oldAvailableSpots = event.availableSpots;
+    event.availableSpots = correctAvailableSpots;
+    await event.save();
+
+    console.log(`Event ${event.title}: Recalculated spots from ${oldAvailableSpots} to ${correctAvailableSpots} (Capacity: ${event.capacity}, Booked: ${totalBooked})`);
+
+    res.json({
+      message: 'Spots recalculated successfully',
+      event,
+      oldAvailableSpots,
+      newAvailableSpots: correctAvailableSpots,
+      totalBooked,
+      capacity: event.capacity
+    });
+  } catch (error) {
+    console.error('Error recalculating spots:', error);
+    res.status(500).json({ error: 'Failed to recalculate spots' });
+  }
+});
 
 module.exports = router;

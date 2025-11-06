@@ -188,6 +188,22 @@ function AdminDashboard() {
     }
   };
 
+  const handleRecalculateSpots = async (eventId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post(`/api/events/${eventId}/recalculate-spots`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const { oldAvailableSpots, newAvailableSpots, totalBooked, capacity } = response.data;
+      alert(`Spots recalculated!\n\nCapacity: ${capacity}\nBooked (completed payments): ${totalBooked}\n\nOld Available: ${oldAvailableSpots}\nNew Available: ${newAvailableSpots}`);
+      fetchData();
+    } catch (error) {
+      console.error('Error recalculating spots:', error);
+      alert(error.response?.data?.error || 'Failed to recalculate spots');
+    }
+  };
+
   const resetEventForm = () => {
     setEventForm({
       title: '',
@@ -501,6 +517,16 @@ function AdminDashboard() {
                       <td>{event.availableSpots}/{event.capacity}</td>
                       <td>
                         <button onClick={() => handleEditEvent(event)}>Edit</button>
+                        <button
+                          onClick={() => handleRecalculateSpots(event._id)}
+                          style={{
+                            backgroundColor: '#FF9800',
+                            color: 'white'
+                          }}
+                          title="Recalculate available spots from completed bookings"
+                        >
+                          Recalculate
+                        </button>
                         <button onClick={() => handleDeleteEvent(event._id)}>Delete</button>
                       </td>
                     </tr>
