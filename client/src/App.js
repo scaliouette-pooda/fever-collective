@@ -9,6 +9,7 @@ import Contact from './components/Contact';
 import Booking from './components/Booking';
 import Registration from './components/Registration';
 import Login from './components/Login';
+import Profile from './components/Profile';
 import AdminDashboard from './components/AdminDashboard';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/booking/:eventId" element={<Booking />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </div>

@@ -6,6 +6,7 @@ const Event = require('../models/Event');
 const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { sendBookingConfirmation, sendPaymentConfirmation } = require('../services/emailService');
 
 router.post('/',
   sanitizeInput,
@@ -186,6 +187,16 @@ router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => 
 
     await booking.save();
     await booking.populate('event');
+
+    // Send email if payment was just confirmed
+    if (paymentStatus === 'completed' && booking.paymentStatus === 'completed') {
+      sendPaymentConfirmation(booking).catch(err => console.error('Payment email failed:', err));
+    }
+
+    // Send email if booking was just confirmed
+    if (status === 'confirmed' && booking.status === 'confirmed') {
+      sendBookingConfirmation(booking).catch(err => console.error('Booking email failed:', err));
+    }
 
     res.json({ message: 'Booking updated successfully', booking });
   } catch (error) {

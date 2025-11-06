@@ -39,7 +39,10 @@ function Navigation() {
           {!isLoggedIn ? (
             <li><Link to="/login">Login</Link></li>
           ) : (
-            <li><a onClick={handleLogout} style={{ cursor: 'pointer' }}>Logout</a></li>
+            <>
+              <li><Link to="/profile">Profile</Link></li>
+              <li><a onClick={handleLogout} style={{ cursor: 'pointer' }}>Logout</a></li>
+            </>
           )}
           {isAdmin && <li><Link to="/admin">Admin</Link></li>}
         </ul>
