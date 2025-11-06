@@ -28,7 +28,7 @@ const createAdmin = async () => {
     const adminUser = new User({
       name: 'Admin',
       email: 'admin@fevercollective.com',
-      password: 'admin123', // Change this password after first login
+      password: 'fever2025',
       phone: '(000) 000-0000',
       role: 'admin'
     });
@@ -36,8 +36,7 @@ const createAdmin = async () => {
     await adminUser.save();
     console.log('✅ Admin user created successfully!');
     console.log('Email: admin@fevercollective.com');
-    console.log('Password: admin123');
-    console.log('⚠️  IMPORTANT: Change this password after first login!');
+    console.log('Password: fever2025');
 
     process.exit(0);
   } catch (error) {

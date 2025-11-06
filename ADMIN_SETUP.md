@@ -5,11 +5,9 @@
 Admin user has been created in your local MongoDB:
 
 **Email:** admin@fevercollective.com
-**Password:** admin123
+**Password:** fever2025
 
 You can now login at http://localhost:3000/login
-
-⚠️ **IMPORTANT:** Change this password after first login!
 
 ---
 
@@ -54,12 +52,7 @@ Once created, login at:
 - **Production:** https://fever-collective.vercel.app/login
 
 **Email:** admin@fevercollective.com
-**Password:** admin123
-
-**After first login, you should:**
-1. Go to a user management page (if available)
-2. Change your password
-3. Or ask the developer to add password change functionality
+**Password:** fever2025
 
 ---
 
@@ -99,4 +92,4 @@ Once created, login at:
 
 **Forgot admin password:**
 - Run the create-admin script again
-- It will reset the password to `admin123`
+- It will reset the password to `fever2025`
