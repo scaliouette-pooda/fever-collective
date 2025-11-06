@@ -288,7 +288,8 @@ router.post('/:id/confirm-payment', async (req, res) => {
 
     res.json({
       message: 'Payment confirmation received. Your booking will be reviewed shortly.',
-      booking
+      booking,
+      confirmationNumber: booking.confirmationNumber
     });
   } catch (error) {
     console.error('Error confirming payment:', error);

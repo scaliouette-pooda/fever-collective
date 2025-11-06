@@ -12,6 +12,7 @@ function PaymentConfirmation() {
   const [error, setError] = useState('');
   const [paymentUrl, setPaymentUrl] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentPopupOpened, setPaymentPopupOpened] = useState(false);
 
   useEffect(() => {
     fetchBooking();
@@ -22,6 +23,16 @@ function PaymentConfirmation() {
       if (data.bookingId === bookingId && data.paymentUrl) {
         setPaymentUrl(data.paymentUrl);
         setPaymentMethod(data.paymentMethod || 'venmo');
+
+        // Automatically open payment popup on page load
+        if (!data.popupOpened) {
+          openPaymentPopup(data.paymentUrl);
+          // Mark as opened
+          localStorage.setItem('pendingBooking', JSON.stringify({
+            ...data,
+            popupOpened: true
+          }));
+        }
       }
     }
     // eslint-disable-next-line
@@ -39,11 +50,36 @@ function PaymentConfirmation() {
     }
   };
 
+  const openPaymentPopup = (url) => {
+    const width = 600;
+    const height = 700;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+
+    const popup = window.open(
+      url,
+      'PaymentWindow',
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+
+    if (popup) {
+      setPaymentPopupOpened(true);
+      popup.focus();
+    } else {
+      alert('Please allow popups for this site to complete payment.');
+    }
+  };
+
   const handleConfirmPayment = async () => {
     setConfirming(true);
     try {
-      await api.post(`/api/bookings/${bookingId}/confirm-payment`);
-      alert('Payment confirmed! You will receive a confirmation email shortly.');
+      const response = await api.post(`/api/bookings/${bookingId}/confirm-payment`);
+      const confirmationNumber = response.data.confirmationNumber || `FC${bookingId.substring(0, 6).toUpperCase()}`;
+
+      // Clear pending booking from localStorage
+      localStorage.removeItem('pendingBooking');
+
+      alert(`✅ Payment Confirmed!\n\nConfirmation Number: ${confirmationNumber}\n\nYou will receive an email receipt shortly with your booking details and confirmation number.`);
       navigate('/events');
     } catch (err) {
       console.error('Error confirming payment:', err);
@@ -133,14 +169,12 @@ function PaymentConfirmation() {
 
             <div className="payment-actions">
               {paymentUrl && (
-                <a
-                  href={paymentUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => openPaymentPopup(paymentUrl)}
                   className="payment-link-button"
                 >
-                  Pay with {paymentMethod === 'venmo' ? 'Venmo' : 'PayPal'}
-                </a>
+                  {paymentPopupOpened ? 'Reopen Payment Window' : `Pay with ${paymentMethod === 'venmo' ? 'Venmo' : 'PayPal'}`}
+                </button>
               )}
               <button
                 className="confirm-button"

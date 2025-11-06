@@ -159,11 +159,26 @@ const sendPaymentConfirmation = async (booking) => {
 
           <p>Your spot is confirmed! We can't wait to see you at the event.</p>
 
+          <div style="background-color: #e8f5e9; padding: 20px; margin: 20px 0; border: 2px solid #4caf50; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #2e7d32; text-align: center;">Confirmation Number</h3>
+            <p style="text-align: center; font-size: 24px; font-weight: bold; color: #1b5e20; margin: 10px 0; letter-spacing: 2px;">
+              ${booking.confirmationNumber || 'Pending'}
+            </p>
+            <p style="text-align: center; font-size: 12px; color: #666; margin: 5px 0;">
+              Please save this number for your records
+            </p>
+          </div>
+
           <div style="background-color: #f5f5f5; padding: 20px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Receipt Details</h3>
             <p style="margin: 5px 0;"><strong>Booking ID:</strong> ${booking._id}</p>
             <p style="margin: 5px 0;"><strong>Event:</strong> ${booking.event.title}</p>
-            <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(booking.event.date).toLocaleDateString()}</p>
+            <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(booking.event.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            <p style="margin: 5px 0;"><strong>Time:</strong> ${booking.event.time}</p>
+            <p style="margin: 5px 0;"><strong>Location:</strong> ${booking.event.location}</p>
+            <p style="margin: 5px 0;"><strong>Spots:</strong> ${booking.spots}</p>
             <p style="margin: 5px 0;"><strong>Amount Paid:</strong> $${booking.totalAmount}</p>
+            <p style="margin: 5px 0;"><strong>Payment Date:</strong> ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
 
           <p style="color: #666; font-size: 0.9em; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
