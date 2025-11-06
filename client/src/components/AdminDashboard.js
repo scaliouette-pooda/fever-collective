@@ -718,9 +718,7 @@ function AdminDashboard() {
                         value={bookingForm.paymentStatus}
                         onChange={handleBookingFormChange}
                         style={{
-                          backgroundColor: bookingForm.paymentStatus === 'refunded' ? '#ffebee' :
-                                         bookingForm.paymentStatus === 'completed' ? '#e8f5e9' :
-                                         'rgba(11, 85, 244, 1)'
+                          backgroundColor: 'rgba(11, 85, 244, 1)'
                         }}
                       >
                         <option value="pending">Pending</option>
