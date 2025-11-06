@@ -10,9 +10,21 @@ function PaymentConfirmation() {
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState('');
+  const [paymentUrl, setPaymentUrl] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
 
   useEffect(() => {
     fetchBooking();
+    // Get payment URL from localStorage if available
+    const pending = localStorage.getItem('pendingBooking');
+    if (pending) {
+      const data = JSON.parse(pending);
+      if (data.bookingId === bookingId && data.paymentUrl) {
+        setPaymentUrl(data.paymentUrl);
+        setPaymentMethod(data.paymentMethod || 'venmo');
+      }
+    }
+    // eslint-disable-next-line
   }, [bookingId]);
 
   const fetchBooking = async () => {
@@ -100,13 +112,36 @@ function PaymentConfirmation() {
 
             <div className="payment-instructions">
               <h3>Payment Instructions</h3>
-              <p>1. Complete payment via Venmo to: <strong>@lauryn-caliouette</strong></p>
-              <p>2. Amount: <strong>${booking.totalAmount}</strong></p>
-              <p>3. Include booking ID in note: <strong>{booking._id.substring(0, 8)}</strong></p>
-              <p>4. Click "I've Completed Payment" below after sending</p>
+              {paymentMethod === 'venmo' ? (
+                <>
+                  <p>1. Click "Pay with Venmo" button below</p>
+                  <p>2. Amount: <strong>${booking.totalAmount}</strong></p>
+                  <p>3. Booking ID <strong>{booking._id.substring(0, 8)}</strong> will be included automatically</p>
+                  <p>4. Complete payment in Venmo app</p>
+                  <p>5. Return here and click "I've Completed Payment"</p>
+                </>
+              ) : (
+                <>
+                  <p>1. Click "Pay with PayPal" button below</p>
+                  <p>2. Amount: <strong>${booking.totalAmount}</strong></p>
+                  <p>3. Include booking ID in note: <strong>{booking._id.substring(0, 8)}</strong></p>
+                  <p>4. Complete payment on PayPal</p>
+                  <p>5. Return here and click "I've Completed Payment"</p>
+                </>
+              )}
             </div>
 
             <div className="payment-actions">
+              {paymentUrl && (
+                <a
+                  href={paymentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="payment-link-button"
+                >
+                  Pay with {paymentMethod === 'venmo' ? 'Venmo' : 'PayPal'}
+                </a>
+              )}
               <button
                 className="confirm-button"
                 onClick={handleConfirmPayment}

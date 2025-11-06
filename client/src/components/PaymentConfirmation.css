@@ -129,8 +129,28 @@
 
 .payment-actions {
   display: flex;
+  flex-direction: column;
   gap: 15px;
   margin-bottom: 20px;
+}
+
+.payment-link-button {
+  padding: 15px 30px;
+  background: #3D95CE;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
+.payment-link-button:hover {
+  background: #2A7AB0;
 }
 
 .confirm-button {

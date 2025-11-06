@@ -48,21 +48,17 @@ function Booking() {
 
       const { booking, paymentUrl, returnUrl } = response.data;
 
-      // Store booking ID and return URL for later
+      // Store booking ID and payment URL for confirmation page
       localStorage.setItem('pendingBooking', JSON.stringify({
         bookingId: booking._id,
-        returnUrl: returnUrl
+        returnUrl: returnUrl,
+        paymentUrl: paymentUrl,
+        paymentMethod: formData.paymentMethod
       }));
 
-      // For Venmo, open in new tab so user can return easily
-      if (formData.paymentMethod === 'venmo') {
-        window.open(paymentUrl, '_blank');
-        // Redirect to confirmation page immediately
-        window.location.href = returnUrl;
-      } else {
-        // For PayPal, redirect directly
-        window.location.href = paymentUrl;
-      }
+      // Redirect directly to confirmation page
+      // User will see payment instructions and button there
+      window.location.href = returnUrl;
     } catch (error) {
       console.error('Error creating booking:', error);
       alert('Failed to create booking. Please try again.');
