@@ -720,7 +720,7 @@ function AdminDashboard() {
                         style={{
                           backgroundColor: bookingForm.paymentStatus === 'refunded' ? '#ffebee' :
                                          bookingForm.paymentStatus === 'completed' ? '#e8f5e9' :
-                                         '#fff3cd'
+                                         'rgba(11, 85, 244, 1)'
                         }}
                       >
                         <option value="pending">Pending</option>
