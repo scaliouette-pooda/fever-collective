@@ -59,7 +59,7 @@ router.post('/',
           booking,
           paymentMethod: 'venmo',
           paymentUrl: venmoUrl,
-          instructions: `Please pay $${totalAmount} via Venmo to complete your booking. Include booking ID: ${booking._id}`
+          
         });
       }
 

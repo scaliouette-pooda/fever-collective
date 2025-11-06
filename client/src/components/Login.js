@@ -24,6 +24,9 @@ function Login() {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
+      // Force navigation update by triggering storage event
+      window.dispatchEvent(new Event('storage'));
+
       // Redirect based on role
       if (response.data.user.role === 'admin') {
         navigate('/admin');
