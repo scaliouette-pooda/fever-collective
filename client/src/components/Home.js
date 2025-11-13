@@ -42,7 +42,7 @@ function Home() {
       <section className="cta">
         <div className="cta-content">
           <h2>Ready to Experience the Fever?</h2>
-          <p>Join us for our next popup event</p>
+          
           <Link to="/events">
             <button>Book Your Spot</button>
           </Link>
