@@ -21,7 +21,8 @@
       "Bash(curl:*)",
       "Bash(node scripts/resetAdminPassword.js:*)",
       "Bash(serverroutesupload.js)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

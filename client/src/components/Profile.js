@@ -40,7 +40,11 @@ function Profile() {
       setProfileData({
         name: response.data.name,
         email: response.data.email,
-        phone: response.data.phone
+        phone: response.data.phone,
+        availableCredits: response.data.availableCredits || 0,
+        referralTier: response.data.referralTier || 'starter',
+        referralCount: response.data.referralCount || 0,
+        totalReferralEarnings: response.data.totalReferralEarnings || 0
       });
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -280,10 +284,73 @@ function Profile() {
           )}
         </div>
 
+        {/* Class Credits Section */}
+        <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <h3 style={{ marginBottom: '20px', color: '#c9a86a' }}>Your Class Credits</h3>
+
+          <div style={{
+            background: 'rgba(201, 168, 106, 0.1)',
+            border: '1px solid rgba(201, 168, 106, 0.3)',
+            padding: '30px',
+            textAlign: 'center',
+            marginBottom: '20px'
+          }}>
+            <div style={{ fontSize: '3rem', color: '#c9a86a', fontWeight: '300', marginBottom: '10px' }}>
+              {profileData.availableCredits || 0}
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '20px' }}>
+              Available Credits
+            </div>
+            <button
+              onClick={() => navigate('/class-packs')}
+              style={{
+                padding: '12px 30px',
+                backgroundColor: '#c9a86a',
+                color: '#1a1a1a',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}
+            >
+              Purchase Class Pack
+            </button>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', textAlign: 'center' }}>
+            Use credits to book any class. 1 credit = 1 class booking.
+          </p>
+        </div>
+
         {/* Referral Section */}
         {referralData && (
           <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
             <h3 style={{ marginBottom: '20px', color: '#c9a86a' }}>Your Referral Program</h3>
+
+            {/* Referral Tier Badge */}
+            <div style={{
+              background: profileData.referralTier === 'elite' ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' :
+                         profileData.referralTier === 'ambassador' ? 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' :
+                         'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)',
+              padding: '15px 25px',
+              textAlign: 'center',
+              marginBottom: '20px',
+              position: 'relative'
+            }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: '600', color: '#1a1a1a', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '5px' }}>
+                Your Tier
+              </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1a1a1a', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                {profileData.referralTier === 'elite' ? '⭐ ELITE' :
+                 profileData.referralTier === 'ambassador' ? '🎖️ AMBASSADOR' :
+                 '🌟 STARTER'}
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#1a1a1a', marginTop: '5px' }}>
+                ${profileData.referralTier === 'elite' ? '20' :
+                   profileData.referralTier === 'ambassador' ? '15' : '10'} per referral
+              </div>
+            </div>
 
             <div style={{
               background: 'rgba(201, 168, 106, 0.1)',
@@ -291,9 +358,16 @@ function Profile() {
               padding: '20px',
               marginBottom: '20px'
             }}>
-              <p style={{ marginBottom: '10px', fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.8)' }}>
+              <p style={{ marginBottom: '15px', fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.8)' }}>
                 Share your referral link and earn rewards! New users get 10% off their first booking.
               </p>
+
+              <div style={{ marginBottom: '15px', padding: '12px', backgroundColor: 'rgba(0,0,0,0.2)', fontSize: '0.85rem', lineHeight: '1.6' }}>
+                <strong>Tier Benefits:</strong><br/>
+                • Starter (1-3 refs): $10 per referral<br/>
+                • Ambassador (4-9 refs): $15 per referral + badge<br/>
+                • Elite (10+ refs): $20 per referral + exclusive perks
+              </div>
 
               <div style={{ marginTop: '15px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
