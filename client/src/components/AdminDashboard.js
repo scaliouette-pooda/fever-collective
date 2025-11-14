@@ -2166,9 +2166,33 @@ function AdminDashboard() {
         {activeTab === 'referrals' && (
           <div>
             <h2>Referral Leaderboard</h2>
-            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
-              Track top referrers and their performance.
-            </p>
+
+            <div className="section-description">
+              <h3>How the Referral Program Works</h3>
+              <p>
+                Track and reward your most engaged community members who are spreading the word about your events.
+              </p>
+
+              <div className="promo-features">
+                <h4>Key Metrics</h4>
+                <ul>
+                  <li><strong>Rank:</strong> Top 3 referrers are highlighted in gold</li>
+                  <li><strong>Referral Code:</strong> Unique code each user shares (auto-generated when they visit their profile)</li>
+                  <li><strong>Total Referrals:</strong> Number of new users who signed up using their code</li>
+                  <li><strong>Credits Earned:</strong> Dollar amount of credits earned from successful referrals</li>
+                </ul>
+              </div>
+
+              <div className="promo-tips">
+                <h4>Program Details</h4>
+                <ul>
+                  <li>New users get <strong>10% off</strong> their first booking when using a referral code</li>
+                  <li>Referrers earn <strong>credits</strong> that can be applied to future bookings</li>
+                  <li>Users can find their referral link in their <strong>Profile page</strong></li>
+                  <li>Encourage top referrers with special rewards or recognition</li>
+                </ul>
+              </div>
+            </div>
 
             {referralLeaderboard.length === 0 ? (
               <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
@@ -2217,38 +2241,56 @@ function AdminDashboard() {
         {activeTab === 'checkin' && (
           <div>
             <h2>Event Check-In</h2>
-            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
-              Scan QR codes or manually check in attendees.
-            </p>
 
             <div className="section-description">
-              <h3>QR Code Scanner</h3>
-              <p>Enter or scan the QR code from a booking confirmation</p>
+              <h3>How to Check In Attendees</h3>
+              <p>
+                Quickly verify and check in attendees at your events using QR codes from their booking confirmations.
+              </p>
 
-              <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <input
-                    type="text"
-                    value={qrScanInput}
-                    onChange={(e) => setQrScanInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleQRScan()}
-                    placeholder="Paste QR data (e.g., BOOKING:12345...)"
-                    style={{
-                      flex: 1,
-                      padding: '1rem',
-                      backgroundColor: 'rgba(26, 26, 26, 0.6)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      color: '#e8e8e8',
-                      fontSize: '1rem'
-                    }}
-                  />
-                  <button onClick={handleQRScan} style={{ padding: '1rem 2rem' }}>
-                    Check In
-                  </button>
-                </div>
-                <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.6)' }}>
-                  Tip: Focus this field and use a barcode scanner to scan QR codes
-                </p>
+              <div className="promo-features">
+                <h4>Three Ways to Check In</h4>
+                <ul>
+                  <li><strong>QR Code Scanner:</strong> Use a barcode scanner device to scan QR codes from booking confirmation emails</li>
+                  <li><strong>Manual Entry:</strong> Type or paste the booking ID from the confirmation email</li>
+                  <li><strong>Table View:</strong> Click on bookings in the table below to manually check in attendees</li>
+                </ul>
+              </div>
+
+              <div className="promo-tips">
+                <h4>Scanner Setup Instructions</h4>
+                <ul>
+                  <li><strong>Step 1:</strong> Click in the input field below to focus it</li>
+                  <li><strong>Step 2:</strong> Scan the QR code with your barcode scanner (or paste the booking ID)</li>
+                  <li><strong>Step 3:</strong> Press Enter or click "Check In" to complete</li>
+                  <li><strong>Note:</strong> Only bookings with completed payments can be checked in</li>
+                  <li><strong>Tip:</strong> QR codes are sent in booking confirmation emails - attendees can show them on their phone</li>
+                </ul>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '3rem', maxWidth: '800px' }}>
+              <h3 style={{ marginBottom: '1rem' }}>QR Code Scanner</h3>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <input
+                  type="text"
+                  value={qrScanInput}
+                  onChange={(e) => setQrScanInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleQRScan()}
+                  placeholder="Scan QR code or paste booking ID (e.g., BOOKING:12345...)"
+                  style={{
+                    flex: 1,
+                    padding: '1rem',
+                    backgroundColor: 'rgba(26, 26, 26, 0.6)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    color: '#e8e8e8',
+                    fontSize: '1rem'
+                  }}
+                />
+                <button onClick={handleQRScan} style={{ padding: '1rem 2rem' }}>
+                  Check In
+                </button>
+              </div>
               </div>
 
               {scanResult && (

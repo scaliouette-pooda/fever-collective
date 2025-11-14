@@ -20,33 +20,38 @@
 }
 
 .admin-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
   margin-bottom: 3rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .admin-tabs button {
-  padding: 1rem 2rem;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: rgba(232, 232, 232, 0.6);
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(232, 232, 232, 0.7);
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  text-align: center;
 }
 
 .admin-tabs button:hover {
   color: #e8e8e8;
-  border-bottom-color: rgba(201, 168, 106, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(201, 168, 106, 0.5);
 }
 
 .admin-tabs button.active {
-  color: #c9a86a;
-  border-bottom-color: #c9a86a;
+  color: #1a1a1a;
+  background: #c9a86a;
+  border-color: #c9a86a;
+  font-weight: 600;
 }
 
 .admin-content {
@@ -449,6 +454,15 @@ td button:last-of-type:hover {
     font-size: 2.5rem;
   }
 
+  .admin-tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-tabs button {
+    font-size: 0.75rem;
+    padding: 0.8rem 1rem;
+  }
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
@@ -481,5 +495,11 @@ td button:last-of-type:hover {
     width: 100%;
     margin-bottom: 0.5rem;
     margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tabs {
+    grid-template-columns: 1fr;
   }
 }

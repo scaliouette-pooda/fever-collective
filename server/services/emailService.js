@@ -181,8 +181,25 @@ const sendPaymentConfirmation = async (booking) => {
             <p style="margin: 5px 0;"><strong>Payment Date:</strong> ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
 
+          <div style="background-color: #fff3cd; padding: 20px; margin: 20px 0; border: 2px solid #ffc107; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #856404; text-align: center;">📱 Check-In QR Code</h3>
+            <p style="text-align: center; font-size: 14px; color: #666; margin: 10px 0;">
+              View your QR code for easy check-in at the event
+            </p>
+            <div style="text-align: center; margin: 20px 0;">
+              <a href="${process.env.CLIENT_URL}/confirmation/${booking._id}"
+                 style="background-color: #c9a86a; color: #1a1a1a; padding: 12px 30px;
+                        text-decoration: none; border-radius: 4px; display: inline-block; font-weight: bold;">
+                View QR Code & Details
+              </a>
+            </div>
+            <p style="text-align: center; font-size: 12px; color: #666; margin: 5px 0;">
+              Save this link or show your QR code on your phone at the event
+            </p>
+          </div>
+
           <p style="color: #666; font-size: 0.9em; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
-            Keep this email for your records. See you soon!
+            Keep this email for your records. Arrive 10-15 minutes early for check-in. See you soon!
           </p>
         </div>
       `

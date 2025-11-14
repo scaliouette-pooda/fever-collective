@@ -154,20 +154,19 @@ function Booking() {
       if (userConfirmed) {
         // User says they completed payment
         try {
-          const confirmResponse = await api.post(`/api/bookings/${booking._id}/confirm-payment`);
-          const confirmationNumber = confirmResponse.data.confirmationNumber || `FC${booking._id.substring(0, 6).toUpperCase()}`;
-
-          alert(`✅ Payment Confirmed!\n\nConfirmation Number: ${confirmationNumber}\n\nYou will receive an email receipt shortly with your booking details.`);
+          await api.post(`/api/bookings/${booking._id}/confirm-payment`);
+          // Redirect to confirmation page with QR code
+          navigate(`/confirmation/${booking._id}`);
         } catch (err) {
           console.error('Error confirming payment:', err);
           alert('Failed to confirm payment. Please contact support with your booking ID: ' + booking._id);
+          navigate('/events');
         }
       } else {
         alert(`Booking saved!\n\nBooking ID: ${booking._id}\n\nPlease complete payment and contact us to confirm. Check your email for details.`);
+        // Still redirect to confirmation page
+        navigate(`/confirmation/${booking._id}`);
       }
-
-      // Redirect to events page
-      navigate('/events');
     } catch (error) {
       console.error('Error creating booking:', error);
       alert('Failed to create booking. Please try again.');
