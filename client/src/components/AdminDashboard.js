@@ -9,6 +9,7 @@ function AdminDashboard() {
   const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [users, setUsers] = useState([]);
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -64,6 +65,9 @@ function AdminDashboard() {
       } else if (activeTab === 'bookings') {
         const res = await api.get('/api/bookings', config);
         setBookings(res.data);
+      } else if (activeTab === 'settings') {
+        const res = await api.get('/api/settings', config);
+        setSettings(res.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -322,6 +326,30 @@ function AdminDashboard() {
     }
   };
 
+  const handleSettingsChange = (section, field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleUpdateSettings = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      await api.put('/api/settings', settings, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Settings updated successfully!');
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      alert('Failed to update settings. Please try again.');
+    }
+  };
+
   if (loading) return <div className="admin-loading">Loading...</div>;
 
   return (
@@ -349,6 +377,12 @@ function AdminDashboard() {
           onClick={() => setActiveTab('analytics')}
         >
           Analytics
+        </button>
+        <button
+          className={activeTab === 'settings' ? 'active' : ''}
+          onClick={() => setActiveTab('settings')}
+        >
+          Settings
         </button>
       </div>
 
@@ -781,6 +815,197 @@ function AdminDashboard() {
                 </p>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'settings' && settings && (
+          <div className="settings-section">
+            <h2>Site Settings</h2>
+            <form onSubmit={handleUpdateSettings} className="settings-form">
+
+              {/* Social Media Section */}
+              <div className="settings-card">
+                <h3>Social Media Links</h3>
+                <div className="form-group">
+                  <label>Instagram URL</label>
+                  <input
+                    type="url"
+                    value={settings.socialMedia?.instagram || ''}
+                    onChange={(e) => handleSettingsChange('socialMedia', 'instagram', e.target.value)}
+                    placeholder="https://instagram.com/thefevercollective"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Facebook URL</label>
+                  <input
+                    type="url"
+                    value={settings.socialMedia?.facebook || ''}
+                    onChange={(e) => handleSettingsChange('socialMedia', 'facebook', e.target.value)}
+                    placeholder="https://facebook.com/thefevercollective"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Twitter/X URL</label>
+                  <input
+                    type="url"
+                    value={settings.socialMedia?.twitter || ''}
+                    onChange={(e) => handleSettingsChange('socialMedia', 'twitter', e.target.value)}
+                    placeholder="https://twitter.com/fevercollective"
+                  />
+                </div>
+              </div>
+
+              {/* Contact Information Section */}
+              <div className="settings-card">
+                <h3>Contact Information</h3>
+                <div className="form-group">
+                  <label>Contact Email</label>
+                  <input
+                    type="email"
+                    value={settings.contact?.email || ''}
+                    onChange={(e) => handleSettingsChange('contact', 'email', e.target.value)}
+                    placeholder="info@thefevercollective.com"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Phone Number</label>
+                  <input
+                    type="tel"
+                    value={settings.contact?.phone || ''}
+                    onChange={(e) => handleSettingsChange('contact', 'phone', e.target.value)}
+                    placeholder="+1 (555) 123-4567"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Address</label>
+                  <input
+                    type="text"
+                    value={settings.contact?.address || ''}
+                    onChange={(e) => handleSettingsChange('contact', 'address', e.target.value)}
+                    placeholder="123 Main St, City, State 12345"
+                  />
+                </div>
+              </div>
+
+              {/* Email Configuration Section */}
+              <div className="settings-card">
+                <h3>Email Configuration</h3>
+                <div className="form-group">
+                  <label>From Name</label>
+                  <input
+                    type="text"
+                    value={settings.emailConfig?.fromName || ''}
+                    onChange={(e) => handleSettingsChange('emailConfig', 'fromName', e.target.value)}
+                    placeholder="The Fever Collective"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>From Email</label>
+                  <input
+                    type="email"
+                    value={settings.emailConfig?.fromEmail || ''}
+                    onChange={(e) => handleSettingsChange('emailConfig', 'fromEmail', e.target.value)}
+                    placeholder="info@thefevercollective.com"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Reply-To Email</label>
+                  <input
+                    type="email"
+                    value={settings.emailConfig?.replyTo || ''}
+                    onChange={(e) => handleSettingsChange('emailConfig', 'replyTo', e.target.value)}
+                    placeholder="info@thefevercollective.com"
+                  />
+                </div>
+              </div>
+
+              {/* Payment Settings Section */}
+              <div className="settings-card">
+                <h3>Payment Settings</h3>
+                <div className="form-group">
+                  <label>Venmo Username</label>
+                  <input
+                    type="text"
+                    value={settings.payment?.venmoUsername || ''}
+                    onChange={(e) => handleSettingsChange('payment', 'venmoUsername', e.target.value)}
+                    placeholder="@fevercollective"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>PayPal Email</label>
+                  <input
+                    type="email"
+                    value={settings.payment?.paypalEmail || ''}
+                    onChange={(e) => handleSettingsChange('payment', 'paypalEmail', e.target.value)}
+                    placeholder="payments@thefevercollective.com"
+                  />
+                </div>
+                <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '20px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="checkbox"
+                      checked={settings.payment?.acceptVenmo || false}
+                      onChange={(e) => handleSettingsChange('payment', 'acceptVenmo', e.target.checked)}
+                    />
+                    Accept Venmo
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="checkbox"
+                      checked={settings.payment?.acceptPayPal || false}
+                      onChange={(e) => handleSettingsChange('payment', 'acceptPayPal', e.target.checked)}
+                    />
+                    Accept PayPal
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input
+                      type="checkbox"
+                      checked={settings.payment?.acceptCash || false}
+                      onChange={(e) => handleSettingsChange('payment', 'acceptCash', e.target.checked)}
+                    />
+                    Accept Cash
+                  </label>
+                </div>
+              </div>
+
+              {/* Site Information Section */}
+              <div className="settings-card">
+                <h3>Site Information</h3>
+                <div className="form-group">
+                  <label>Site Name</label>
+                  <input
+                    type="text"
+                    value={settings.siteInfo?.siteName || ''}
+                    onChange={(e) => handleSettingsChange('siteInfo', 'siteName', e.target.value)}
+                    placeholder="The Fever Collective"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Tagline</label>
+                  <input
+                    type="text"
+                    value={settings.siteInfo?.tagline || ''}
+                    onChange={(e) => handleSettingsChange('siteInfo', 'tagline', e.target.value)}
+                    placeholder="Exclusive Pilates Popup Events"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea
+                    value={settings.siteInfo?.description || ''}
+                    onChange={(e) => handleSettingsChange('siteInfo', 'description', e.target.value)}
+                    placeholder="Join us for unique pilates experiences in stunning locations"
+                    rows="3"
+                  />
+                </div>
+              </div>
+
+              <div className="form-actions" style={{ marginTop: '2rem' }}>
+                <button type="submit" className="btn-primary">
+                  Save All Settings
+                </button>
+              </div>
+            </form>
           </div>
         )}
       </div>

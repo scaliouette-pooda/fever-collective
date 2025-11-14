@@ -268,6 +268,118 @@ td button:last-of-type:hover {
   text-transform: uppercase;
 }
 
+/* Settings Section */
+.settings-section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.settings-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.settings-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.settings-card:hover {
+  border-color: rgba(201, 168, 106, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.settings-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #c9a86a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(201, 168, 106, 0.3);
+  padding-bottom: 0.75rem;
+}
+
+.settings-card .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.settings-card .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.settings-card label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(232, 232, 232, 0.8);
+}
+
+.settings-card input[type="text"],
+.settings-card input[type="email"],
+.settings-card input[type="url"],
+.settings-card input[type="tel"],
+.settings-card textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(26, 26, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e8e8e8;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.settings-card input[type="text"]:focus,
+.settings-card input[type="email"]:focus,
+.settings-card input[type="url"]:focus,
+.settings-card input[type="tel"]:focus,
+.settings-card textarea:focus {
+  outline: none;
+  border-color: #c9a86a;
+  background: rgba(26, 26, 26, 0.8);
+}
+
+.settings-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #c9a86a;
+}
+
+.settings-card textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.btn-primary {
+  padding: 1rem 3rem;
+  background: #c9a86a;
+  color: #1a1a1a;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  align-self: center;
+}
+
+.btn-primary:hover {
+  background: #e8e8e8;
+  transform: translateY(-2px);
+}
+
 /* Responsive */
 @media (max-width: 968px) {
   .admin-dashboard {
