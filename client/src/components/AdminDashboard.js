@@ -17,6 +17,10 @@ function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [aboutImageFile, setAboutImageFile] = useState(null);
+  const [aboutImagePreview, setAboutImagePreview] = useState(null);
+  const [missionImageFile, setMissionImageFile] = useState(null);
+  const [missionImagePreview, setMissionImagePreview] = useState(null);
   const [editingBooking, setEditingBooking] = useState(null);
   const [showBookingEditForm, setShowBookingEditForm] = useState(false);
   const [showPromoForm, setShowPromoForm] = useState(false);
@@ -125,6 +129,30 @@ function AdminDashboard() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAboutImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAboutImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAboutImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMissionImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setMissionImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMissionImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -379,10 +407,54 @@ function AdminDashboard() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await api.put('/api/settings', settings, {
+
+      // Upload images if new ones were selected
+      let aboutImageUrl = settings.homeImages?.aboutImage || '';
+      let missionImageUrl = settings.homeImages?.missionImage || '';
+
+      if (aboutImageFile) {
+        const formData = new FormData();
+        formData.append('image', aboutImageFile);
+        const response = await api.post('/api/upload/image', formData, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        aboutImageUrl = response.data.imageUrl;
+      }
+
+      if (missionImageFile) {
+        const formData = new FormData();
+        formData.append('image', missionImageFile);
+        const response = await api.post('/api/upload/image', formData, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        missionImageUrl = response.data.imageUrl;
+      }
+
+      // Update settings with image URLs
+      const updatedSettings = {
+        ...settings,
+        homeImages: {
+          aboutImage: aboutImageUrl,
+          missionImage: missionImageUrl
+        }
+      };
+
+      await api.put('/api/settings', updatedSettings, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      // Clear image files after successful upload
+      setAboutImageFile(null);
+      setMissionImageFile(null);
+
       alert('Settings updated successfully!');
+      fetchData(); // Refresh settings
     } catch (error) {
       console.error('Error updating settings:', error);
       alert('Failed to update settings. Please try again.');
@@ -1742,6 +1814,50 @@ function AdminDashboard() {
                     placeholder="Join us for unique pilates experiences in stunning locations"
                     rows="3"
                   />
+                </div>
+              </div>
+
+              {/* Home Page Images Section */}
+              <div className="settings-card">
+                <h3>Home Page Images</h3>
+                <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Upload images for the home page sections. Images will be optimized and stored in Cloudinary.
+                </p>
+
+                <div className="form-group">
+                  <label>About Section Image (Wellness · Community · Movement)</label>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleAboutImageChange}
+                  />
+                  {(aboutImagePreview || settings.homeImages?.aboutImage) && (
+                    <div className="image-preview" style={{ marginTop: '1rem' }}>
+                      <img
+                        src={aboutImagePreview || settings.homeImages?.aboutImage}
+                        alt="About section preview"
+                        style={{ maxWidth: '300px', border: '1px solid rgba(255,255,255,0.2)' }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label>Mission Section Image (Movement · Community · Wellness)</label>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleMissionImageChange}
+                  />
+                  {(missionImagePreview || settings.homeImages?.missionImage) && (
+                    <div className="image-preview" style={{ marginTop: '1rem' }}>
+                      <img
+                        src={missionImagePreview || settings.homeImages?.missionImage}
+                        alt="Mission section preview"
+                        style={{ maxWidth: '300px', border: '1px solid rgba(255,255,255,0.2)' }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 

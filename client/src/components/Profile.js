@@ -17,9 +17,12 @@ function Profile() {
     confirmPassword: ''
   });
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [referralData, setReferralData] = useState(null);
+  const [showReferralCopied, setShowReferralCopied] = useState(false);
 
   useEffect(() => {
     fetchProfile();
+    fetchReferralData();
   }, []);
 
   const fetchProfile = async () => {
@@ -48,6 +51,29 @@ function Profile() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReferralData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await api.get('/api/referrals/my-code', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setReferralData(response.data);
+    } catch (error) {
+      console.error('Error fetching referral data:', error);
+    }
+  };
+
+  const handleCopyReferralLink = () => {
+    if (referralData?.referralUrl) {
+      navigator.clipboard.writeText(referralData.referralUrl);
+      setShowReferralCopied(true);
+      setTimeout(() => setShowReferralCopied(false), 2000);
     }
   };
 
@@ -253,6 +279,101 @@ function Profile() {
             </>
           )}
         </div>
+
+        {/* Referral Section */}
+        {referralData && (
+          <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <h3 style={{ marginBottom: '20px', color: '#c9a86a' }}>Your Referral Program</h3>
+
+            <div style={{
+              background: 'rgba(201, 168, 106, 0.1)',
+              border: '1px solid rgba(201, 168, 106, 0.3)',
+              padding: '20px',
+              marginBottom: '20px'
+            }}>
+              <p style={{ marginBottom: '10px', fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.8)' }}>
+                Share your referral link and earn rewards! New users get 10% off their first booking.
+              </p>
+
+              <div style={{ marginTop: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Your Referral Code
+                </label>
+                <div style={{
+                  display: 'flex',
+                  gap: '10px',
+                  backgroundColor: 'rgba(26, 26, 26, 0.6)',
+                  padding: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <input
+                    type="text"
+                    value={referralData.referralCode}
+                    readOnly
+                    style={{
+                      flex: 1,
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: '#c9a86a',
+                      fontSize: '1.2rem',
+                      fontWeight: 'bold',
+                      letterSpacing: '2px'
+                    }}
+                  />
+                  <button
+                    onClick={handleCopyReferralLink}
+                    style={{
+                      padding: '8px 20px',
+                      backgroundColor: '#c9a86a',
+                      color: '#1a1a1a',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    {showReferralCopied ? '✓ Copied!' : 'Copy Link'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '15px',
+              marginTop: '20px'
+            }}>
+              <div style={{
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', color: '#c9a86a', fontWeight: '300' }}>
+                  {referralData.referralCount}
+                </div>
+                <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '5px' }}>
+                  Referrals
+                </div>
+              </div>
+
+              <div style={{
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', color: '#c9a86a', fontWeight: '300' }}>
+                  ${referralData.referralCredits}
+                </div>
+                <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '5px' }}>
+                  Credits Earned
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

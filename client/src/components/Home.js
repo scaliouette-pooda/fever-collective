@@ -1,8 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../config/api';
 import './Home.css';
 
 function Home() {
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await api.get('/api/settings');
+      setSettings(response.data);
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
+
   return (
     <div className="home">
       <section className="hero">
@@ -33,9 +49,13 @@ function Home() {
             </p>
           </div>
           <div className="about-image">
-            <div className="placeholder-image">
-              <span>Wellness · Community · Movement</span>
-            </div>
+            {settings?.homeImages?.aboutImage ? (
+              <img src={settings.homeImages.aboutImage} alt="Wellness · Community · Movement" />
+            ) : (
+              <div className="placeholder-image">
+                <span>Wellness · Community · Movement</span>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -54,9 +74,13 @@ function Home() {
           </p>
         </div>
         <div className="mission-image">
-          <div className="placeholder-mission-img">
-            <span>Movement · Community · Wellness</span>
-          </div>
+          {settings?.homeImages?.missionImage ? (
+            <img src={settings.homeImages.missionImage} alt="Movement · Community · Wellness" />
+          ) : (
+            <div className="placeholder-mission-img">
+              <span>Movement · Community · Wellness</span>
+            </div>
+          )}
         </div>
       </section>
 

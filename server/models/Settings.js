@@ -95,6 +95,18 @@ const settingsSchema = new mongoose.Schema({
     }
   },
 
+  // Home Page Images
+  homeImages: {
+    aboutImage: {
+      type: String,
+      default: ''
+    },
+    missionImage: {
+      type: String,
+      default: ''
+    }
+  },
+
   updatedAt: {
     type: Date,
     default: Date.now

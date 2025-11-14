@@ -19,6 +19,12 @@ function Booking() {
   const [promoData, setPromoData] = useState(null);
   const [promoError, setPromoError] = useState('');
   const [validatingPromo, setValidatingPromo] = useState(false);
+  const [showWaitlistForm, setShowWaitlistForm] = useState(false);
+  const [waitlistData, setWaitlistData] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
 
   useEffect(() => {
     fetchEvent();
@@ -77,6 +83,30 @@ function Booking() {
     setPromoCode('');
     setPromoData(null);
     setPromoError('');
+  };
+
+  const handleWaitlistChange = (e) => {
+    setWaitlistData({
+      ...waitlistData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleJoinWaitlist = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/api/waitlist', {
+        eventId,
+        ...waitlistData
+      });
+
+      alert(`✅ Added to Waitlist!\n\nYour position: #${response.data.position}\n\nWe'll notify you immediately if a spot becomes available.`);
+      setShowWaitlistForm(false);
+      setWaitlistData({ name: '', email: '', phone: '' });
+    } catch (error) {
+      console.error('Error joining waitlist:', error);
+      alert(error.response?.data?.error || 'Failed to join waitlist. Please try again.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -201,8 +231,88 @@ function Booking() {
         </div>
 
         <div className="booking-form-container">
-          <h2>Complete Your Booking</h2>
-          <form onSubmit={handleSubmit} className="booking-form">
+          {event.availableSpots === 0 ? (
+            <>
+              <h2>Event Sold Out</h2>
+              <p style={{ textAlign: 'center', marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                This event is currently full. Join the waitlist to be notified if a spot opens up.
+              </p>
+
+              {!showWaitlistForm ? (
+                <button
+                  type="button"
+                  onClick={() => setShowWaitlistForm(true)}
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    backgroundColor: '#c9a86a',
+                    color: '#1a1a1a',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    fontWeight: '600'
+                  }}
+                >
+                  Join Waitlist
+                </button>
+              ) : (
+                <form onSubmit={handleJoinWaitlist} className="booking-form">
+                  <div className="form-group">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={waitlistData.name}
+                      onChange={handleWaitlistChange}
+                      placeholder="Your full name"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={waitlistData.email}
+                      onChange={handleWaitlistChange}
+                      placeholder="your.email@example.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Phone (Optional)</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={waitlistData.phone}
+                      onChange={handleWaitlistChange}
+                      placeholder="(123) 456-7890"
+                    />
+                  </div>
+
+                  <button type="submit">Join Waitlist</button>
+                  <button
+                    type="button"
+                    onClick={() => setShowWaitlistForm(false)}
+                    style={{
+                      marginTop: '1rem',
+                      background: 'transparent',
+                      border: '1px solid rgba(255,255,255,0.3)'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </form>
+              )}
+            </>
+          ) : (
+            <>
+              <h2>Complete Your Booking</h2>
+              <form onSubmit={handleSubmit} className="booking-form">
             <div className="form-group">
               <label>Name</label>
               <input
@@ -326,6 +436,8 @@ function Booking() {
 
             <button type="submit" className="booking-submit">Proceed to Payment</button>
           </form>
+            </>
+          )}
         </div>
       </div>
     </div>

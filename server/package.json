@@ -20,6 +20,7 @@
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^7.0.10",
+    "qrcode": "^1.5.4",
     "stripe": "^12.14.0",
     "winston": "^3.9.0"
   },

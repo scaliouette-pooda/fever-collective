@@ -46,6 +46,24 @@ const bookingSchema = new mongoose.Schema({
   promoCodeUsed: {
     type: String
   },
+  referredBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  referralCodeUsed: {
+    type: String
+  },
+  referralDiscount: {
+    type: Number,
+    default: 0
+  },
+  checkedIn: {
+    type: Boolean,
+    default: false
+  },
+  checkedInAt: {
+    type: Date
+  },
   paymentStatus: {
     type: String,
     enum: ['pending', 'completed', 'failed', 'refunded'],

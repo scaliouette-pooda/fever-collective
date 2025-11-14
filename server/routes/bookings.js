@@ -406,4 +406,108 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   res.json({ received: true });
 });
 
+// Check-in booking (admin only)
+router.post('/:id/check-in', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate('event');
+
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    if (booking.paymentStatus !== 'completed') {
+      return res.status(400).json({ error: 'Only completed bookings can be checked in' });
+    }
+
+    if (booking.checkedIn) {
+      return res.status(400).json({
+        error: 'Already checked in',
+        checkedInAt: booking.checkedInAt
+      });
+    }
+
+    booking.checkedIn = true;
+    booking.checkedInAt = new Date();
+    await booking.save();
+
+    res.json({
+      message: 'Check-in successful',
+      booking: {
+        id: booking._id,
+        name: booking.name,
+        email: booking.email,
+        spots: booking.spots,
+        event: booking.event.title,
+        checkedInAt: booking.checkedInAt
+      }
+    });
+  } catch (error) {
+    console.error('Error checking in booking:', error);
+    res.status(500).json({ error: 'Failed to check in' });
+  }
+});
+
+// Scan QR code for check-in (admin only)
+router.post('/check-in/scan', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const { qrData } = req.body;
+
+    if (!qrData) {
+      return res.status(400).json({ error: 'QR data is required' });
+    }
+
+    // QR data format: "BOOKING:bookingId"
+    const [prefix, bookingId] = qrData.split(':');
+
+    if (prefix !== 'BOOKING') {
+      return res.status(400).json({ error: 'Invalid QR code' });
+    }
+
+    const booking = await Booking.findById(bookingId).populate('event');
+
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    if (booking.paymentStatus !== 'completed') {
+      return res.status(400).json({ error: 'Payment not completed for this booking' });
+    }
+
+    if (booking.checkedIn) {
+      return res.json({
+        alreadyCheckedIn: true,
+        message: 'Already checked in',
+        booking: {
+          id: booking._id,
+          name: booking.name,
+          email: booking.email,
+          spots: booking.spots,
+          event: booking.event.title,
+          checkedInAt: booking.checkedInAt
+        }
+      });
+    }
+
+    booking.checkedIn = true;
+    booking.checkedInAt = new Date();
+    await booking.save();
+
+    res.json({
+      success: true,
+      message: 'Check-in successful',
+      booking: {
+        id: booking._id,
+        name: booking.name,
+        email: booking.email,
+        spots: booking.spots,
+        event: booking.event.title,
+        checkedInAt: booking.checkedInAt
+      }
+    });
+  } catch (error) {
+    console.error('Error scanning QR code:', error);
+    res.status(500).json({ error: 'Failed to process QR code' });
+  }
+});
+
 module.exports = router;

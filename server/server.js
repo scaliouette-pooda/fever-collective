@@ -44,6 +44,9 @@ const settingsRoutes = require('./routes/settings');
 const promoCodeRoutes = require('./routes/promoCodes');
 const emailCampaignRoutes = require('./routes/emailCampaigns');
 const uploadRoutes = require('./routes/upload');
+const waitlistRoutes = require('./routes/waitlist');
+const reviewRoutes = require('./routes/reviews');
+const referralRoutes = require('./routes/referrals');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -52,6 +55,9 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/promo-codes', promoCodeRoutes);
 app.use('/api/email-campaigns', emailCampaignRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/waitlist', waitlistRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/referrals', referralRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Collective API' });
