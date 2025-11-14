@@ -12,6 +12,12 @@ function AdminDashboard() {
   const [settings, setSettings] = useState(null);
   const [promoCodes, setPromoCodes] = useState([]);
   const [emailCampaigns, setEmailCampaigns] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [waitlists, setWaitlists] = useState([]);
+  const [referralLeaderboard, setReferralLeaderboard] = useState([]);
+  const [selectedEventForWaitlist, setSelectedEventForWaitlist] = useState(null);
+  const [qrScanInput, setQrScanInput] = useState('');
+  const [scanResult, setScanResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -107,6 +113,19 @@ function AdminDashboard() {
       } else if (activeTab === 'emailMarketing') {
         const res = await api.get('/api/email-campaigns', config);
         setEmailCampaigns(res.data);
+      } else if (activeTab === 'reviews') {
+        const res = await api.get('/api/reviews/admin/all', config);
+        setReviews(res.data);
+      } else if (activeTab === 'waitlist') {
+        const eventsRes = await api.get('/api/events', config);
+        setEvents(eventsRes.data);
+      } else if (activeTab === 'referrals') {
+        const res = await api.get('/api/referrals/leaderboard', config);
+        setReferralLeaderboard(res.data);
+      } else if (activeTab === 'checkin') {
+        // Load recent bookings for check-in
+        const res = await api.get('/api/bookings', config);
+        setBookings(res.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
