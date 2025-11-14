@@ -688,6 +688,112 @@ function AdminDashboard() {
     }
   };
 
+  // Review Handlers
+  const handleApproveReview = async (reviewId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await api.patch(`/api/reviews/${reviewId}/approve`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Review approved!');
+      fetchData();
+    } catch (error) {
+      console.error('Error approving review:', error);
+      alert('Failed to approve review');
+    }
+  };
+
+  const handleToggleFeaturedReview = async (reviewId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await api.patch(`/api/reviews/${reviewId}/featured`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error toggling featured:', error);
+      alert('Failed to toggle featured status');
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Are you sure you want to delete this review?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/api/reviews/${reviewId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Review deleted!');
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      alert('Failed to delete review');
+    }
+  };
+
+  // Waitlist Handlers
+  const handleLoadWaitlist = async (eventId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await api.get(`/api/waitlist/event/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setWaitlists(res.data);
+      setSelectedEventForWaitlist(eventId);
+    } catch (error) {
+      console.error('Error loading waitlist:', error);
+      alert('Failed to load waitlist');
+    }
+  };
+
+  const handleNotifyNextWaitlist = async (eventId) => {
+    if (!window.confirm('Notify the next person on the waitlist?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await api.post(`/api/waitlist/notify/${eventId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Notified: ${res.data.notified.name} (${res.data.notified.email})`);
+      handleLoadWaitlist(eventId);
+    } catch (error) {
+      console.error('Error notifying waitlist:', error);
+      alert(error.response?.data?.error || 'Failed to notify waitlist');
+    }
+  };
+
+  // Check-in Handler
+  const handleQRScan = async () => {
+    if (!qrScanInput.trim()) {
+      alert('Please enter QR code data');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await api.post('/api/bookings/check-in/scan',
+        { qrData: qrScanInput },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setScanResult(res.data);
+      setQrScanInput('');
+
+      if (res.data.success) {
+        alert(`✅ Check-in Successful!\n\nName: ${res.data.booking.name}\nSpots: ${res.data.booking.spots}\nEvent: ${res.data.booking.event}`);
+      } else if (res.data.alreadyCheckedIn) {
+        alert(`Already Checked In\n\nName: ${res.data.booking.name}\nChecked in at: ${new Date(res.data.booking.checkedInAt).toLocaleString()}`);
+      }
+
+      fetchData();
+    } catch (error) {
+      console.error('Error scanning QR:', error);
+      alert(error.response?.data?.error || 'Failed to scan QR code');
+      setScanResult(null);
+    }
+  };
+
   if (loading) return <div className="admin-loading">Loading...</div>;
 
   return (
@@ -721,6 +827,30 @@ function AdminDashboard() {
           onClick={() => setActiveTab('emailMarketing')}
         >
           Email Marketing
+        </button>
+        <button
+          className={activeTab === 'reviews' ? 'active' : ''}
+          onClick={() => setActiveTab('reviews')}
+        >
+          Reviews
+        </button>
+        <button
+          className={activeTab === 'waitlist' ? 'active' : ''}
+          onClick={() => setActiveTab('waitlist')}
+        >
+          Waitlist
+        </button>
+        <button
+          className={activeTab === 'referrals' ? 'active' : ''}
+          onClick={() => setActiveTab('referrals')}
+        >
+          Referrals
+        </button>
+        <button
+          className={activeTab === 'checkin' ? 'active' : ''}
+          onClick={() => setActiveTab('checkin')}
+        >
+          Check-In
         </button>
         <button
           className={activeTab === 'analytics' ? 'active' : ''}
@@ -1886,6 +2016,299 @@ function AdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {/* Reviews Tab */}
+        {activeTab === 'reviews' && (
+          <div>
+            <h2>Manage Reviews</h2>
+            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+              Approve, feature, or delete customer reviews. Featured reviews appear on the homepage.
+            </p>
+
+            {reviews.length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
+                No reviews yet
+              </p>
+            ) : (
+              <div className="bookings-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Name</th>
+                      <th>Rating</th>
+                      <th>Comment</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reviews.map(review => (
+                      <tr key={review._id}>
+                        <td>{review.event?.title || 'N/A'}</td>
+                        <td>{review.name}</td>
+                        <td>
+                          <span style={{ color: '#c9a86a', fontSize: '1.2rem' }}>
+                            {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                          </span>
+                        </td>
+                        <td style={{ maxWidth: '300px' }}>{review.comment}</td>
+                        <td>
+                          {review.featured && <span className="status-badge completed">Featured</span>}
+                          {review.approved ? (
+                            <span className="status-badge completed">Approved</span>
+                          ) : (
+                            <span className="status-badge pending">Pending</span>
+                          )}
+                        </td>
+                        <td>
+                          {!review.approved && (
+                            <button onClick={() => handleApproveReview(review._id)}>
+                              Approve
+                            </button>
+                          )}
+                          {review.approved && (
+                            <button onClick={() => handleToggleFeaturedReview(review._id)}>
+                              {review.featured ? 'Unfeature' : 'Feature'}
+                            </button>
+                          )}
+                          <button onClick={() => handleDeleteReview(review._id)}>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Waitlist Tab */}
+        {activeTab === 'waitlist' && (
+          <div>
+            <h2>Manage Waitlists</h2>
+            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+              View and notify people on event waitlists.
+            </p>
+
+            <div className="section-description">
+              <h3>Select an Event</h3>
+              <p>Choose an event to view its waitlist</p>
+            </div>
+
+            <div style={{ display: 'grid', gap: '1rem', marginTop: '2rem' }}>
+              {events.map(event => (
+                <div
+                  key={event._id}
+                  style={{
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    padding: '1.5rem',
+                    cursor: 'pointer',
+                    backgroundColor: selectedEventForWaitlist === event._id ? 'rgba(201, 168, 106, 0.1)' : 'transparent'
+                  }}
+                  onClick={() => handleLoadWaitlist(event._id)}
+                >
+                  <h3>{event.title}</h3>
+                  <p>Date: {new Date(event.date).toLocaleDateString()} | Available Spots: {event.availableSpots}</p>
+                </div>
+              ))}
+            </div>
+
+            {selectedEventForWaitlist && waitlists.length > 0 && (
+              <div style={{ marginTop: '3rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3>Waitlist ({waitlists.length} people)</h3>
+                  <button onClick={() => handleNotifyNextWaitlist(selectedEventForWaitlist)}>
+                    Notify Next Person
+                  </button>
+                </div>
+
+                <div className="bookings-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Position</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {waitlists.map(entry => (
+                        <tr key={entry._id}>
+                          <td><strong>#{entry.position}</strong></td>
+                          <td>{entry.name}</td>
+                          <td>{entry.email}</td>
+                          <td>{entry.phone || 'N/A'}</td>
+                          <td>
+                            <span className={`status-badge ${entry.status === 'waiting' ? 'pending' : 'completed'}`}>
+                              {entry.status}
+                            </span>
+                          </td>
+                          <td>{new Date(entry.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Referrals Tab */}
+        {activeTab === 'referrals' && (
+          <div>
+            <h2>Referral Leaderboard</h2>
+            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+              Track top referrers and their performance.
+            </p>
+
+            {referralLeaderboard.length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
+                No referrals yet
+              </p>
+            ) : (
+              <div className="bookings-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Referral Code</th>
+                      <th>Total Referrals</th>
+                      <th>Credits Earned</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referralLeaderboard.map((user, index) => (
+                      <tr key={user._id}>
+                        <td>
+                          <strong style={{ fontSize: '1.3rem', color: index < 3 ? '#c9a86a' : 'inherit' }}>
+                            #{index + 1}
+                          </strong>
+                        </td>
+                        <td>{user.name}</td>
+                        <td>{user.email}</td>
+                        <td>
+                          <span style={{ fontFamily: 'monospace', color: '#c9a86a', fontWeight: 'bold' }}>
+                            {user.referralCode}
+                          </span>
+                        </td>
+                        <td><strong>{user.referralCount}</strong></td>
+                        <td>${user.referralCredits}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Check-In Tab */}
+        {activeTab === 'checkin' && (
+          <div>
+            <h2>Event Check-In</h2>
+            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+              Scan QR codes or manually check in attendees.
+            </p>
+
+            <div className="section-description">
+              <h3>QR Code Scanner</h3>
+              <p>Enter or scan the QR code from a booking confirmation</p>
+
+              <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <input
+                    type="text"
+                    value={qrScanInput}
+                    onChange={(e) => setQrScanInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleQRScan()}
+                    placeholder="Paste QR data (e.g., BOOKING:12345...)"
+                    style={{
+                      flex: 1,
+                      padding: '1rem',
+                      backgroundColor: 'rgba(26, 26, 26, 0.6)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      color: '#e8e8e8',
+                      fontSize: '1rem'
+                    }}
+                  />
+                  <button onClick={handleQRScan} style={{ padding: '1rem 2rem' }}>
+                    Check In
+                  </button>
+                </div>
+                <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                  Tip: Focus this field and use a barcode scanner to scan QR codes
+                </p>
+              </div>
+
+              {scanResult && (
+                <div style={{
+                  marginTop: '2rem',
+                  padding: '1.5rem',
+                  backgroundColor: scanResult.success ? 'rgba(100, 255, 100, 0.1)' : 'rgba(255, 200, 100, 0.1)',
+                  border: `1px solid ${scanResult.success ? 'rgba(100, 255, 100, 0.3)' : 'rgba(255, 200, 100, 0.3)'}`
+                }}>
+                  <h4>{scanResult.message}</h4>
+                  {scanResult.booking && (
+                    <div style={{ marginTop: '1rem' }}>
+                      <p><strong>Name:</strong> {scanResult.booking.name}</p>
+                      <p><strong>Event:</strong> {scanResult.booking.event}</p>
+                      <p><strong>Spots:</strong> {scanResult.booking.spots}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginTop: '3rem' }}>
+              <h3>Recent Bookings</h3>
+              <div className="bookings-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Event</th>
+                      <th>Spots</th>
+                      <th>Payment</th>
+                      <th>Check-In Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bookings.slice(0, 20).map(booking => (
+                      <tr key={booking._id}>
+                        <td>{booking.name}</td>
+                        <td>{booking.event?.title || 'N/A'}</td>
+                        <td>{booking.spots}</td>
+                        <td>
+                          <span className={`status-badge ${booking.paymentStatus}`}>
+                            {booking.paymentStatus}
+                          </span>
+                        </td>
+                        <td>
+                          {booking.checkedIn ? (
+                            <span className="status-badge completed">
+                              ✓ {new Date(booking.checkedInAt).toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="status-badge pending">Not checked in</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>
