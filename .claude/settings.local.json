@@ -18,7 +18,8 @@
       "Bash(node scripts/createAdmin.js:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(node scripts/resetAdminPassword.js:*)"
     ],
     "deny": [],
     "ask": []
