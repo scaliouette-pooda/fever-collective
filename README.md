@@ -47,10 +47,10 @@ A sophisticated pilates popup event booking platform with admin dashboard, event
 - Multer + Cloudinary for image uploads
 
 ### Deployment
-- Frontend: Vercel
-- Backend: Render
+- Frontend: Vercel (https://thefevercollective.com)
+- Backend: Vercel
 - Database: MongoDB Atlas
-- Images: Cloudinary
+- Email: Custom SMTP (info@thefevercollective.com)
 
 ## Quick Start (Local Development)
 
@@ -74,23 +74,24 @@ cd ../client
 npm install
 ```
 
-3. Configure environment variables:
+3. Configure environment variables - see `ENVIRONMENT_VARIABLES.md` for complete guide
 
 **Server (.env):**
 ```
-MONGODB_URI=mongodb://localhost:27017/fever-collective
+MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_here
 CLIENT_URL=http://localhost:3000
 PORT=5001
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+EMAIL_SERVICE=custom
+EMAIL_USER=your-email@example.com
+EMAIL_PASSWORD=your-email-password
+SMTP_HOST=mail.yourdomain.com
+SMTP_PORT=587
 ```
 
 **Client (.env):**
 ```
 REACT_APP_API_URL=http://localhost:5001
-REACT_APP_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 ```
 
 ### Running the Application
@@ -164,16 +165,20 @@ fever-collective/
 
 ## Deployment
 
-### Frontend (Vercel)
-1. Connect GitHub repository to Vercel
-2. Set environment variables
-3. Deploy from main branch
+See `VERCEL_DEPLOYMENT.md` for complete deployment guide.
 
-### Backend (Render/Heroku)
-1. Connect GitHub repository
-2. Set environment variables
-3. Configure build command: `npm install`
-4. Configure start command: `npm start`
+### Quick Deploy Checklist
+1. Set up MongoDB Atlas database
+2. Configure environment variables in Vercel
+3. Deploy frontend and backend to Vercel
+4. Create admin user
+5. Test email functionality
+
+For detailed instructions, see:
+- `VERCEL_DEPLOYMENT.md` - Vercel deployment guide
+- `ENVIRONMENT_VARIABLES.md` - Environment variables reference
+- `EMAIL_SETUP.md` - Email configuration
+- `ADMIN_SETUP.md` - Admin user setup
 
 ## Security Features
 

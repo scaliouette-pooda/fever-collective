@@ -13,7 +13,12 @@
       "Bash(node --version:*)",
       "Bash(npm --version:*)",
       "Bash(mongod --version:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(node scripts/createAdmin.js:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

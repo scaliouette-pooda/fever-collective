@@ -1,11 +1,19 @@
 # Email Configuration Guide
 
+## Current Production Setup
+
+**Email Address:** info@thefevercollective.com
+**SMTP Host:** mail.thefevercollective.com
+**Port:** 587
+**Status:** ✅ Configured and ready
+
 ## Overview
 
-The system now sends automatic emails for:
+The system automatically sends emails for:
 - ✅ **Welcome emails** when users register
-- ✅ **Booking confirmations** when admin confirms booking
-- ✅ **Payment confirmations** when admin confirms payment
+- ✅ **Booking confirmations** when bookings are created
+- ✅ **Payment confirmations** when payments are received
+- ✅ **Password reset emails** when users request password resets
 
 ## Gmail Setup (Recommended)
 
@@ -23,9 +31,9 @@ The system now sends automatic emails for:
 5. Click **Generate**
 6. Copy the 16-character password (remove spaces)
 
-### Step 3: Add to Render Environment
+### Step 3: Add to Vercel Environment
 
-Go to Render dashboard → fever-collective-api → Environment:
+Go to Vercel dashboard → Your Project → Settings → Environment Variables:
 
 ```
 EMAIL_SERVICE=gmail
@@ -34,6 +42,22 @@ EMAIL_PASSWORD=abcd efgh ijkl mnop
 ```
 
 (Paste the app password exactly as shown, with or without spaces)
+
+---
+
+## Custom Domain Email (Current Setup)
+
+**For info@thefevercollective.com:**
+
+```
+EMAIL_SERVICE=custom
+EMAIL_USER=info@thefevercollective.com
+EMAIL_PASSWORD=your-email-password
+SMTP_HOST=mail.thefevercollective.com
+SMTP_PORT=587
+```
+
+This is the current production configuration. Add these to Vercel environment variables.
 
 ---
 
@@ -104,9 +128,9 @@ EMAIL_PASSWORD=your-password
 
 ### Production Testing
 
-1. Add environment variables to Render (see above)
-2. Wait for Render to redeploy (2-3 minutes)
-3. Register at https://fever-collective.vercel.app/register
+1. Add environment variables to Vercel (see above)
+2. Wait for Vercel to redeploy (automatic)
+3. Register at https://thefevercollective.com/register
 4. Check inbox
 
 ---
@@ -134,11 +158,12 @@ EMAIL_PASSWORD=your-password
 
 ### Emails not sending
 
-**Check Render logs:**
-1. Go to Render dashboard
-2. Select fever-collective-api
-3. Check **Logs** tab
-4. Look for email errors
+**Check Vercel logs:**
+1. Go to Vercel dashboard
+2. Select your project
+3. Check **Deployments** → Click on latest deployment
+4. View **Function Logs**
+5. Look for email errors
 
 **Common issues:**
 - Wrong app password (needs 2FA enabled)
@@ -212,5 +237,14 @@ SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 ```
 
-**On Render:**
-All variables should be added to Environment tab of your service.
+**On Vercel:**
+All variables should be added to Settings → Environment Variables.
+
+**Current Production Values:**
+```
+EMAIL_SERVICE=custom
+EMAIL_USER=info@thefevercollective.com
+EMAIL_PASSWORD=Laurmilo123!
+SMTP_HOST=mail.thefevercollective.com
+SMTP_PORT=587
+```

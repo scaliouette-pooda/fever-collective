@@ -1,33 +1,29 @@
 # Admin User Setup
 
-## Local Database
+## Current Admin Account
 
-Admin user has been created in your local MongoDB:
+**Email:** info@thefevercollective.com
+**Password:** FeverDesigner2025!
 
-**Email:** admin@fevercollective.com
-**Password:** fever2025
+**Login URLs:**
+- Production: https://thefevercollective.com/login
+- Local: http://localhost:3000/login
 
-You can now login at http://localhost:3000/login
+**Admin Dashboard:**
+- Production: https://thefevercollective.com/admin
+- Local: http://localhost:3000/admin
 
 ---
 
-## Production Database (MongoDB Atlas)
+## Creating Admin User
 
-To create the admin user on production:
+### Production Database (MongoDB Atlas - Current Setup)
 
-### Option 1: Via Render Console (Easiest)
+The admin user has already been created in production. If you need to create a new admin or reset the password:
 
-1. Go to your Render dashboard: https://dashboard.render.com
-2. Select your **fever-collective-api** service
-3. Click on **Shell** tab
-4. Run this command:
-   ```bash
-   npm run create-admin
-   ```
+### Option 1: Run Locally with Production Connection (Recommended)
 
-### Option 2: Run Locally with Production Connection
-
-1. Temporarily update `server/.env` with production MongoDB URI:
+1. Make sure `server/.env` has production MongoDB URI:
    ```
    MONGODB_URI=mongodb+srv://fever_admin:wtSF3WV9tiDZ3mCG@cluster0.zvsajyi.mongodb.net/fever-collective?retryWrites=true&w=majority
    ```
@@ -35,24 +31,21 @@ To create the admin user on production:
 2. Run the script:
    ```bash
    cd server
-   npm run create-admin
+   node scripts/createAdmin.js
    ```
 
-3. Restore local MongoDB URI in `.env`:
-   ```
-   MONGODB_URI=mongodb://localhost:27017/fever-collective
-   ```
+The script will:
+- Create a new admin user with email: info@thefevercollective.com
+- Set password to: FeverDesigner2025!
+- If user exists, it will update their role to admin
 
----
+### Option 2: Update User Role Manually in MongoDB Atlas
 
-## Admin Credentials
-
-Once created, login at:
-- **Local:** http://localhost:3000/login
-- **Production:** https://fever-collective.vercel.app/login
-
-**Email:** admin@fevercollective.com
-**Password:** fever2025
+1. Go to MongoDB Atlas dashboard
+2. Browse Collections → fever-collective database → users collection
+3. Find the user with email: info@thefevercollective.com
+4. Edit the document and set `role: "admin"`
+5. Save changes
 
 ---
 
@@ -91,5 +84,10 @@ Once created, login at:
 - Check browser console for errors
 
 **Forgot admin password:**
-- Run the create-admin script again
-- It will reset the password to `fever2025`
+- Use the "Forgot Password" feature on the login page
+- Or run the create-admin script again to reset to default password
+- Or use MongoDB Atlas to reset the password hash directly
+
+**Need to change admin email:**
+- Update the email in `server/scripts/createAdmin.js` (line 14)
+- Run the script to create new admin with different email
