@@ -47,6 +47,7 @@ const uploadRoutes = require('./routes/upload');
 const waitlistRoutes = require('./routes/waitlist');
 const reviewRoutes = require('./routes/reviews');
 const referralRoutes = require('./routes/referrals');
+const classPackRoutes = require('./routes/classPacks');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -58,6 +59,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/waitlist', waitlistRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/referrals', referralRoutes);
+app.use('/api/class-packs', classPackRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Collective API' });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import api from '../config/api';
 import './Auth.css';
 
@@ -58,7 +58,7 @@ function BookingConfirmation() {
           margin: '2rem 0',
           border: '2px solid #c9a86a'
         }}>
-          <QRCode
+          <QRCodeSVG
             value={qrData}
             size={256}
             level="H"

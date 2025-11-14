@@ -28,6 +28,16 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     min: 1
   },
+  // Ticket tier information
+  ticketTierId: {
+    type: mongoose.Schema.Types.ObjectId
+  },
+  ticketTierName: {
+    type: String
+  },
+  ticketTierPrice: {
+    type: Number
+  },
   totalAmount: {
     type: Number,
     required: true

@@ -31,6 +31,41 @@ const eventSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  // Ticket tiers for dynamic pricing
+  ticketTiers: [{
+    name: {
+      type: String,
+      required: true
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    capacity: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    availableSpots: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    benefits: {
+      type: String,
+      default: ''
+    },
+    order: {
+      type: Number,
+      default: 0
+    }
+  }],
+  // Use ticket tiers if enabled, otherwise use base price
+  useTieredPricing: {
+    type: Boolean,
+    default: false
+  },
   capacity: {
     type: Number,
     required: true,
