@@ -2291,7 +2291,6 @@ function AdminDashboard() {
                   Check In
                 </button>
               </div>
-              </div>
 
               {scanResult && (
                 <div style={{
@@ -2313,6 +2312,7 @@ function AdminDashboard() {
             </div>
 
             <div style={{ marginTop: '3rem' }}>
+
               <h3>Recent Bookings</h3>
               <div className="bookings-table">
                 <table>
