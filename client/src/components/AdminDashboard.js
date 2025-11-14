@@ -138,7 +138,7 @@ function AdminDashboard() {
     formData.append('image', imageFile);
 
     try {
-      const response = await api.post('/api/events/upload-image', formData, {
+      const response = await api.post('/api/upload/image', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -147,8 +147,12 @@ function AdminDashboard() {
       return response.data.imageUrl;
     } catch (error) {
       console.error('Error uploading image:', error);
-      if (error.response?.status === 501) {
-        alert('Image upload is not configured on the server. Event will be created without image.');
+      if (error.response?.status === 400) {
+        alert('No file uploaded. Please select an image.');
+      } else if (error.response?.data?.error) {
+        alert(`Upload failed: ${error.response.data.error}`);
+      } else {
+        alert('Image upload failed. Event will be created without image.');
       }
       return null;
     }

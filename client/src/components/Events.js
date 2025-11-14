@@ -6,7 +6,6 @@ import './Events.css';
 function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     fetchEvents();
@@ -24,10 +23,6 @@ function Events() {
     }
   };
 
-  const filteredEvents = filter === 'all'
-    ? events
-    : events.filter(event => event.level === filter);
-
   if (loading) return <div className="container loading">Loading...</div>;
 
   return (
@@ -37,47 +32,14 @@ function Events() {
         <p className="events-subtitle">Discover our upcoming popup experiences</p>
       </div>
 
-      <div className="events-filter">
-        <button
-          className={filter === 'all' ? 'active' : ''}
-          onClick={() => setFilter('all')}
-        >
-          All Events
-        </button>
-        <button
-          className={filter === 'beginner' ? 'active' : ''}
-          onClick={() => setFilter('beginner')}
-        >
-          Beginner
-        </button>
-        <button
-          className={filter === 'intermediate' ? 'active' : ''}
-          onClick={() => setFilter('intermediate')}
-        >
-          Intermediate
-        </button>
-        <button
-          className={filter === 'advanced' ? 'active' : ''}
-          onClick={() => setFilter('advanced')}
-        >
-          Advanced
-        </button>
-        <button
-          className={filter === 'all levels' ? 'active' : ''}
-          onClick={() => setFilter('all levels')}
-        >
-          All Levels
-        </button>
-      </div>
-
-      {filteredEvents.length === 0 ? (
+      {events.length === 0 ? (
         <div className="no-events">
-          <p>No events match your filter.</p>
-          <p>Check back soon or browse all events.</p>
+          <p>No upcoming events at this time.</p>
+          <p>Check back soon for new experiences.</p>
         </div>
       ) : (
         <div className="events-list">
-          {filteredEvents.map(event => (
+          {events.map(event => (
             <div key={event._id} className="event-item">
               <div className="event-item-image">
                 {event.imageUrl ? (

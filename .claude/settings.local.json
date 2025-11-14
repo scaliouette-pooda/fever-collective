@@ -19,7 +19,9 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(curl:*)",
-      "Bash(node scripts/resetAdminPassword.js:*)"
+      "Bash(node scripts/resetAdminPassword.js:*)",
+      "Bash(serverroutesupload.js)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

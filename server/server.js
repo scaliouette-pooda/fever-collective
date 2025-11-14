@@ -43,6 +43,7 @@ const bookingRoutes = require('./routes/bookings');
 const settingsRoutes = require('./routes/settings');
 const promoCodeRoutes = require('./routes/promoCodes');
 const emailCampaignRoutes = require('./routes/emailCampaigns');
+const uploadRoutes = require('./routes/upload');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -50,6 +51,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/promo-codes', promoCodeRoutes);
 app.use('/api/email-campaigns', emailCampaignRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Collective API' });

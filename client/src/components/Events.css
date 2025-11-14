@@ -15,35 +15,6 @@
   margin-top: 1rem;
 }
 
-.events-filter {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-bottom: 4rem;
-  flex-wrap: wrap;
-}
-
-.events-filter button {
-  padding: 0.75rem 1.75rem;
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(232, 232, 232, 0.7);
-  font-size: 0.85rem;
-  transition: all 0.3s ease;
-}
-
-.events-filter button:hover {
-  border-color: #c9a86a;
-  color: #e8e8e8;
-  background-color: transparent;
-}
-
-.events-filter button.active {
-  border-color: #c9a86a;
-  background-color: #c9a86a;
-  color: #1a1a1a;
-}
-
 .events-list {
   display: flex;
   flex-direction: column;
@@ -194,14 +165,5 @@
   .event-item-details {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-
-  .events-filter {
-    gap: 1rem;
-  }
-
-  .events-filter button {
-    padding: 0.65rem 1.25rem;
-    font-size: 0.8rem;
   }
 }
