@@ -195,8 +195,68 @@ const sendPaymentConfirmation = async (booking) => {
   }
 };
 
+// Send password reset email
+const sendPasswordResetEmail = async (user, resetToken) => {
+  if (!process.env.EMAIL_USER) {
+    console.log('Email not configured - skipping password reset email');
+    return;
+  }
+
+  try {
+    const transporter = createTransporter();
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
+
+    const mailOptions = {
+      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: 'Password Reset Request',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #1a1a1a; border-bottom: 2px solid #c9a86a; padding-bottom: 10px;">
+            Password Reset Request
+          </h1>
+
+          <p>Hi ${user.name},</p>
+
+          <p>We received a request to reset your password for your The Fever Collective account.</p>
+
+          <p>Click the button below to reset your password. This link will expire in 1 hour.</p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}"
+               style="background-color: #1a1a1a; color: #e8e8e8; padding: 12px 30px;
+                      text-decoration: none; border-radius: 4px; display: inline-block;">
+              Reset Password
+            </a>
+          </div>
+
+          <p style="color: #666; font-size: 0.9em;">
+            Or copy and paste this link into your browser:<br>
+            <a href="${resetUrl}" style="color: #c9a86a;">${resetUrl}</a>
+          </p>
+
+          <p style="color: #d32f2f; font-size: 0.9em; margin-top: 30px;">
+            If you didn't request this password reset, please ignore this email. Your password will remain unchanged.
+          </p>
+
+          <p style="color: #666; font-size: 0.9em; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+            Questions? Reply to this email and we'll be happy to help!
+          </p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Password reset email sent to:', user.email);
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    throw new Error('Failed to send password reset email');
+  }
+};
+
 module.exports = {
   sendWelcomeEmail,
   sendBookingConfirmation,
-  sendPaymentConfirmation
+  sendPaymentConfirmation,
+  sendPasswordResetEmail
 };

@@ -70,6 +70,11 @@ function Login() {
               placeholder="Enter your password"
               required
             />
+            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+              <Link to="/forgot-password" style={{ fontSize: '0.9rem', color: '#c9a86a' }}>
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
           <button type="submit" className="auth-submit">Login</button>

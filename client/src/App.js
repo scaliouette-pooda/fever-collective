@@ -10,6 +10,8 @@ import Contact from './components/Contact';
 import Booking from './components/Booking';
 import Registration from './components/Registration';
 import Login from './components/Login';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import Profile from './components/Profile';
 import AdminDashboard from './components/AdminDashboard';
 
@@ -26,6 +28,8 @@ function App() {
           <Route path="/booking/:eventId" element={<Booking />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
