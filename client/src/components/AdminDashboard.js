@@ -18,6 +18,10 @@ function AdminDashboard() {
   const [selectedEventForWaitlist, setSelectedEventForWaitlist] = useState(null);
   const [qrScanInput, setQrScanInput] = useState('');
   const [scanResult, setScanResult] = useState(null);
+  const [classPacks, setClassPacks] = useState([]);
+  const [userCredits, setUserCredits] = useState([]);
+  const [showClassPackForm, setShowClassPackForm] = useState(false);
+  const [editingClassPack, setEditingClassPack] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -53,7 +57,9 @@ function AdminDashboard() {
     capacity: '',
     instructor: '',
     level: 'all levels',
-    imageUrl: ''
+    imageUrl: '',
+    useTieredPricing: false,
+    ticketTiers: []
   });
 
   const [promoForm, setPromoForm] = useState({
@@ -77,6 +83,17 @@ function AdminDashboard() {
     recipients: 'all',
     customEmails: '',
     includedPromoCode: ''
+  });
+
+  const [classPackForm, setClassPackForm] = useState({
+    name: '',
+    description: '',
+    credits: '',
+    price: '',
+    regularPrice: '',
+    validityDays: '180',
+    features: [''],
+    isPopular: false
   });
 
   useEffect(() => {
@@ -126,6 +143,13 @@ function AdminDashboard() {
         // Load recent bookings for check-in
         const res = await api.get('/api/bookings', config);
         setBookings(res.data);
+      } else if (activeTab === 'classPacks') {
+        const res = await api.get('/api/class-packs/admin/all', config);
+        setClassPacks(res.data);
+      } else if (activeTab === 'userCredits') {
+        // Fetch all users with their credit information
+        const res = await api.get('/api/auth/users', config);
+        setUserCredits(res.data.filter(u => u.availableCredits > 0 || u.referralCredits > 0));
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -794,6 +818,177 @@ function AdminDashboard() {
     }
   };
 
+  // Class Pack Handlers
+  const handleClassPackFormChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setClassPackForm({
+      ...classPackForm,
+      [name]: type === 'checkbox' ? checked : value
+    });
+  };
+
+  const handleFeatureChange = (index, value) => {
+    const newFeatures = [...classPackForm.features];
+    newFeatures[index] = value;
+    setClassPackForm({ ...classPackForm, features: newFeatures });
+  };
+
+  const handleAddFeature = () => {
+    setClassPackForm({
+      ...classPackForm,
+      features: [...classPackForm.features, '']
+    });
+  };
+
+  const handleRemoveFeature = (index) => {
+    const newFeatures = classPackForm.features.filter((_, i) => i !== index);
+    setClassPackForm({ ...classPackForm, features: newFeatures });
+  };
+
+  const handleCreateClassPack = async (e) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem('token');
+      const packData = {
+        ...classPackForm,
+        credits: parseInt(classPackForm.credits),
+        price: parseFloat(classPackForm.price),
+        regularPrice: parseFloat(classPackForm.regularPrice),
+        validityDays: parseInt(classPackForm.validityDays),
+        features: classPackForm.features.filter(f => f.trim() !== '')
+      };
+
+      if (editingClassPack) {
+        await api.put(`/api/class-packs/${editingClassPack._id}`, packData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Class pack updated successfully!');
+      } else {
+        await api.post('/api/class-packs', packData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Class pack created successfully!');
+      }
+
+      setShowClassPackForm(false);
+      setEditingClassPack(null);
+      setClassPackForm({
+        name: '',
+        description: '',
+        credits: '',
+        price: '',
+        regularPrice: '',
+        validityDays: '180',
+        features: [''],
+        isPopular: false
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error saving class pack:', error);
+      alert(error.response?.data?.error || 'Failed to save class pack');
+    }
+  };
+
+  const handleEditClassPack = (pack) => {
+    setEditingClassPack(pack);
+    setClassPackForm({
+      name: pack.name,
+      description: pack.description,
+      credits: pack.credits.toString(),
+      price: pack.price.toString(),
+      regularPrice: pack.regularPrice.toString(),
+      validityDays: pack.validityDays.toString(),
+      features: pack.features.length > 0 ? pack.features : [''],
+      isPopular: pack.isPopular
+    });
+    setShowClassPackForm(true);
+  };
+
+  const handleDeleteClassPack = async (packId) => {
+    if (!window.confirm('Are you sure you want to delete this class pack? This cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/api/class-packs/${packId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Class pack deleted successfully!');
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting class pack:', error);
+      alert(error.response?.data?.error || 'Failed to delete class pack');
+    }
+  };
+
+  const handleToggleClassPackActive = async (packId, currentStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      await api.patch(`/api/class-packs/${packId}/toggle-active`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Class pack ${currentStatus ? 'deactivated' : 'activated'} successfully!`);
+      fetchData();
+    } catch (error) {
+      console.error('Error toggling class pack status:', error);
+      alert(error.response?.data?.error || 'Failed to toggle class pack status');
+    }
+  };
+
+  const handleCancelClassPackForm = () => {
+    setShowClassPackForm(false);
+    setEditingClassPack(null);
+    setClassPackForm({
+      name: '',
+      description: '',
+      credits: '',
+      price: '',
+      regularPrice: '',
+      validityDays: '180',
+      features: [''],
+      isPopular: false
+    });
+  };
+
+  // Ticket Tier Handlers
+  const handleAddTicketTier = () => {
+    setEventForm({
+      ...eventForm,
+      ticketTiers: [
+        ...eventForm.ticketTiers,
+        {
+          name: '',
+          price: '',
+          capacity: '',
+          benefits: '',
+          order: eventForm.ticketTiers.length
+        }
+      ]
+    });
+  };
+
+  const handleRemoveTicketTier = (index) => {
+    const newTiers = eventForm.ticketTiers.filter((_, i) => i !== index);
+    setEventForm({
+      ...eventForm,
+      ticketTiers: newTiers.map((tier, i) => ({ ...tier, order: i }))
+    });
+  };
+
+  const handleTicketTierChange = (index, field, value) => {
+    const newTiers = [...eventForm.ticketTiers];
+    newTiers[index] = {
+      ...newTiers[index],
+      [field]: value
+    };
+    setEventForm({
+      ...eventForm,
+      ticketTiers: newTiers
+    });
+  };
+
   if (loading) return <div className="admin-loading">Loading...</div>;
 
   return (
@@ -863,6 +1058,24 @@ function AdminDashboard() {
           onClick={() => setActiveTab('settings')}
         >
           Settings
+        </button>
+        <button
+          className={activeTab === 'classPacks' ? 'active' : ''}
+          onClick={() => setActiveTab('classPacks')}
+        >
+          Class Packs
+        </button>
+        <button
+          className={activeTab === 'userCredits' ? 'active' : ''}
+          onClick={() => setActiveTab('userCredits')}
+        >
+          User Credits
+        </button>
+        <button
+          className={activeTab === 'emailAutomation' ? 'active' : ''}
+          onClick={() => setActiveTab('emailAutomation')}
+        >
+          Email Automation
         </button>
       </div>
 
@@ -1018,6 +1231,172 @@ function AdminDashboard() {
                       )}
                     </div>
 
+                    {/* Ticket Tiers Section */}
+                    <div className="form-group" style={{
+                      borderTop: '2px solid rgba(201, 168, 106, 0.3)',
+                      paddingTop: '1.5rem',
+                      marginTop: '1.5rem'
+                    }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+                        <input
+                          type="checkbox"
+                          checked={eventForm.useTieredPricing || false}
+                          onChange={(e) => {
+                            setEventForm({
+                              ...eventForm,
+                              useTieredPricing: e.target.checked,
+                              ticketTiers: e.target.checked && eventForm.ticketTiers.length === 0
+                                ? [{
+                                    name: 'General Admission',
+                                    price: eventForm.price || '',
+                                    capacity: eventForm.capacity || '',
+                                    benefits: '',
+                                    order: 0
+                                  }]
+                                : eventForm.ticketTiers
+                            });
+                          }}
+                        />
+                        <strong>Use Tiered Pricing</strong>
+                      </label>
+                      <small style={{ color: 'rgba(232, 232, 232, 0.6)', display: 'block', marginTop: '-0.5rem', marginBottom: '1rem' }}>
+                        Create multiple ticket tiers with different prices and capacities (e.g., Early Bird, VIP, General)
+                      </small>
+
+                      {eventForm.useTieredPricing && (
+                        <div style={{
+                          background: 'rgba(201, 168, 106, 0.1)',
+                          border: '1px solid rgba(201, 168, 106, 0.3)',
+                          borderRadius: '8px',
+                          padding: '1.5rem',
+                          marginTop: '1rem'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <h4 style={{ margin: 0 }}>Ticket Tiers</h4>
+                            <button
+                              type="button"
+                              onClick={handleAddTicketTier}
+                              style={{
+                                padding: '8px 15px',
+                                background: 'rgba(52, 199, 89, 0.2)',
+                                border: '1px solid rgba(52, 199, 89, 0.5)',
+                                color: '#34c759',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              + Add Tier
+                            </button>
+                          </div>
+
+                          {eventForm.ticketTiers.length === 0 ? (
+                            <p style={{ textAlign: 'center', color: 'rgba(232, 232, 232, 0.5)', padding: '1rem' }}>
+                              No tiers added yet. Click "Add Tier" to create your first ticket tier.
+                            </p>
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                              {eventForm.ticketTiers.map((tier, index) => (
+                                <div
+                                  key={index}
+                                  style={{
+                                    background: 'rgba(26, 26, 26, 0.5)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '8px',
+                                    padding: '1rem'
+                                  }}
+                                >
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                    <strong style={{ color: '#c9a86a' }}>Tier {index + 1}</strong>
+                                    {eventForm.ticketTiers.length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveTicketTier(index)}
+                                        style={{
+                                          padding: '4px 10px',
+                                          background: 'rgba(255, 59, 48, 0.2)',
+                                          border: '1px solid rgba(255, 59, 48, 0.5)',
+                                          color: '#ff3b30',
+                                          borderRadius: '4px',
+                                          cursor: 'pointer',
+                                          fontSize: '0.85rem'
+                                        }}
+                                      >
+                                        Remove
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.75rem' }}>
+                                    <div>
+                                      <label style={{ fontSize: '0.9rem', marginBottom: '0.25rem', display: 'block' }}>Tier Name *</label>
+                                      <input
+                                        type="text"
+                                        value={tier.name}
+                                        onChange={(e) => handleTicketTierChange(index, 'name', e.target.value)}
+                                        placeholder="e.g., Early Bird, VIP, General"
+                                        required
+                                        style={{ width: '100%' }}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize: '0.9rem', marginBottom: '0.25rem', display: 'block' }}>Price ($) *</label>
+                                      <input
+                                        type="number"
+                                        value={tier.price}
+                                        onChange={(e) => handleTicketTierChange(index, 'price', e.target.value)}
+                                        placeholder="0.00"
+                                        step="0.01"
+                                        min="0"
+                                        required
+                                        style={{ width: '100%' }}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
+                                    <div>
+                                      <label style={{ fontSize: '0.9rem', marginBottom: '0.25rem', display: 'block' }}>Capacity *</label>
+                                      <input
+                                        type="number"
+                                        value={tier.capacity}
+                                        onChange={(e) => handleTicketTierChange(index, 'capacity', e.target.value)}
+                                        placeholder="0"
+                                        min="0"
+                                        required
+                                        style={{ width: '100%' }}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize: '0.9rem', marginBottom: '0.25rem', display: 'block' }}>Benefits (Optional)</label>
+                                      <input
+                                        type="text"
+                                        value={tier.benefits}
+                                        onChange={(e) => handleTicketTierChange(index, 'benefits', e.target.value)}
+                                        placeholder="e.g., Priority seating, Welcome gift"
+                                        style={{ width: '100%' }}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <div style={{
+                            marginTop: '1rem',
+                            padding: '0.75rem',
+                            background: 'rgba(0, 122, 255, 0.1)',
+                            border: '1px solid rgba(0, 122, 255, 0.3)',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            color: 'rgba(232, 232, 232, 0.7)'
+                          }}>
+                            <strong style={{ color: '#007aff' }}>Note:</strong> When using tiered pricing, the regular price and capacity fields are ignored. Total capacity and pricing are determined by your ticket tiers.
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="form-actions">
                       <button type="button" onClick={() => {
                         setShowEventForm(false);
@@ -1088,6 +1467,8 @@ function AdminDashboard() {
                     <th>Email</th>
                     <th>Event</th>
                     <th>Spots</th>
+                    <th>Ticket Tier</th>
+                    <th>Credit Used</th>
                     <th>Amount</th>
                     <th>Payment</th>
                     <th>Booking</th>
@@ -1102,6 +1483,38 @@ function AdminDashboard() {
                       <td>{booking.email}</td>
                       <td>{booking.event?.title || 'N/A'}</td>
                       <td>{booking.spots}</td>
+                      <td>
+                        {booking.ticketTierName ? (
+                          <span style={{
+                            background: 'rgba(201, 168, 106, 0.2)',
+                            color: '#c9a86a',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            fontWeight: '600'
+                          }}>
+                            {booking.ticketTierName}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'rgba(232, 232, 232, 0.5)' }}>Standard</span>
+                        )}
+                      </td>
+                      <td>
+                        {booking.usedCredits ? (
+                          <span style={{
+                            background: 'rgba(52, 199, 89, 0.2)',
+                            color: '#34c759',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            fontWeight: '600'
+                          }}>
+                            {booking.usedCredits} {booking.usedCredits === 1 ? 'credit' : 'credits'}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'rgba(232, 232, 232, 0.5)' }}>—</span>
+                        )}
+                      </td>
                       <td>${booking.totalAmount}</td>
                       <td>
                         <span className={`status-badge ${booking.paymentStatus}`}>
@@ -1759,27 +2172,263 @@ function AdminDashboard() {
         {activeTab === 'analytics' && (
           <div className="analytics-section">
             <h2>Analytics Dashboard</h2>
-            <div className="stats-grid">
-              <div className="stat-card">
-                <h3>Total Events</h3>
-                <p className="stat-value">{events.length}</p>
+
+            {/* Core Metrics */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem', color: '#c9a86a' }}>Core Metrics</h3>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <h3>Total Events</h3>
+                  <p className="stat-value">{events.length}</p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    {events.filter(e => new Date(e.date) >= new Date()).length} upcoming
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Total Bookings</h3>
+                  <p className="stat-value">{bookings.length}</p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    {bookings.filter(b => b.status === 'confirmed').length} confirmed
+                  </small>
+                </div>
+                <div className="stat-card" style={{ background: 'rgba(52, 199, 89, 0.1)', borderColor: 'rgba(52, 199, 89, 0.3)' }}>
+                  <h3>Total Revenue</h3>
+                  <p className="stat-value" style={{ color: '#34c759' }}>
+                    ${bookings.reduce((sum, b) => sum + (b.paymentStatus === 'completed' ? b.totalAmount : 0), 0).toFixed(2)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    From {bookings.filter(b => b.paymentStatus === 'completed').length} completed payments
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Avg Booking Value</h3>
+                  <p className="stat-value">
+                    ${bookings.length > 0 ?
+                      (bookings.reduce((sum, b) => sum + b.totalAmount, 0) / bookings.length).toFixed(2) :
+                      '0.00'}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    Per transaction
+                  </small>
+                </div>
               </div>
-              <div className="stat-card">
-                <h3>Total Bookings</h3>
-                <p className="stat-value">{bookings.length}</p>
+            </div>
+
+            {/* Revenue Breakdown */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem', color: '#c9a86a' }}>Revenue Breakdown</h3>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <h3>Event Bookings</h3>
+                  <p className="stat-value">
+                    ${bookings
+                      .filter(b => b.paymentStatus === 'completed' && !b.usedCredits)
+                      .reduce((sum, b) => sum + b.totalAmount, 0)
+                      .toFixed(2)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    Direct event revenue
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Tiered Bookings</h3>
+                  <p className="stat-value">
+                    ${bookings
+                      .filter(b => b.paymentStatus === 'completed' && b.ticketTierId)
+                      .reduce((sum, b) => sum + b.totalAmount, 0)
+                      .toFixed(2)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    {bookings.filter(b => b.ticketTierId).length} tiered tickets sold
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Credit Redemptions</h3>
+                  <p className="stat-value" style={{ color: '#ff9500' }}>
+                    {bookings.filter(b => b.usedCredits).reduce((sum, b) => sum + (b.usedCredits || 0), 0)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    Credits redeemed ({bookings.filter(b => b.usedCredits).length} bookings)
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Pending Revenue</h3>
+                  <p className="stat-value" style={{ color: '#ff9500' }}>
+                    ${bookings
+                      .filter(b => b.paymentStatus === 'pending')
+                      .reduce((sum, b) => sum + b.totalAmount, 0)
+                      .toFixed(2)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    {bookings.filter(b => b.paymentStatus === 'pending').length} pending payments
+                  </small>
+                </div>
               </div>
-              <div className="stat-card">
-                <h3>Revenue</h3>
-                <p className="stat-value">
-                  ${bookings.reduce((sum, b) => sum + (b.paymentStatus === 'completed' ? b.totalAmount : 0), 0)}
-                </p>
+            </div>
+
+            {/* Class Packs & Credits */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem', color: '#c9a86a' }}>Class Packs & Credits</h3>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <h3>Active Class Packs</h3>
+                  <p className="stat-value">{classPacks.filter(p => p.isActive).length}</p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    of {classPacks.length} total packs
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Credits Outstanding</h3>
+                  <p className="stat-value">
+                    {userCredits.reduce((sum, u) => sum + (u.availableCredits || 0), 0)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    Across {userCredits.length} users
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Credit Utilization</h3>
+                  <p className="stat-value">
+                    {userCredits.length > 0 ?
+                      Math.round((bookings.filter(b => b.usedCredits).length / bookings.length) * 100) :
+                      0}%
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    Of total bookings
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Referral Credits</h3>
+                  <p className="stat-value" style={{ color: '#ff9500' }}>
+                    ${referralLeaderboard.reduce((sum, u) => sum + (u.referralCredits || 0), 0).toFixed(2)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    Earned by {referralLeaderboard.length} users
+                  </small>
+                </div>
               </div>
-              <div className="stat-card">
-                <h3>Pending Payments</h3>
-                <p className="stat-value">
-                  {bookings.filter(b => b.paymentStatus === 'pending').length}
-                </p>
+            </div>
+
+            {/* Referral Program ROI */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem', color: '#c9a86a' }}>Referral Program Performance</h3>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <h3>Total Referrals</h3>
+                  <p className="stat-value">
+                    {referralLeaderboard.reduce((sum, u) => sum + (u.referralCount || 0), 0)}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    By {referralLeaderboard.length} active referrers
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Elite Members</h3>
+                  <p className="stat-value" style={{ color: '#FFD700' }}>
+                    {referralLeaderboard.filter(u => u.referralTier === 'elite').length}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    10+ referrals each
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Ambassador Members</h3>
+                  <p className="stat-value" style={{ color: '#C0C0C0' }}>
+                    {referralLeaderboard.filter(u => u.referralTier === 'ambassador').length}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    4-9 referrals each
+                  </small>
+                </div>
+                <div className="stat-card">
+                  <h3>Avg Referrals/User</h3>
+                  <p className="stat-value">
+                    {referralLeaderboard.length > 0 ?
+                      (referralLeaderboard.reduce((sum, u) => sum + (u.referralCount || 0), 0) / referralLeaderboard.length).toFixed(1) :
+                      '0.0'}
+                  </p>
+                  <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                    Per active referrer
+                  </small>
+                </div>
               </div>
+            </div>
+
+            {/* Top Performers */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem', color: '#c9a86a' }}>Top Performers</h3>
+              <div style={{
+                background: 'rgba(201, 168, 106, 0.1)',
+                border: '1px solid rgba(201, 168, 106, 0.3)',
+                borderRadius: '8px',
+                padding: '1.5rem'
+              }}>
+                <h4 style={{ marginTop: 0, marginBottom: '1rem' }}>Top 5 Events by Revenue</h4>
+                {events.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {events
+                      .map(event => ({
+                        ...event,
+                        revenue: bookings
+                          .filter(b => b.event?._id === event._id && b.paymentStatus === 'completed')
+                          .reduce((sum, b) => sum + b.totalAmount, 0)
+                      }))
+                      .sort((a, b) => b.revenue - a.revenue)
+                      .slice(0, 5)
+                      .map((event, index) => (
+                        <div key={event._id} style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '0.75rem',
+                          background: 'rgba(26, 26, 26, 0.5)',
+                          borderRadius: '4px'
+                        }}>
+                          <div>
+                            <span style={{ color: index < 3 ? '#c9a86a' : 'rgba(232, 232, 232, 0.9)', fontWeight: '600' }}>
+                              #{index + 1}
+                            </span>
+                            <span style={{ marginLeft: '1rem' }}>{event.title}</span>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ color: '#34c759', fontWeight: '600', fontSize: '1.1rem' }}>
+                              ${event.revenue.toFixed(2)}
+                            </div>
+                            <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                              {bookings.filter(b => b.event?._id === event._id && b.paymentStatus === 'completed').length} bookings
+                            </small>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <p style={{ textAlign: 'center', color: 'rgba(232, 232, 232, 0.5)', margin: 0 }}>
+                    No events yet
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Coming Soon */}
+            <div style={{
+              padding: '1.5rem',
+              background: 'rgba(0, 122, 255, 0.1)',
+              border: '1px solid rgba(0, 122, 255, 0.3)',
+              borderRadius: '8px'
+            }}>
+              <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007aff' }}>
+                📊 Coming Soon
+              </h3>
+              <ul style={{ lineHeight: '1.8', marginBottom: 0, color: 'rgba(232, 232, 232, 0.8)', columns: 2, columnGap: '2rem' }}>
+                <li>Monthly recurring revenue (MRR)</li>
+                <li>Customer lifetime value (LTV)</li>
+                <li>Churn rate tracking</li>
+                <li>Email campaign conversion rates</li>
+                <li>Promo code usage analytics</li>
+                <li>Peak booking times</li>
+                <li>Geographic distribution</li>
+                <li>Custom date range filters</li>
+              </ul>
             </div>
           </div>
         )}
@@ -2019,6 +2668,784 @@ function AdminDashboard() {
           </div>
         )}
 
+        {/* Class Packs Management Tab */}
+        {activeTab === 'classPacks' && (
+          <div className="class-packs-section">
+            <div className="section-header">
+              <h2>Class Packs Management</h2>
+              <button onClick={() => {
+                setShowClassPackForm(true);
+                setEditingClassPack(null);
+                setClassPackForm({
+                  name: '',
+                  description: '',
+                  credits: '',
+                  price: '',
+                  regularPrice: '',
+                  validityDays: '180',
+                  features: [''],
+                  isPopular: false
+                });
+              }}>
+                + Create Class Pack
+              </button>
+            </div>
+
+            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+              Create and manage class pack bundles. Users can purchase packs with multiple credits at discounted rates.
+            </p>
+
+            {/* Class Pack Form Modal */}
+            {showClassPackForm && (
+              <div className="modal-overlay" onClick={handleCancelClassPackForm}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <h3>{editingClassPack ? 'Edit Class Pack' : 'Create New Class Pack'}</h3>
+                  <form onSubmit={handleCreateClassPack} className="event-form">
+                    <div className="form-group">
+                      <label>Pack Name *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={classPackForm.name}
+                        onChange={handleClassPackFormChange}
+                        placeholder="e.g., Starter Pack, Premium Bundle"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Description *</label>
+                      <textarea
+                        name="description"
+                        value={classPackForm.description}
+                        onChange={handleClassPackFormChange}
+                        placeholder="Describe what makes this pack special..."
+                        rows="3"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Number of Credits *</label>
+                        <input
+                          type="number"
+                          name="credits"
+                          value={classPackForm.credits}
+                          onChange={handleClassPackFormChange}
+                          min="1"
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Pack Price ($) *</label>
+                        <input
+                          type="number"
+                          name="price"
+                          value={classPackForm.price}
+                          onChange={handleClassPackFormChange}
+                          step="0.01"
+                          min="0"
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Regular Price ($) *</label>
+                        <input
+                          type="number"
+                          name="regularPrice"
+                          value={classPackForm.regularPrice}
+                          onChange={handleClassPackFormChange}
+                          step="0.01"
+                          min="0"
+                          required
+                        />
+                        <small style={{ color: 'rgba(232, 232, 232, 0.6)', fontSize: '0.85rem' }}>
+                          Used to calculate savings percentage
+                        </small>
+                      </div>
+
+                      <div className="form-group">
+                        <label>Validity (Days)</label>
+                        <input
+                          type="number"
+                          name="validityDays"
+                          value={classPackForm.validityDays}
+                          onChange={handleClassPackFormChange}
+                          min="1"
+                        />
+                        <small style={{ color: 'rgba(232, 232, 232, 0.6)', fontSize: '0.85rem' }}>
+                          Credits expire after this many days
+                        </small>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Features</label>
+                      {classPackForm.features.map((feature, index) => (
+                        <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                          <input
+                            type="text"
+                            value={feature}
+                            onChange={(e) => handleFeatureChange(index, e.target.value)}
+                            placeholder="e.g., Priority booking, Flexible scheduling"
+                            style={{ flex: 1 }}
+                          />
+                          {classPackForm.features.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFeature(index)}
+                              style={{
+                                padding: '8px 15px',
+                                background: 'rgba(255, 59, 48, 0.2)',
+                                border: '1px solid rgba(255, 59, 48, 0.5)',
+                                color: '#ff3b30'
+                              }}
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={handleAddFeature}
+                        style={{
+                          padding: '8px 15px',
+                          background: 'rgba(201, 168, 106, 0.2)',
+                          border: '1px solid rgba(201, 168, 106, 0.5)',
+                          color: '#c9a86a',
+                          marginTop: '5px'
+                        }}
+                      >
+                        + Add Feature
+                      </button>
+                    </div>
+
+                    <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+                        <input
+                          type="checkbox"
+                          name="isPopular"
+                          checked={classPackForm.isPopular}
+                          onChange={handleClassPackFormChange}
+                        />
+                        Mark as "Most Popular"
+                      </label>
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="submit" className="btn-primary">
+                        {editingClassPack ? 'Update Pack' : 'Create Pack'}
+                      </button>
+                      <button type="button" onClick={handleCancelClassPackForm}>
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Class Packs Table */}
+            {classPacks.length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
+                No class packs created yet. Create your first pack to start offering bundles!
+              </p>
+            ) : (
+              <div className="bookings-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Credits</th>
+                      <th>Price</th>
+                      <th>Regular Price</th>
+                      <th>Savings</th>
+                      <th>Validity</th>
+                      <th>Status</th>
+                      <th>Popular</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {classPacks.map(pack => {
+                      const savingsPercent = Math.round(((pack.regularPrice - pack.price) / pack.regularPrice) * 100);
+                      return (
+                        <tr key={pack._id}>
+                          <td>
+                            <strong>{pack.name}</strong>
+                            <br />
+                            <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
+                              {pack.description.substring(0, 50)}...
+                            </small>
+                          </td>
+                          <td><strong>{pack.credits}</strong> credits</td>
+                          <td style={{ color: '#c9a86a', fontWeight: '600' }}>${pack.price}</td>
+                          <td style={{ textDecoration: 'line-through', color: 'rgba(232, 232, 232, 0.5)' }}>
+                            ${pack.regularPrice}
+                          </td>
+                          <td>
+                            <span style={{
+                              background: 'rgba(52, 199, 89, 0.2)',
+                              color: '#34c759',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '0.9rem',
+                              fontWeight: '600'
+                            }}>
+                              {savingsPercent}% OFF
+                            </span>
+                          </td>
+                          <td>{pack.validityDays} days</td>
+                          <td>
+                            {pack.isActive ? (
+                              <span className="status-badge completed">Active</span>
+                            ) : (
+                              <span className="status-badge cancelled">Inactive</span>
+                            )}
+                          </td>
+                          <td>
+                            {pack.isPopular && (
+                              <span style={{ color: '#c9a86a', fontSize: '1.2rem' }}>⭐</span>
+                            )}
+                          </td>
+                          <td>
+                            <button onClick={() => handleEditClassPack(pack)}>
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleToggleClassPackActive(pack._id, pack.isActive)}
+                              style={{
+                                background: pack.isActive ? 'rgba(255, 149, 0, 0.2)' : 'rgba(52, 199, 89, 0.2)',
+                                borderColor: pack.isActive ? 'rgba(255, 149, 0, 0.5)' : 'rgba(52, 199, 89, 0.5)',
+                                color: pack.isActive ? '#ff9500' : '#34c759'
+                              }}
+                            >
+                              {pack.isActive ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClassPack(pack._id)}
+                              style={{
+                                background: 'rgba(255, 59, 48, 0.2)',
+                                borderColor: 'rgba(255, 59, 48, 0.5)',
+                                color: '#ff3b30'
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Statistics */}
+            {classPacks.length > 0 && (
+              <div style={{
+                marginTop: '2rem',
+                padding: '1.5rem',
+                background: 'rgba(201, 168, 106, 0.1)',
+                border: '1px solid rgba(201, 168, 106, 0.3)',
+                borderRadius: '8px'
+              }}>
+                <h3 style={{ marginTop: 0, marginBottom: '1rem' }}>Quick Stats</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '5px' }}>
+                      Total Packs
+                    </div>
+                    <div style={{ fontSize: '2rem', fontWeight: '300', color: '#c9a86a' }}>
+                      {classPacks.length}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '5px' }}>
+                      Active Packs
+                    </div>
+                    <div style={{ fontSize: '2rem', fontWeight: '300', color: '#34c759' }}>
+                      {classPacks.filter(p => p.isActive).length}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '5px' }}>
+                      Average Savings
+                    </div>
+                    <div style={{ fontSize: '2rem', fontWeight: '300', color: '#c9a86a' }}>
+                      {Math.round(classPacks.reduce((sum, p) =>
+                        sum + ((p.regularPrice - p.price) / p.regularPrice * 100), 0) / classPacks.length)}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* User Credits Overview Tab */}
+        {activeTab === 'userCredits' && (
+          <div className="user-credits-section">
+            <h2>User Credits Overview</h2>
+            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+              View all users with active credits and their balances. Track credit usage and expiration dates.
+            </p>
+
+            {userCredits.length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
+                No users with credits found.
+              </p>
+            ) : (
+              <>
+                {/* Summary Cards */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '1.5rem',
+                  marginBottom: '2rem'
+                }}>
+                  <div style={{
+                    padding: '1.5rem',
+                    background: 'rgba(201, 168, 106, 0.1)',
+                    border: '1px solid rgba(201, 168, 106, 0.3)',
+                    borderRadius: '8px'
+                  }}>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '5px' }}>
+                      Total Users with Credits
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '300', color: '#c9a86a' }}>
+                      {userCredits.length}
+                    </div>
+                  </div>
+                  <div style={{
+                    padding: '1.5rem',
+                    background: 'rgba(52, 199, 89, 0.1)',
+                    border: '1px solid rgba(52, 199, 89, 0.3)',
+                    borderRadius: '8px'
+                  }}>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '5px' }}>
+                      Total Credits Outstanding
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '300', color: '#34c759' }}>
+                      {userCredits.reduce((sum, user) => sum + (user.availableCredits || 0), 0)}
+                    </div>
+                  </div>
+                  <div style={{
+                    padding: '1.5rem',
+                    background: 'rgba(255, 149, 0, 0.1)',
+                    border: '1px solid rgba(255, 149, 0, 0.3)',
+                    borderRadius: '8px'
+                  }}>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '5px' }}>
+                      Referral Credits Outstanding
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '300', color: '#ff9500' }}>
+                      {userCredits.reduce((sum, user) => sum + (user.referralCredits || 0), 0)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Users Table */}
+                <div className="bookings-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Available Credits</th>
+                        <th>Referral Credits</th>
+                        <th>Total Credits</th>
+                        <th>Referral Tier</th>
+                        <th>Member Since</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userCredits.map(user => {
+                        const totalCredits = (user.availableCredits || 0) + (user.referralCredits || 0);
+                        const tier = user.referralTier || 'starter';
+                        return (
+                          <tr key={user._id}>
+                            <td><strong>{user.name}</strong></td>
+                            <td style={{ color: 'rgba(232, 232, 232, 0.7)' }}>{user.email}</td>
+                            <td>
+                              <span style={{
+                                background: 'rgba(52, 199, 89, 0.2)',
+                                color: '#34c759',
+                                padding: '4px 10px',
+                                borderRadius: '4px',
+                                fontWeight: '600'
+                              }}>
+                                {user.availableCredits || 0}
+                              </span>
+                            </td>
+                            <td>
+                              <span style={{
+                                background: 'rgba(255, 149, 0, 0.2)',
+                                color: '#ff9500',
+                                padding: '4px 10px',
+                                borderRadius: '4px',
+                                fontWeight: '600'
+                              }}>
+                                {user.referralCredits || 0}
+                              </span>
+                            </td>
+                            <td>
+                              <strong style={{ color: '#c9a86a', fontSize: '1.1rem' }}>
+                                {totalCredits}
+                              </strong>
+                            </td>
+                            <td>
+                              <span style={{
+                                background: tier === 'elite' ?
+                                  'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' :
+                                  tier === 'ambassador' ?
+                                  'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' :
+                                  'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)',
+                                padding: '4px 10px',
+                                borderRadius: '4px',
+                                color: '#1a1a1a',
+                                fontWeight: '600',
+                                fontSize: '0.85rem',
+                                textTransform: 'uppercase',
+                                display: 'inline-block'
+                              }}>
+                                {tier === 'elite' ? '⭐ ELITE' :
+                                 tier === 'ambassador' ? '🎖️ AMBASSADOR' :
+                                 '🌟 STARTER'}
+                              </span>
+                            </td>
+                            <td style={{ color: 'rgba(232, 232, 232, 0.7)' }}>
+                              {new Date(user.createdAt).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Instructions */}
+                <div style={{
+                  marginTop: '2rem',
+                  padding: '1.5rem',
+                  background: 'rgba(0, 122, 255, 0.1)',
+                  border: '1px solid rgba(0, 122, 255, 0.3)',
+                  borderRadius: '8px'
+                }}>
+                  <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007aff' }}>
+                    About User Credits
+                  </h3>
+                  <ul style={{ lineHeight: '1.8', marginBottom: 0, color: 'rgba(232, 232, 232, 0.8)' }}>
+                    <li>
+                      <strong style={{ color: '#34c759' }}>Available Credits:</strong> Credits purchased through class packs. Users can redeem these for bookings.
+                    </li>
+                    <li>
+                      <strong style={{ color: '#ff9500' }}>Referral Credits:</strong> Bonus credits earned through the referral program when friends make bookings.
+                    </li>
+                    <li>
+                      <strong style={{ color: '#c9a86a' }}>Referral Tiers:</strong>
+                      <ul style={{ marginTop: '0.5rem' }}>
+                        <li>🌟 Starter (0-3 referrals): $10 per referral</li>
+                        <li>🎖️ Ambassador (4-9 referrals): $15 per referral</li>
+                        <li>⭐ Elite (10+ referrals): $20 per referral</li>
+                      </ul>
+                    </li>
+                    <li>
+                      Credits automatically expire based on the class pack validity period (typically 180 days from purchase).
+                    </li>
+                    <li>
+                      Users will receive email reminders when credits are about to expire.
+                    </li>
+                  </ul>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Email Automation Dashboard Tab */}
+        {activeTab === 'emailAutomation' && (
+          <div className="email-automation-section">
+            <h2>Email Automation Dashboard</h2>
+            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+              Monitor and manage automated email campaigns. All campaigns run automatically based on schedules.
+            </p>
+
+            {/* Campaign Cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '1.5rem',
+              marginBottom: '2rem'
+            }}>
+              {/* Post-Event Follow-Up */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'rgba(52, 199, 89, 0.1)',
+                border: '1px solid rgba(52, 199, 89, 0.3)',
+                borderRadius: '8px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0, color: '#34c759' }}>Post-Event Follow-Up</h3>
+                  <span style={{
+                    background: 'rgba(52, 199, 89, 0.3)',
+                    color: '#34c759',
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    fontSize: '0.85rem',
+                    fontWeight: '600'
+                  }}>
+                    ACTIVE
+                  </span>
+                </div>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  Sent 24 hours after event completion. Thanks attendees and offers 20% discount code (COMEBACK20) valid for 48 hours.
+                </p>
+                <div style={{
+                  marginTop: '1rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Schedule:</strong> Runs every hour
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Trigger:</strong> 24 hours after event ends
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                    <strong>Includes:</strong> Upcoming events, review request
+                  </div>
+                </div>
+              </div>
+
+              {/* Win-Back Campaign */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'rgba(255, 149, 0, 0.1)',
+                border: '1px solid rgba(255, 149, 0, 0.3)',
+                borderRadius: '8px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0, color: '#ff9500' }}>Win-Back Campaign</h3>
+                  <span style={{
+                    background: 'rgba(255, 149, 0, 0.3)',
+                    color: '#ff9500',
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    fontSize: '0.85rem',
+                    fontWeight: '600'
+                  }}>
+                    ACTIVE
+                  </span>
+                </div>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  Targets inactive users (30-60 days). Offers 30% discount (WELCOME30) valid for 7 days to re-engage customers.
+                </p>
+                <div style={{
+                  marginTop: '1rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Schedule:</strong> Daily at 10:00 AM
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Trigger:</strong> 30+ days since last booking
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                    <strong>Includes:</strong> Upcoming events, what's new
+                  </div>
+                </div>
+              </div>
+
+              {/* Birthday Special */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'rgba(255, 214, 10, 0.1)',
+                border: '1px solid rgba(255, 214, 10, 0.3)',
+                borderRadius: '8px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0, color: '#ffd60a' }}>Birthday Special</h3>
+                  <span style={{
+                    background: 'rgba(255, 214, 10, 0.3)',
+                    color: '#ffd60a',
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    fontSize: '0.85rem',
+                    fontWeight: '600'
+                  }}>
+                    ACTIVE
+                  </span>
+                </div>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  Celebrates user birthdays with free class or 50% off code (BDAYxxxx) valid for entire birthday month.
+                </p>
+                <div style={{
+                  marginTop: '1rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Schedule:</strong> Daily at 9:00 AM
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Trigger:</strong> User's birthday
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                    <strong>Includes:</strong> Personalized code, event listings
+                  </div>
+                </div>
+              </div>
+
+              {/* Abandoned Booking Reminder */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'rgba(0, 122, 255, 0.1)',
+                border: '1px solid rgba(0, 122, 255, 0.3)',
+                borderRadius: '8px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0, color: '#007aff' }}>Abandoned Booking</h3>
+                  <span style={{
+                    background: 'rgba(128, 128, 128, 0.3)',
+                    color: '#808080',
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    fontSize: '0.85rem',
+                    fontWeight: '600'
+                  }}>
+                    MANUAL
+                  </span>
+                </div>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  Reminds users about incomplete bookings. Offers 10% discount (COMPLETE10) valid for 24 hours to encourage completion.
+                </p>
+                <div style={{
+                  marginTop: '1rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Schedule:</strong> Manual trigger only
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+                    <strong>Trigger:</strong> Incomplete booking detected
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                    <strong>Includes:</strong> Event details, urgency indicators
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Configuration Info */}
+            <div style={{
+              padding: '1.5rem',
+              background: 'rgba(201, 168, 106, 0.1)',
+              border: '1px solid rgba(201, 168, 106, 0.3)',
+              borderRadius: '8px',
+              marginBottom: '2rem'
+            }}>
+              <h3 style={{ marginTop: 0, color: '#c9a86a' }}>Email Automation Configuration</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem', color: 'rgba(232, 232, 232, 0.9)' }}>
+                    Email Service
+                  </div>
+                  <div style={{ fontSize: '0.95rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                    {process.env.REACT_APP_EMAIL_SERVICE || 'Gmail SMTP'}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem', color: 'rgba(232, 232, 232, 0.9)' }}>
+                    From Email
+                  </div>
+                  <div style={{ fontSize: '0.95rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                    {settings?.emailConfig?.fromEmail || 'Not configured'}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem', color: 'rgba(232, 232, 232, 0.9)' }}>
+                    Automation Status
+                  </div>
+                  <div style={{ fontSize: '0.95rem' }}>
+                    <span style={{
+                      background: 'rgba(52, 199, 89, 0.2)',
+                      color: '#34c759',
+                      padding: '4px 10px',
+                      borderRadius: '4px',
+                      fontWeight: '600'
+                    }}>
+                      Running
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Instructions */}
+            <div style={{
+              padding: '1.5rem',
+              background: 'rgba(255, 59, 48, 0.1)',
+              border: '1px solid rgba(255, 59, 48, 0.3)',
+              borderRadius: '8px'
+            }}>
+              <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#ff3b30' }}>
+                ⚠️ Important Notes
+              </h3>
+              <ul style={{ lineHeight: '1.8', marginBottom: 0, color: 'rgba(232, 232, 232, 0.8)' }}>
+                <li>
+                  All automated campaigns run on the server. They will continue running as long as the server is active.
+                </li>
+                <li>
+                  <strong>Post-Event Follow-Up:</strong> Checks hourly for events that ended 24 hours ago. Includes upcoming events and 20% off code.
+                </li>
+                <li>
+                  <strong>Win-Back Campaign:</strong> Runs daily at 10 AM, targets users inactive for 30-60 days with 30% off code.
+                </li>
+                <li>
+                  <strong>Birthday Special:</strong> Runs daily at 9 AM, sends birthday greeting with free class or 50% off code.
+                </li>
+                <li>
+                  <strong>Abandoned Booking:</strong> Currently manual only. Can be triggered through the API when an incomplete booking is detected.
+                </li>
+                <li>
+                  Email configuration is managed in the <strong>Settings</strong> tab. Ensure your SMTP credentials are properly configured.
+                </li>
+                <li>
+                  All promotional codes mentioned in emails should be created in the <strong>Promo Codes</strong> tab for proper redemption.
+                </li>
+              </ul>
+            </div>
+
+            {/* Future Enhancements Note */}
+            <div style={{
+              marginTop: '2rem',
+              padding: '1.5rem',
+              background: 'rgba(0, 122, 255, 0.1)',
+              border: '1px solid rgba(0, 122, 255, 0.3)',
+              borderRadius: '8px'
+            }}>
+              <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007aff' }}>
+                📊 Coming Soon
+              </h3>
+              <ul style={{ lineHeight: '1.8', marginBottom: 0, color: 'rgba(232, 232, 232, 0.8)' }}>
+                <li>Email open rate tracking</li>
+                <li>Click-through rate analytics</li>
+                <li>A/B testing for subject lines</li>
+                <li>Manual trigger buttons for each campaign</li>
+                <li>Email history and logs</li>
+                <li>Conversion tracking per campaign</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
         {/* Reviews Tab */}
         {activeTab === 'reviews' && (
           <div>
@@ -2191,6 +3618,12 @@ function AdminDashboard() {
                   <li>Users can find their referral link in their <strong>Profile page</strong></li>
                   <li>Encourage top referrers with special rewards or recognition</li>
                 </ul>
+                <h4 style={{ marginTop: '1rem' }}>Referral Tiers & Rewards</h4>
+                <ul>
+                  <li>🌟 <strong>Starter</strong> (0-3 referrals): Earn <strong>$10</strong> per successful referral</li>
+                  <li>🎖️ <strong>Ambassador</strong> (4-9 referrals): Earn <strong>$15</strong> per successful referral</li>
+                  <li>⭐ <strong>Elite</strong> (10+ referrals): Earn <strong>$20</strong> per successful referral</li>
+                </ul>
               </div>
             </div>
 
@@ -2206,30 +3639,69 @@ function AdminDashboard() {
                       <th>Rank</th>
                       <th>Name</th>
                       <th>Email</th>
+                      <th>Referral Tier</th>
                       <th>Referral Code</th>
                       <th>Total Referrals</th>
                       <th>Credits Earned</th>
+                      <th>Reward Per Referral</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {referralLeaderboard.map((user, index) => (
-                      <tr key={user._id}>
-                        <td>
-                          <strong style={{ fontSize: '1.3rem', color: index < 3 ? '#c9a86a' : 'inherit' }}>
-                            #{index + 1}
-                          </strong>
-                        </td>
-                        <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>
-                          <span style={{ fontFamily: 'monospace', color: '#c9a86a', fontWeight: 'bold' }}>
-                            {user.referralCode}
-                          </span>
-                        </td>
-                        <td><strong>{user.referralCount}</strong></td>
-                        <td>${user.referralCredits}</td>
-                      </tr>
-                    ))}
+                    {referralLeaderboard.map((user, index) => {
+                      const tier = user.referralTier || 'starter';
+                      const rewardAmount = tier === 'elite' ? 20 : tier === 'ambassador' ? 15 : 10;
+                      return (
+                        <tr key={user._id}>
+                          <td>
+                            <strong style={{ fontSize: '1.3rem', color: index < 3 ? '#c9a86a' : 'inherit' }}>
+                              #{index + 1}
+                            </strong>
+                          </td>
+                          <td>{user.name}</td>
+                          <td style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.9rem' }}>{user.email}</td>
+                          <td>
+                            <span style={{
+                              background: tier === 'elite' ?
+                                'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' :
+                                tier === 'ambassador' ?
+                                'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' :
+                                'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)',
+                              padding: '6px 12px',
+                              borderRadius: '4px',
+                              color: '#1a1a1a',
+                              fontWeight: '600',
+                              fontSize: '0.85rem',
+                              textTransform: 'uppercase',
+                              display: 'inline-block'
+                            }}>
+                              {tier === 'elite' ? '⭐ ELITE' :
+                               tier === 'ambassador' ? '🎖️ AMBASSADOR' :
+                               '🌟 STARTER'}
+                            </span>
+                          </td>
+                          <td>
+                            <span style={{ fontFamily: 'monospace', color: '#c9a86a', fontWeight: 'bold' }}>
+                              {user.referralCode}
+                            </span>
+                          </td>
+                          <td><strong style={{ fontSize: '1.1rem', color: '#c9a86a' }}>{user.referralCount}</strong></td>
+                          <td>
+                            <strong style={{ color: '#34c759' }}>${user.referralCredits}</strong>
+                          </td>
+                          <td>
+                            <span style={{
+                              background: 'rgba(52, 199, 89, 0.2)',
+                              color: '#34c759',
+                              padding: '4px 10px',
+                              borderRadius: '4px',
+                              fontWeight: '600'
+                            }}>
+                              ${rewardAmount}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
