@@ -15,6 +15,10 @@ function Booking() {
     spots: 1,
     paymentMethod: 'venmo'
   });
+  const [promoCode, setPromoCode] = useState('');
+  const [promoData, setPromoData] = useState(null);
+  const [promoError, setPromoError] = useState('');
+  const [validatingPromo, setValidatingPromo] = useState(false);
 
   useEffect(() => {
     fetchEvent();
@@ -39,13 +43,57 @@ function Booking() {
     });
   };
 
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) {
+      setPromoError('Please enter a promo code');
+      return;
+    }
+
+    setValidatingPromo(true);
+    setPromoError('');
+    setPromoData(null);
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const totalAmount = event.price * formData.spots;
+
+      const response = await api.post('/api/promo-codes/validate', {
+        code: promoCode.toUpperCase(),
+        eventId: event._id,
+        amount: totalAmount,
+        userId: user.id
+      });
+
+      setPromoData(response.data);
+    } catch (error) {
+      console.error('Error validating promo code:', error);
+      setPromoError(error.response?.data?.error || 'Invalid promo code');
+    } finally {
+      setValidatingPromo(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setPromoCode('');
+    setPromoData(null);
+    setPromoError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/api/bookings', {
+      const bookingData = {
         ...formData,
         eventId
-      });
+      };
+
+      // Include promo code if applied
+      if (promoData) {
+        bookingData.promoCodeId = promoData.promoCode.id;
+        bookingData.promoCode = promoData.promoCode.code;
+      }
+
+      const response = await api.post('/api/bookings', bookingData);
 
       const { booking, paymentUrl } = response.data;
 
@@ -218,9 +266,62 @@ function Booking() {
               </select>
             </div>
 
+            {/* Promo Code Section */}
+            <div className="promo-code-section">
+              <label>Promo Code (Optional)</label>
+              {!promoData ? (
+                <div className="promo-input-group">
+                  <input
+                    type="text"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                    placeholder="Enter promo code"
+                    disabled={validatingPromo}
+                    style={{ textTransform: 'uppercase' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyPromo}
+                    disabled={validatingPromo || !promoCode.trim()}
+                    className="apply-promo-btn"
+                  >
+                    {validatingPromo ? 'Validating...' : 'Apply'}
+                  </button>
+                </div>
+              ) : (
+                <div className="promo-applied">
+                  <div className="promo-success">
+                    <span>✓ {promoData.promoCode.code} applied!</span>
+                    <span className="promo-desc">{promoData.promoCode.description}</span>
+                  </div>
+                  <button type="button" onClick={handleRemovePromo} className="remove-promo-btn">
+                    Remove
+                  </button>
+                </div>
+              )}
+              {promoError && (
+                <div className="promo-error">{promoError}</div>
+              )}
+            </div>
+
+            {/* Price Breakdown */}
             <div className="booking-total">
-              <span>Total</span>
-              <span className="total-amount">${event.price * formData.spots}</span>
+              <div className="price-row">
+                <span>Subtotal ({formData.spots} {formData.spots === 1 ? 'spot' : 'spots'})</span>
+                <span>${event.price * formData.spots}</span>
+              </div>
+              {promoData && (
+                <div className="price-row discount-row">
+                  <span>Discount ({promoData.promoCode.code})</span>
+                  <span className="discount-amount">-${promoData.discount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="price-row total-row">
+                <span>Total</span>
+                <span className="total-amount">
+                  ${promoData ? promoData.finalAmount.toFixed(2) : (event.price * formData.spots).toFixed(2)}
+                </span>
+              </div>
             </div>
 
             <button type="submit" className="booking-submit">Proceed to Payment</button>

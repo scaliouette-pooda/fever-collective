@@ -3,6 +3,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
+const PromoCode = require('../models/PromoCode');
 const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -21,7 +22,7 @@ router.post('/',
   validateRequestBody(),
   async (req, res) => {
     try {
-      const { eventId, name, email, phone, spots, paymentMethod } = req.body;
+      const { eventId, name, email, phone, spots, paymentMethod, promoCodeId, promoCode: promoCodeString } = req.body;
 
       const event = await Event.findById(eventId);
       if (!event) {
@@ -32,7 +33,23 @@ router.post('/',
         return res.status(400).json({ error: 'Not enough spots available' });
       }
 
-      const totalAmount = event.price * spots;
+      let originalAmount = event.price * spots;
+      let totalAmount = originalAmount;
+      let discountAmount = 0;
+      let promoCodeDoc = null;
+
+      // Apply promo code if provided
+      if (promoCodeId) {
+        promoCodeDoc = await PromoCode.findById(promoCodeId);
+        if (promoCodeDoc && promoCodeDoc.isValid()) {
+          discountAmount = promoCodeDoc.calculateDiscount(originalAmount);
+          totalAmount = originalAmount - discountAmount;
+
+          // Increment usage count
+          promoCodeDoc.usageCount += 1;
+          await promoCodeDoc.save();
+        }
+      }
 
       // Handle Venmo payments
       if (paymentMethod === 'venmo') {
@@ -43,6 +60,10 @@ router.post('/',
           phone,
           spots,
           totalAmount,
+          originalAmount,
+          discountAmount,
+          promoCode: promoCodeId || null,
+          promoCodeUsed: promoCodeString || null,
           paymentIntentId: 'venmo_' + Date.now(),
           paymentStatus: 'pending',
           status: 'pending'
@@ -71,6 +92,10 @@ router.post('/',
           phone,
           spots,
           totalAmount,
+          originalAmount,
+          discountAmount,
+          promoCode: promoCodeId || null,
+          promoCodeUsed: promoCodeString || null,
           paymentIntentId: 'paypal_' + Date.now(),
           paymentStatus: 'pending',
           status: 'pending'

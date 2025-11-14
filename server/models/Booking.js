@@ -32,6 +32,20 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  originalAmount: {
+    type: Number
+  },
+  discountAmount: {
+    type: Number,
+    default: 0
+  },
+  promoCode: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PromoCode'
+  },
+  promoCodeUsed: {
+    type: String
+  },
   paymentStatus: {
     type: String,
     enum: ['pending', 'completed', 'failed', 'refunded'],

@@ -93,17 +93,125 @@
   margin-bottom: 1.75rem;
 }
 
-.booking-total {
+/* Promo Code Section */
+.promo-code-section {
+  margin: 1.5rem 0;
+}
+
+.promo-input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.promo-input-group input {
+  flex: 1;
+}
+
+.apply-promo-btn {
+  padding: 0.75rem 1.5rem;
+  background: #c9a86a;
+  color: #1a1a1a;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.apply-promo-btn:hover:not(:disabled) {
+  background: #e8e8e8;
+}
+
+.apply-promo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.promo-applied {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem;
+  background: rgba(100, 255, 100, 0.1);
+  border: 1px solid rgba(100, 255, 100, 0.3);
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+.promo-success {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.promo-success span:first-child {
+  color: rgb(100, 255, 100);
+  font-weight: 600;
+}
+
+.promo-desc {
+  font-size: 0.85rem;
+  color: rgba(232, 232, 232, 0.7);
+}
+
+.remove-promo-btn {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: rgba(232, 232, 232, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.remove-promo-btn:hover {
+  background: rgba(255, 100, 100, 0.1);
+  border-color: rgba(255, 100, 100, 0.3);
+  color: rgb(255, 100, 100);
+}
+
+.promo-error {
+  color: rgb(255, 100, 100);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* Updated Booking Total */
+.booking-total {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   padding: 1.5rem 0;
   margin: 2rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.discount-row {
+  color: rgb(100, 255, 100);
+}
+
+.discount-amount {
+  font-weight: 600;
+}
+
+.total-row {
   font-size: 1rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 0.5rem;
 }
 
 .total-amount {

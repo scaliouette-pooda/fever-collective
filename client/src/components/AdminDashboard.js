@@ -10,6 +10,7 @@ function AdminDashboard() {
   const [bookings, setBookings] = useState([]);
   const [users, setUsers] = useState([]);
   const [settings, setSettings] = useState(null);
+  const [promoCodes, setPromoCodes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -17,6 +18,8 @@ function AdminDashboard() {
   const [imagePreview, setImagePreview] = useState(null);
   const [editingBooking, setEditingBooking] = useState(null);
   const [showBookingEditForm, setShowBookingEditForm] = useState(false);
+  const [showPromoForm, setShowPromoForm] = useState(false);
+  const [editingPromo, setEditingPromo] = useState(null);
 
   const [bookingForm, setBookingForm] = useState({
     name: '',
@@ -38,6 +41,20 @@ function AdminDashboard() {
     instructor: '',
     level: 'all levels',
     imageUrl: ''
+  });
+
+  const [promoForm, setPromoForm] = useState({
+    code: '',
+    description: '',
+    discountType: 'percentage',
+    discountValue: '',
+    maxDiscount: '',
+    minPurchase: '',
+    usageLimit: '',
+    perUserLimit: '1',
+    startDate: '',
+    expiryDate: '',
+    isActive: true
   });
 
   useEffect(() => {
@@ -68,6 +85,9 @@ function AdminDashboard() {
       } else if (activeTab === 'settings') {
         const res = await api.get('/api/settings', config);
         setSettings(res.data);
+      } else if (activeTab === 'promoCodes') {
+        const res = await api.get('/api/promo-codes', config);
+        setPromoCodes(res.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -350,6 +370,118 @@ function AdminDashboard() {
     }
   };
 
+  // Promo Code Handlers
+  const handlePromoFormChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setPromoForm({
+      ...promoForm,
+      [name]: type === 'checkbox' ? checked : value
+    });
+  };
+
+  const resetPromoForm = () => {
+    setPromoForm({
+      code: '',
+      description: '',
+      discountType: 'percentage',
+      discountValue: '',
+      maxDiscount: '',
+      minPurchase: '',
+      usageLimit: '',
+      perUserLimit: '1',
+      startDate: '',
+      expiryDate: '',
+      isActive: true
+    });
+  };
+
+  const handleCreatePromoCode = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+
+      // Prepare data
+      const promoData = {
+        ...promoForm,
+        code: promoForm.code.toUpperCase(),
+        discountValue: parseFloat(promoForm.discountValue),
+        maxDiscount: promoForm.maxDiscount ? parseFloat(promoForm.maxDiscount) : null,
+        minPurchase: promoForm.minPurchase ? parseFloat(promoForm.minPurchase) : 0,
+        usageLimit: promoForm.usageLimit ? parseInt(promoForm.usageLimit) : null,
+        perUserLimit: parseInt(promoForm.perUserLimit) || 1,
+        startDate: promoForm.startDate || new Date().toISOString(),
+        expiryDate: promoForm.expiryDate || null
+      };
+
+      if (editingPromo) {
+        await api.put(`/api/promo-codes/${editingPromo._id}`, promoData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Promo code updated successfully!');
+      } else {
+        await api.post('/api/promo-codes', promoData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Promo code created successfully!');
+      }
+
+      setShowPromoForm(false);
+      setEditingPromo(null);
+      resetPromoForm();
+      fetchData();
+    } catch (error) {
+      console.error('Error saving promo code:', error);
+      alert(error.response?.data?.error || 'Failed to save promo code. Please try again.');
+    }
+  };
+
+  const handleEditPromoCode = (promo) => {
+    setEditingPromo(promo);
+    setPromoForm({
+      code: promo.code,
+      description: promo.description,
+      discountType: promo.discountType,
+      discountValue: promo.discountValue.toString(),
+      maxDiscount: promo.maxDiscount?.toString() || '',
+      minPurchase: promo.minPurchase?.toString() || '',
+      usageLimit: promo.usageLimit?.toString() || '',
+      perUserLimit: promo.perUserLimit?.toString() || '1',
+      startDate: promo.startDate ? new Date(promo.startDate).toISOString().split('T')[0] : '',
+      expiryDate: promo.expiryDate ? new Date(promo.expiryDate).toISOString().split('T')[0] : '',
+      isActive: promo.isActive
+    });
+    setShowPromoForm(true);
+  };
+
+  const handleDeletePromoCode = async (promoId) => {
+    if (!window.confirm('Are you sure you want to delete this promo code?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/api/promo-codes/${promoId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Promo code deleted successfully!');
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting promo code:', error);
+      alert('Failed to delete promo code.');
+    }
+  };
+
+  const handleTogglePromoCode = async (promoId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await api.patch(`/api/promo-codes/${promoId}/toggle`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error toggling promo code:', error);
+      alert('Failed to toggle promo code status.');
+    }
+  };
+
   if (loading) return <div className="admin-loading">Loading...</div>;
 
   return (
@@ -371,6 +503,12 @@ function AdminDashboard() {
           onClick={() => setActiveTab('bookings')}
         >
           Bookings
+        </button>
+        <button
+          className={activeTab === 'promoCodes' ? 'active' : ''}
+          onClick={() => setActiveTab('promoCodes')}
+        >
+          Promo Codes
         </button>
         <button
           className={activeTab === 'analytics' ? 'active' : ''}
@@ -787,6 +925,238 @@ function AdminDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'promoCodes' && (
+          <div className="promo-codes-section">
+            <div className="section-header">
+              <h2>Manage Promo Codes</h2>
+              <button onClick={() => {
+                setShowPromoForm(true);
+                setEditingPromo(null);
+                resetPromoForm();
+              }}>
+                Create New Promo Code
+              </button>
+            </div>
+
+            {showPromoForm && (
+              <div className="event-form-modal">
+                <div className="event-form-container">
+                  <h3>{editingPromo ? 'Edit Promo Code' : 'Create New Promo Code'}</h3>
+                  <form onSubmit={handleCreatePromoCode}>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Code *</label>
+                        <input
+                          type="text"
+                          name="code"
+                          value={promoForm.code}
+                          onChange={handlePromoFormChange}
+                          placeholder="SUMMER2024"
+                          required
+                          disabled={editingPromo}
+                          style={{ textTransform: 'uppercase' }}
+                        />
+                        <small>Will be converted to uppercase</small>
+                      </div>
+                      <div className="form-group">
+                        <label>Discount Type *</label>
+                        <select
+                          name="discountType"
+                          value={promoForm.discountType}
+                          onChange={handlePromoFormChange}
+                          required
+                        >
+                          <option value="percentage">Percentage (%)</option>
+                          <option value="fixed">Fixed Amount ($)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Description *</label>
+                      <input
+                        type="text"
+                        name="description"
+                        value={promoForm.description}
+                        onChange={handlePromoFormChange}
+                        placeholder="10% off for new customers"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Discount Value * {promoForm.discountType === 'percentage' ? '(%)' : '($)'}</label>
+                        <input
+                          type="number"
+                          name="discountValue"
+                          value={promoForm.discountValue}
+                          onChange={handlePromoFormChange}
+                          min="0"
+                          step="0.01"
+                          placeholder={promoForm.discountType === 'percentage' ? '10' : '5.00'}
+                          required
+                        />
+                      </div>
+                      {promoForm.discountType === 'percentage' && (
+                        <div className="form-group">
+                          <label>Max Discount ($) (optional)</label>
+                          <input
+                            type="number"
+                            name="maxDiscount"
+                            value={promoForm.maxDiscount}
+                            onChange={handlePromoFormChange}
+                            min="0"
+                            step="0.01"
+                            placeholder="50.00"
+                          />
+                          <small>Cap the maximum discount amount</small>
+                        </div>
+                      )}
+                      <div className="form-group">
+                        <label>Minimum Purchase ($)</label>
+                        <input
+                          type="number"
+                          name="minPurchase"
+                          value={promoForm.minPurchase}
+                          onChange={handlePromoFormChange}
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Total Usage Limit (optional)</label>
+                        <input
+                          type="number"
+                          name="usageLimit"
+                          value={promoForm.usageLimit}
+                          onChange={handlePromoFormChange}
+                          min="1"
+                          placeholder="Unlimited"
+                        />
+                        <small>Leave empty for unlimited uses</small>
+                      </div>
+                      <div className="form-group">
+                        <label>Per User Limit</label>
+                        <input
+                          type="number"
+                          name="perUserLimit"
+                          value={promoForm.perUserLimit}
+                          onChange={handlePromoFormChange}
+                          min="1"
+                          placeholder="1"
+                        />
+                        <small>Times one user can use this code</small>
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Start Date</label>
+                        <input
+                          type="date"
+                          name="startDate"
+                          value={promoForm.startDate}
+                          onChange={handlePromoFormChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Expiry Date (optional)</label>
+                        <input
+                          type="date"
+                          name="expiryDate"
+                          value={promoForm.expiryDate}
+                          onChange={handlePromoFormChange}
+                        />
+                        <small>Leave empty for no expiry</small>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="checkbox"
+                          name="isActive"
+                          checked={promoForm.isActive}
+                          onChange={handlePromoFormChange}
+                        />
+                        Active (code can be used immediately)
+                      </label>
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="button" onClick={() => {
+                        setShowPromoForm(false);
+                        setEditingPromo(null);
+                        resetPromoForm();
+                      }}>
+                        Cancel
+                      </button>
+                      <button type="submit">
+                        {editingPromo ? 'Update Promo Code' : 'Create Promo Code'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            <div className="promo-codes-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Discount</th>
+                    <th>Usage</th>
+                    <th>Valid Until</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {promoCodes.map(promo => (
+                    <tr key={promo._id}>
+                      <td><strong>{promo.code}</strong></td>
+                      <td>{promo.description}</td>
+                      <td>
+                        {promo.discountType === 'percentage'
+                          ? `${promo.discountValue}%`
+                          : `$${promo.discountValue}`}
+                        {promo.maxDiscount && ` (max $${promo.maxDiscount})`}
+                      </td>
+                      <td>
+                        {promo.usageCount} / {promo.usageLimit || '∞'}
+                      </td>
+                      <td>
+                        {promo.expiryDate
+                          ? new Date(promo.expiryDate).toLocaleDateString()
+                          : 'Never'}
+                      </td>
+                      <td>
+                        <span className={`status-badge ${promo.isValid() ? 'completed' : 'failed'}`}>
+                          {promo.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td>
+                        <button onClick={() => handleTogglePromoCode(promo._id)}>
+                          {promo.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button onClick={() => handleEditPromoCode(promo)}>Edit</button>
+                        <button onClick={() => handleDeletePromoCode(promo._id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
