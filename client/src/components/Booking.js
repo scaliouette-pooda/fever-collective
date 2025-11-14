@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../config/api';
+import { CountdownTimer, SpotsRemainingBadge, RecentlyViewedCounter } from './SocialProof';
 import './Booking.css';
 
 function Booking() {
@@ -185,6 +186,10 @@ function Booking() {
 
       <div className="booking-container">
         <div className="booking-details">
+          {/* Social Proof Widgets */}
+          <CountdownTimer eventDate={event.date} spotsLeft={event.availableSpots} />
+          <RecentlyViewedCounter viewCount={Math.floor(Math.random() * 20) + 10} />
+
           <div className="event-summary">
             <h2>Event Details</h2>
             <div className="detail-item">
@@ -218,9 +223,11 @@ function Booking() {
               <span className="detail-label">Price</span>
               <span className="detail-value">${event.price} per person</span>
             </div>
-            <div className="detail-item">
-              <span className="detail-label">Available</span>
-              <span className="detail-value">{event.availableSpots} spots remaining</span>
+            <div className="detail-item" style={{ gridColumn: '1 / -1', marginTop: '10px' }}>
+              <SpotsRemainingBadge
+                availableSpots={event.availableSpots}
+                capacity={event.capacity}
+              />
             </div>
           </div>
 

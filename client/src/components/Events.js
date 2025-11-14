@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../config/api';
+import { LiveBookingNotification, SpotsRemainingBadge } from './SocialProof';
 import './Events.css';
 
 function Events() {
@@ -27,6 +28,8 @@ function Events() {
 
   return (
     <div className="events-page">
+      <LiveBookingNotification />
+
       <div className="events-header">
         <h1>Events</h1>
         <p className="events-subtitle">Discover our upcoming popup experiences</p>
@@ -78,9 +81,11 @@ function Events() {
                     <span className="detail-label">Location</span>
                     <span className="detail-value">{event.location}</span>
                   </div>
-                  <div className="detail">
-                    <span className="detail-label">Available</span>
-                    <span className="detail-value">{event.availableSpots} spots</span>
+                  <div className="detail" style={{ gridColumn: '1 / -1' }}>
+                    <SpotsRemainingBadge
+                      availableSpots={event.availableSpots}
+                      capacity={event.capacity}
+                    />
                   </div>
                 </div>
                 <p className="event-item-description">{event.description}</p>
