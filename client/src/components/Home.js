@@ -8,7 +8,7 @@ function Home() {
       <section className="hero">
         <div className="hero-content">
           <h1>The Fever Collective</h1>
-          <p className="tagline">A pilates & wellness community that's out of this world</p>
+          <p className="tagline"> Heat That Heals. Movement That Empowers.</p>
           <div className="hero-actions">
             <Link to="/events">
               <button>View Events</button>
