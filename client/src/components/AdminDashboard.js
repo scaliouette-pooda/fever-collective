@@ -11,6 +11,7 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [settings, setSettings] = useState(null);
   const [promoCodes, setPromoCodes] = useState([]);
+  const [emailCampaigns, setEmailCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -20,6 +21,8 @@ function AdminDashboard() {
   const [showBookingEditForm, setShowBookingEditForm] = useState(false);
   const [showPromoForm, setShowPromoForm] = useState(false);
   const [editingPromo, setEditingPromo] = useState(null);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [recipientPreview, setRecipientPreview] = useState(null);
 
   const [bookingForm, setBookingForm] = useState({
     name: '',
@@ -57,6 +60,15 @@ function AdminDashboard() {
     isActive: true
   });
 
+  const [emailForm, setEmailForm] = useState({
+    name: '',
+    subject: '',
+    message: '',
+    recipients: 'all',
+    customEmails: '',
+    includedPromoCode: ''
+  });
+
   useEffect(() => {
     // Check if user is admin
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -88,6 +100,9 @@ function AdminDashboard() {
       } else if (activeTab === 'promoCodes') {
         const res = await api.get('/api/promo-codes', config);
         setPromoCodes(res.data);
+      } else if (activeTab === 'emailMarketing') {
+        const res = await api.get('/api/email-campaigns', config);
+        setEmailCampaigns(res.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -482,6 +497,102 @@ function AdminDashboard() {
     }
   };
 
+  // Email Marketing Handlers
+  const handleEmailFormChange = (e) => {
+    const { name, value } = e.target;
+    setEmailForm({
+      ...emailForm,
+      [name]: value
+    });
+  };
+
+  const resetEmailForm = () => {
+    setEmailForm({
+      name: '',
+      subject: '',
+      message: '',
+      recipients: 'all',
+      customEmails: '',
+      includedPromoCode: ''
+    });
+    setRecipientPreview(null);
+  };
+
+  const handlePreviewRecipients = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post('/api/email-campaigns/preview-recipients', {
+        recipients: emailForm.recipients,
+        customEmails: emailForm.customEmails.split(',').map(e => e.trim()).filter(e => e)
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRecipientPreview(response.data);
+    } catch (error) {
+      console.error('Error previewing recipients:', error);
+      alert('Failed to preview recipients');
+    }
+  };
+
+  const handleCreateCampaign = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+
+      const campaignData = {
+        ...emailForm,
+        customEmails: emailForm.customEmails.split(',').map(e => e.trim()).filter(e => e)
+      };
+
+      await api.post('/api/email-campaigns', campaignData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('Campaign created successfully!');
+      setShowEmailForm(false);
+      resetEmailForm();
+      fetchData();
+    } catch (error) {
+      console.error('Error creating campaign:', error);
+      alert(error.response?.data?.error || 'Failed to create campaign');
+    }
+  };
+
+  const handleSendCampaign = async (campaignId) => {
+    if (!window.confirm('Are you sure you want to send this email campaign? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post(`/api/email-campaigns/${campaignId}/send`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert(`Campaign is being sent to ${response.data.recipientCount} recipients!`);
+      fetchData();
+    } catch (error) {
+      console.error('Error sending campaign:', error);
+      alert(error.response?.data?.error || 'Failed to send campaign');
+    }
+  };
+
+  const handleDeleteCampaign = async (campaignId) => {
+    if (!window.confirm('Are you sure you want to delete this campaign?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/api/email-campaigns/${campaignId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Campaign deleted successfully!');
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
+      alert('Failed to delete campaign');
+    }
+  };
+
   if (loading) return <div className="admin-loading">Loading...</div>;
 
   return (
@@ -509,6 +620,12 @@ function AdminDashboard() {
           onClick={() => setActiveTab('promoCodes')}
         >
           Promo Codes
+        </button>
+        <button
+          className={activeTab === 'emailMarketing' ? 'active' : ''}
+          onClick={() => setActiveTab('emailMarketing')}
+        >
+          Email Marketing
         </button>
         <button
           className={activeTab === 'analytics' ? 'active' : ''}
@@ -941,6 +1058,36 @@ function AdminDashboard() {
               </button>
             </div>
 
+            {/* Description/Help Text */}
+            <div className="section-description">
+              <h3>About Promo Codes</h3>
+              <p>Create and manage discount codes to drive sales and reward customers. Promo codes can be used during checkout to reduce the booking price.</p>
+
+              <div className="promo-tips">
+                <h4>💡 Tips for Creating Effective Promo Codes:</h4>
+                <ul>
+                  <li><strong>First-Time Customers:</strong> Use codes like FIRST10 or WELCOME15 to attract new customers</li>
+                  <li><strong>Early Bird Discounts:</strong> Reward customers who book in advance (e.g., EARLYBIRD, ADVANCE20)</li>
+                  <li><strong>Social Media:</strong> Create exclusive codes for Instagram/Facebook followers (e.g., INSTA15, FB10)</li>
+                  <li><strong>Loyalty Rewards:</strong> Thank returning customers with special codes (e.g., LOYAL20, VIP25)</li>
+                  <li><strong>Seasonal Campaigns:</strong> Run time-limited promotions (e.g., SUMMER10, HOLIDAY15)</li>
+                  <li><strong>Influencer Partnerships:</strong> Give influencers unique codes to track referrals</li>
+                </ul>
+              </div>
+
+              <div className="promo-features">
+                <h4>✨ Features:</h4>
+                <ul>
+                  <li><strong>Flexible Discounts:</strong> Choose percentage (10%, 25%) or fixed amount ($5, $10)</li>
+                  <li><strong>Usage Limits:</strong> Set total usage limits and per-user limits</li>
+                  <li><strong>Minimum Purchase:</strong> Require minimum booking amount</li>
+                  <li><strong>Schedule Codes:</strong> Set start dates and expiry dates</li>
+                  <li><strong>Track Performance:</strong> See usage count for each code</li>
+                  <li><strong>Quick Toggle:</strong> Activate or deactivate codes instantly</li>
+                </ul>
+              </div>
+            </div>
+
             {showPromoForm && (
               <div className="event-form-modal">
                 <div className="event-form-container">
@@ -1151,6 +1298,230 @@ function AdminDashboard() {
                         </button>
                         <button onClick={() => handleEditPromoCode(promo)}>Edit</button>
                         <button onClick={() => handleDeletePromoCode(promo._id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'emailMarketing' && (
+          <div className="email-marketing-section">
+            <div className="section-header">
+              <h2>Email Marketing</h2>
+              <button onClick={() => {
+                setShowEmailForm(true);
+                resetEmailForm();
+              }}>
+                Create New Campaign
+              </button>
+            </div>
+
+            {/* Description */}
+            <div className="section-description">
+              <h3>About Email Marketing</h3>
+              <p>Send targeted email campaigns to your customers to announce new events, share promotions, and build loyalty.</p>
+
+              <div className="promo-tips">
+                <h4>💡 Campaign Ideas:</h4>
+                <ul>
+                  <li><strong>New Event Announcements:</strong> Email all customers when you launch a new popup</li>
+                  <li><strong>Win-Back Campaigns:</strong> Re-engage customers who haven't booked recently</li>
+                  <li><strong>Exclusive Offers:</strong> Send promo codes to reward loyal customers</li>
+                  <li><strong>Last Chance Reminders:</strong> Alert customers about events filling up</li>
+                </ul>
+              </div>
+            </div>
+
+            {showEmailForm && (
+              <div className="event-form-modal">
+                <div className="event-form-container">
+                  <h3>Create Email Campaign</h3>
+                  <form onSubmit={handleCreateCampaign}>
+                    <div className="form-group">
+                      <label>Campaign Name *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={emailForm.name}
+                        onChange={handleEmailFormChange}
+                        placeholder="Summer Promotion 2024"
+                        required
+                      />
+                      <small>Internal name for your reference</small>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Email Subject *</label>
+                      <input
+                        type="text"
+                        name="subject"
+                        value={emailForm.subject}
+                        onChange={handleEmailFormChange}
+                        placeholder="New Pilates Popup in Berkeley!"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Message *</label>
+                      <textarea
+                        name="message"
+                        value={emailForm.message}
+                        onChange={handleEmailFormChange}
+                        rows="8"
+                        placeholder="We're excited to announce our next popup event in Berkeley!&#10;&#10;Join us for an incredible pilates experience..."
+                        required
+                      />
+                      <small>Write your email message. Keep it friendly and engaging!</small>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Recipients *</label>
+                        <select
+                          name="recipients"
+                          value={emailForm.recipients}
+                          onChange={handleEmailFormChange}
+                          required
+                        >
+                          <option value="all">All Customers</option>
+                          <option value="past_customers">Past Customers (Completed Bookings)</option>
+                          <option value="recent">Recent (Last 30 Days)</option>
+                          <option value="custom">Custom Email List</option>
+                        </select>
+                      </div>
+
+                      <div className="form-group">
+                        <label>Include Promo Code (Optional)</label>
+                        <select
+                          name="includedPromoCode"
+                          value={emailForm.includedPromoCode}
+                          onChange={handleEmailFormChange}
+                        >
+                          <option value="">No Promo Code</option>
+                          {promoCodes.filter(p => p.isActive).map(promo => (
+                            <option key={promo._id} value={promo._id}>
+                              {promo.code} - {promo.description}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {emailForm.recipients === 'custom' && (
+                      <div className="form-group">
+                        <label>Custom Email List</label>
+                        <textarea
+                          name="customEmails"
+                          value={emailForm.customEmails}
+                          onChange={handleEmailFormChange}
+                          rows="4"
+                          placeholder="email1@example.com, email2@example.com, email3@example.com"
+                        />
+                        <small>Comma-separated email addresses</small>
+                      </div>
+                    )}
+
+                    <div className="form-group">
+                      <button
+                        type="button"
+                        onClick={handlePreviewRecipients}
+                        style={{
+                          background: '#2196F3',
+                          color: 'white',
+                          padding: '0.75rem 1.5rem',
+                          border: 'none',
+                          cursor: 'pointer',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        Preview Recipients
+                      </button>
+                      {recipientPreview && (
+                        <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(100, 255, 100, 0.1)', borderRadius: '4px' }}>
+                          <strong>Will send to {recipientPreview.count} recipients</strong>
+                          {recipientPreview.emails && recipientPreview.emails.length > 0 && (
+                            <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                              Preview: {recipientPreview.emails.slice(0, 5).join(', ')}
+                              {recipientPreview.count > 5 && '...'}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="button" onClick={() => {
+                        setShowEmailForm(false);
+                        resetEmailForm();
+                      }}>
+                        Cancel
+                      </button>
+                      <button type="submit">
+                        Create Campaign
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            <div className="email-campaigns-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Campaign Name</th>
+                    <th>Subject</th>
+                    <th>Recipients</th>
+                    <th>Status</th>
+                    <th>Sent</th>
+                    <th>Success Rate</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {emailCampaigns.map(campaign => (
+                    <tr key={campaign._id}>
+                      <td><strong>{campaign.name}</strong></td>
+                      <td>{campaign.subject}</td>
+                      <td>
+                        {campaign.recipients === 'all' && 'All Customers'}
+                        {campaign.recipients === 'past_customers' && 'Past Customers'}
+                        {campaign.recipients === 'recent' && 'Recent (30 days)'}
+                        {campaign.recipients === 'custom' && 'Custom List'}
+                      </td>
+                      <td>
+                        <span className={`status-badge ${campaign.status === 'sent' ? 'completed' : campaign.status === 'failed' ? 'failed' : 'pending'}`}>
+                          {campaign.status}
+                        </span>
+                      </td>
+                      <td>
+                        {campaign.sentAt
+                          ? new Date(campaign.sentAt).toLocaleDateString()
+                          : '-'}
+                      </td>
+                      <td>
+                        {campaign.totalRecipients > 0
+                          ? `${campaign.successCount}/${campaign.totalRecipients} (${Math.round((campaign.successCount / campaign.totalRecipients) * 100)}%)`
+                          : '-'}
+                      </td>
+                      <td>
+                        {campaign.status === 'draft' && (
+                          <button
+                            onClick={() => handleSendCampaign(campaign._id)}
+                            style={{ backgroundColor: '#4CAF50' }}
+                          >
+                            Send Now
+                          </button>
+                        )}
+                        {campaign.status !== 'sending' && (
+                          <button onClick={() => handleDeleteCampaign(campaign._id)}>
+                            Delete
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

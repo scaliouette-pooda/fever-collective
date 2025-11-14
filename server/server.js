@@ -42,12 +42,14 @@ const eventRoutes = require('./routes/events');
 const bookingRoutes = require('./routes/bookings');
 const settingsRoutes = require('./routes/settings');
 const promoCodeRoutes = require('./routes/promoCodes');
+const emailCampaignRoutes = require('./routes/emailCampaigns');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/promo-codes', promoCodeRoutes);
+app.use('/api/email-campaigns', emailCampaignRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Collective API' });

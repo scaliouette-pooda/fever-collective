@@ -4,7 +4,6 @@ import { Analytics } from '@vercel/analytics/react';
 import './App.css';
 import Navigation from './components/Navigation';
 import Home from './components/Home';
-import About from './components/About';
 import Events from './components/Events';
 import Contact from './components/Contact';
 import Booking from './components/Booking';
@@ -22,7 +21,6 @@ function App() {
         <Navigation />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
           <Route path="/events" element={<Events />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/booking/:eventId" element={<Booking />} />
