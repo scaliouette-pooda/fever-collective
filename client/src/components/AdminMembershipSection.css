@@ -104,6 +104,8 @@
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s;
+  background: white;
+  color: #333;
 }
 
 .filter-group input:focus,
@@ -394,6 +396,8 @@
   font-size: 14px;
   font-family: inherit;
   transition: border-color 0.3s;
+  background: white;
+  color: #333;
 }
 
 .form-group input:focus,
