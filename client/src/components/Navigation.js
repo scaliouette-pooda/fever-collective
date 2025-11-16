@@ -34,6 +34,7 @@ function Navigation() {
         <Link to="/" className="nav-logo">The Fever Studio</Link>
         <ul>
           <li><Link to="/events">Events</Link></li>
+          <li><Link to="/memberships">Memberships</Link></li>
           <li><Link to="/class-packs">Class Packs</Link></li>
           <li><Link to="/contact">Contact</Link></li>
           {!isLoggedIn ? (

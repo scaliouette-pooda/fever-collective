@@ -15,6 +15,7 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import Profile from './components/Profile';
 import AdminDashboard from './components/AdminDashboard';
+import Memberships from './components/Memberships';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/memberships" element={<Memberships />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/booking/:eventId" element={<Booking />} />
           <Route path="/confirmation/:bookingId" element={<BookingConfirmation />} />
