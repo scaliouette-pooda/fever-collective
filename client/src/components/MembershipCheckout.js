@@ -413,6 +413,7 @@ function MembershipCheckout() {
 
       {showWaiverModal && (
         <WaiverModal
+          isOpen={showWaiverModal}
           onClose={() => setShowWaiverModal(false)}
           onComplete={handleWaiverComplete}
         />
