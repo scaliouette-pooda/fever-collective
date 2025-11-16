@@ -84,13 +84,22 @@ function Events() {
     const weekEnd = new Date(weekDates[6]);
     weekEnd.setHours(23, 59, 59, 999);
 
+    console.log('=== SCHEDULE DEBUG ===');
+    console.log('Available time slots:', times);
+    console.log('Week start:', weekStart.toISOString());
+    console.log('Week end:', weekEnd.toISOString());
+
     events.forEach(event => {
       const eventDate = new Date(event.date);
       eventDate.setHours(0, 0, 0, 0);
 
+      console.log('Event:', event.title, 'Date:', eventDate.toISOString(), 'Time:', event.time);
+
       if (eventDate >= weekStart && eventDate <= weekEnd) {
         const dateKey = eventDate.toISOString().split('T')[0];
         const timeSlot = event.time;
+
+        console.log('✓ Event in range. DateKey:', dateKey, 'TimeSlot:', timeSlot, 'Match found:', times.includes(timeSlot));
 
         if (schedule[dateKey]) {
           if (!schedule[dateKey][timeSlot]) {
@@ -98,6 +107,8 @@ function Events() {
           }
           schedule[dateKey][timeSlot].push(event);
         }
+      } else {
+        console.log('✗ Event out of range');
       }
     });
 

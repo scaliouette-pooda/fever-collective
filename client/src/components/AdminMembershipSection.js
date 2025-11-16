@@ -57,7 +57,13 @@ function AdminMembershipSection() {
 
     } catch (err) {
       console.error('Error fetching membership data:', err);
-      setError('Failed to load membership data: ' + (err.response?.data?.message || err.message));
+      if (err.response?.status === 401) {
+        setError('Authentication required. Please make sure you are logged in as an admin.');
+      } else if (err.response?.status === 403) {
+        setError('Access denied. Admin privileges required.');
+      } else {
+        setError('Failed to load membership data: ' + (err.response?.data?.message || err.message));
+      }
     } finally {
       setLoading(false);
     }
