@@ -89,7 +89,7 @@
 1. Go to: https://fever-collective.vercel.app/login
 
 2. Login with:
-   - **Email:** admin@fevercollective.com
+   - **Email:** admin@thefeverstudio.com
    - **Password:** fever2025
 
 3. You should:
@@ -144,7 +144,7 @@
 ✅ **Admin System**
 - Admin-only access to dashboard
 - Role-based authentication
-- Admin user: admin@fevercollective.com
+- Admin user: admin@thefeverstudio.com
 
 ✅ **Payment Integration**
 - Venmo payment links

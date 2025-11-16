@@ -2447,7 +2447,7 @@ function AdminDashboard() {
                     type="url"
                     value={settings.socialMedia?.instagram || ''}
                     onChange={(e) => handleSettingsChange('socialMedia', 'instagram', e.target.value)}
-                    placeholder="https://instagram.com/thefevercollective"
+                    placeholder="https://instagram.com/thethefeverstudio"
                   />
                 </div>
                 <div className="form-group">
@@ -2456,7 +2456,7 @@ function AdminDashboard() {
                     type="url"
                     value={settings.socialMedia?.facebook || ''}
                     onChange={(e) => handleSettingsChange('socialMedia', 'facebook', e.target.value)}
-                    placeholder="https://facebook.com/thefevercollective"
+                    placeholder="https://facebook.com/thethefeverstudio"
                   />
                 </div>
                 <div className="form-group">
@@ -2465,7 +2465,7 @@ function AdminDashboard() {
                     type="url"
                     value={settings.socialMedia?.twitter || ''}
                     onChange={(e) => handleSettingsChange('socialMedia', 'twitter', e.target.value)}
-                    placeholder="https://twitter.com/fevercollective"
+                    placeholder="https://twitter.com/thefeverstudio"
                   />
                 </div>
               </div>
@@ -2543,7 +2543,7 @@ function AdminDashboard() {
                     type="text"
                     value={settings.payment?.venmoUsername || ''}
                     onChange={(e) => handleSettingsChange('payment', 'venmoUsername', e.target.value)}
-                    placeholder="@fevercollective"
+                    placeholder="@thefeverstudio"
                   />
                 </div>
                 <div className="form-group">
