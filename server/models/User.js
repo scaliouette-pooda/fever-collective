@@ -62,11 +62,6 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  // Class pack credits
-  availableCredits: {
-    type: Number,
-    default: 0
-  },
   createdAt: {
     type: Date,
     default: Date.now

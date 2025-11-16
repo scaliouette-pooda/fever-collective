@@ -44,8 +44,8 @@ function MembershipCheckout() {
 
   const checkWaiverStatus = async (userId) => {
     try {
-      const response = await api.get(`/api/waivers/check/${userId}`);
-      setHasWaiver(response.data.hasValidWaiver);
+      const response = await api.get('/api/waivers/status');
+      setHasWaiver(response.data.hasSigned && response.data.isValid);
     } catch (error) {
       console.error('Error checking waiver status:', error);
     }
