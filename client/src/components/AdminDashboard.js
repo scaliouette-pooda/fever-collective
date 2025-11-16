@@ -2479,7 +2479,7 @@ function AdminDashboard() {
                     type="email"
                     value={settings.contact?.email || ''}
                     onChange={(e) => handleSettingsChange('contact', 'email', e.target.value)}
-                    placeholder="info@thefevercollective.com"
+                    placeholder="info@thefeverstudio.com"
                   />
                 </div>
                 <div className="form-group">
@@ -2520,7 +2520,7 @@ function AdminDashboard() {
                     type="email"
                     value={settings.emailConfig?.fromEmail || ''}
                     onChange={(e) => handleSettingsChange('emailConfig', 'fromEmail', e.target.value)}
-                    placeholder="info@thefevercollective.com"
+                    placeholder="info@thefeverstudio.com"
                   />
                 </div>
                 <div className="form-group">
@@ -2529,7 +2529,7 @@ function AdminDashboard() {
                     type="email"
                     value={settings.emailConfig?.replyTo || ''}
                     onChange={(e) => handleSettingsChange('emailConfig', 'replyTo', e.target.value)}
-                    placeholder="info@thefevercollective.com"
+                    placeholder="info@thefeverstudio.com"
                   />
                 </div>
               </div>

@@ -11,8 +11,8 @@ const resetAdminPassword = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    const email = 'info@thefevercollective.com';
-    const newPassword = 'FeverDesigner2025!';
+    const email = 'info@thefeverstudio.com';
+    const newPassword = 'Laurcalmilo123!';
 
     // Find and delete existing user
     const existingUser = await User.findOne({ email });
@@ -40,7 +40,7 @@ const resetAdminPassword = async () => {
     console.log('\n📧 Admin Credentials:');
     console.log('Email:', email);
     console.log('Password:', newPassword);
-    console.log('\n🔗 Login at: https://thefevercollective.com/login');
+    console.log('\n🔗 Login at: https://thefeverstudio.com/login');
     console.log('\n⚠️  Remember to change this password after first login!');
 
     process.exit(0);

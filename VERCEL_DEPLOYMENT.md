@@ -87,11 +87,11 @@ PORT=5001
 
 EMAIL_SERVICE=custom
 
-EMAIL_USER=info@thefevercollective.com
+EMAIL_USER=info@thefeverstudio.com
 
-EMAIL_PASSWORD=Laurmilo123!
+EMAIL_PASSWORD=Laurcalmilo123!
 
-SMTP_HOST=mail.thefevercollective.com
+SMTP_HOST=mail.thefeverstudio.com
 
 SMTP_PORT=587
 ```
@@ -145,7 +145,7 @@ After deployment, verify these items:
 - [ ] User registration works
 - [ ] Login works
 - [ ] Email sending works (welcome, booking, password reset)
-- [ ] Admin login works with info@thefevercollective.com
+- [ ] Admin login works with info@thefeverstudio.com
 - [ ] Events can be created/edited/deleted
 - [ ] Bookings can be created
 - [ ] Images upload correctly (if Cloudinary configured)
@@ -166,8 +166,8 @@ After deployment, verify these items:
 4. Click link and reset password
 
 ### Test Admin Access
-1. Go to https://thefevercollective.com/login
-2. Login with: info@thefevercollective.com / FeverDesigner2025!
+1. Go to https://thefeverstudio.com/login (or https://thefevercollective.com/login)
+2. Login with: info@thefeverstudio.com / Laurcalmilo123!
 3. Verify admin dashboard loads
 4. Try creating/editing an event
 

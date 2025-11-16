@@ -11,10 +11,10 @@ const createAdminUser = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    const email = 'info@thefevercollective.com';
+    const email = 'info@thefeverstudio.com';
     const name = 'The Fever Studio';
     const phone = '555-0100'; // Placeholder phone
-    const password = 'FeverDesigner2025!'; // Different password for new admin
+    const password = 'Laurcalmilo123!'; // Admin password
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -34,7 +34,7 @@ const createAdminUser = async () => {
       console.log('\n📧 Existing Admin Account:');
       console.log('Email:', email);
       console.log('Password: [Already set - not changed]');
-      console.log('Login URL: https://fever-collective.vercel.app/admin');
+      console.log('Login URL: https://thefeverstudio.com/admin');
     } else {
       // Hash password
       const salt = await bcrypt.genSalt(10);
@@ -54,7 +54,7 @@ const createAdminUser = async () => {
       console.log('\n📧 New Admin Credentials:');
       console.log('Email:', email);
       console.log('Password:', password);
-      console.log('Login URL: https://fever-collective.vercel.app/admin');
+      console.log('Login URL: https://thefeverstudio.com/admin');
       console.log('\n⚠️  IMPORTANT: Have them change their password after first login!');
     }
 

@@ -27,7 +27,7 @@ const settingsSchema = new mongoose.Schema({
   contact: {
     email: {
       type: String,
-      default: 'info@thefevercollective.com'
+      default: 'info@thefeverstudio.com'
     },
     phone: {
       type: String,
@@ -47,11 +47,11 @@ const settingsSchema = new mongoose.Schema({
     },
     fromEmail: {
       type: String,
-      default: 'info@thefevercollective.com'
+      default: 'info@thefeverstudio.com'
     },
     replyTo: {
       type: String,
-      default: 'info@thefevercollective.com'
+      default: 'info@thefeverstudio.com'
     }
   },
 

@@ -14,9 +14,9 @@ JWT_SECRET=f1e62c8e923229be2736c30a8ccf1f6d
 CLIENT_URL=https://thefevercollective.com
 PORT=5001
 EMAIL_SERVICE=custom
-EMAIL_USER=info@thefevercollective.com
-EMAIL_PASSWORD=Laurmilo123!
-SMTP_HOST=mail.thefevercollective.com
+EMAIL_USER=info@thefeverstudio.com
+EMAIL_PASSWORD=Laurcalmilo123!
+SMTP_HOST=mail.thefeverstudio.com
 SMTP_PORT=587
 VENMO_USERNAME=YourVenmoUsername
 PAYPAL_EMAIL=your-email@example.com
@@ -115,7 +115,7 @@ openssl rand -hex 32
 
 **When to use:**
 - `gmail` - Using Gmail with app password
-- `custom` - Using custom domain email (like info@thefevercollective.com)
+- `custom` - Using custom domain email (like info@thefeverstudio.com)
 - `hotmail` - Using Outlook/Hotmail
 
 ---
@@ -125,7 +125,7 @@ openssl rand -hex 32
 **Type:** String (email address)
 **Required:** Yes
 
-**Current Value:** `info@thefevercollective.com`
+**Current Value:** `info@thefeverstudio.com`
 
 **This email will be the "From" address for:**
 - Welcome emails
@@ -300,9 +300,9 @@ JWT_SECRET=f1e62c8e923229be2736c30a8ccf1f6d
 CLIENT_URL=http://localhost:3000
 PORT=5001
 EMAIL_SERVICE=custom
-EMAIL_USER=info@thefevercollective.com
-EMAIL_PASSWORD=Laurmilo123!
-SMTP_HOST=mail.thefevercollective.com
+EMAIL_USER=info@thefeverstudio.com
+EMAIL_PASSWORD=Laurcalmilo123!
+SMTP_HOST=mail.thefeverstudio.com
 SMTP_PORT=587
 ```
 

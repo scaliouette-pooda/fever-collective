@@ -50,7 +50,7 @@ A sophisticated pilates popup event booking platform with admin dashboard, event
 - Frontend: Vercel (https://thefevercollective.com)
 - Backend: Vercel
 - Database: MongoDB Atlas
-- Email: Custom SMTP (info@thefevercollective.com)
+- Email: Custom SMTP (info@thefeverstudio.com)
 
 ## Quick Start (Local Development)
 

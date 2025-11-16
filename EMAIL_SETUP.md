@@ -2,8 +2,8 @@
 
 ## Current Production Setup
 
-**Email Address:** info@thefevercollective.com
-**SMTP Host:** mail.thefevercollective.com
+**Email Address:** info@thefeverstudio.com
+**SMTP Host:** mail.thefeverstudio.com
 **Port:** 587
 **Status:** ✅ Configured and ready
 
@@ -47,13 +47,13 @@ EMAIL_PASSWORD=abcd efgh ijkl mnop
 
 ## Custom Domain Email (Current Setup)
 
-**For info@thefevercollective.com:**
+**For info@thefeverstudio.com:**
 
 ```
 EMAIL_SERVICE=custom
-EMAIL_USER=info@thefevercollective.com
+EMAIL_USER=info@thefeverstudio.com
 EMAIL_PASSWORD=your-email-password
-SMTP_HOST=mail.thefevercollective.com
+SMTP_HOST=mail.thefeverstudio.com
 SMTP_PORT=587
 ```
 
@@ -243,8 +243,8 @@ All variables should be added to Settings → Environment Variables.
 **Current Production Values:**
 ```
 EMAIL_SERVICE=custom
-EMAIL_USER=info@thefevercollective.com
-EMAIL_PASSWORD=Laurmilo123!
-SMTP_HOST=mail.thefevercollective.com
+EMAIL_USER=info@thefeverstudio.com
+EMAIL_PASSWORD=Laurcalmilo123!
+SMTP_HOST=mail.thefeverstudio.com
 SMTP_PORT=587
 ```

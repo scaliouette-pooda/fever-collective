@@ -2,15 +2,17 @@
 
 ## Current Admin Account
 
-**Email:** info@thefevercollective.com
-**Password:** FeverDesigner2025!
+**Email:** info@thefeverstudio.com
+**Password:** Laurcalmilo123!
 
 **Login URLs:**
-- Production: https://thefevercollective.com/login
+- Production: https://thefeverstudio.com/login
+- Alternative Domain: https://thefevercollective.com/login
 - Local: http://localhost:3000/login
 
 **Admin Dashboard:**
-- Production: https://thefevercollective.com/admin
+- Production: https://thefeverstudio.com/admin
+- Alternative Domain: https://thefevercollective.com/admin
 - Local: http://localhost:3000/admin
 
 ---
@@ -35,15 +37,15 @@ The admin user has already been created in production. If you need to create a n
    ```
 
 The script will:
-- Create a new admin user with email: info@thefevercollective.com
-- Set password to: FeverDesigner2025!
+- Create a new admin user with email: info@thefeverstudio.com
+- Set password to: Laurcalmilo123!
 - If user exists, it will update their role to admin
 
 ### Option 2: Update User Role Manually in MongoDB Atlas
 
 1. Go to MongoDB Atlas dashboard
 2. Browse Collections → fever-collective database → users collection
-3. Find the user with email: info@thefevercollective.com
+3. Find the user with email: info@thefeverstudio.com
 4. Edit the document and set `role: "admin"`
 5. Save changes
 
