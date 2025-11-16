@@ -68,7 +68,6 @@ function Login() {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              required
             />
             <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
               <Link to="/forgot-password" style={{ fontSize: '0.9rem', color: '#c9a86a' }}>
