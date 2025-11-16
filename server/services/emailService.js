@@ -36,18 +36,18 @@ const sendWelcomeEmail = async (user) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: user.email,
-      subject: 'Welcome to The Fever Collective! 🧘‍♀️',
+      subject: 'Welcome to The Fever Studio! 🧘‍♀️',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #1a1a1a; border-bottom: 2px solid #c9a86a; padding-bottom: 10px;">
-            Welcome to The Fever Collective
+            Welcome to The Fever Studio
           </h1>
 
           <p>Hi ${user.name},</p>
 
-          <p>Thank you for joining The Fever Collective! We're excited to have you as part of our community.</p>
+          <p>Thank you for joining The Fever Studio! We're excited to have you as part of our community.</p>
 
           <p>Your account has been successfully created with the email: <strong>${user.email}</strong></p>
 
@@ -92,7 +92,7 @@ const sendBookingConfirmation = async (booking) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: booking.email,
       subject: `Booking Confirmation - ${booking.event.title}`,
       html: `
@@ -144,7 +144,7 @@ const sendPaymentConfirmation = async (booking) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: booking.email,
       subject: `Payment Confirmed - ${booking.event.title}`,
       html: `
@@ -224,7 +224,7 @@ const sendPasswordResetEmail = async (user, resetToken) => {
     const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: 'Password Reset Request',
       html: `
@@ -235,7 +235,7 @@ const sendPasswordResetEmail = async (user, resetToken) => {
 
           <p>Hi ${user.name},</p>
 
-          <p>We received a request to reset your password for your The Fever Collective account.</p>
+          <p>We received a request to reset your password for your The Fever Studio account.</p>
 
           <p>Click the button below to reset your password. This link will expire in 1 hour.</p>
 

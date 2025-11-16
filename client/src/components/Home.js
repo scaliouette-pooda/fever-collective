@@ -23,7 +23,7 @@ function Home() {
     <div className="home">
       <section className="hero">
         <div className="hero-content">
-          <h1>The Fever Collective</h1>
+          <h1>The Fever Studio</h1>
           <p className="tagline">Heat That Heals. Movement That Empowers.</p>
           <p className="tagline-secondary">sculpt · strength · sweat · stretch</p>
           <div className="hero-actions">
@@ -64,7 +64,7 @@ function Home() {
         <div className="mission-content">
           <h2>Our Mission</h2>
           <p>
-            The Fever Collective is more than a workout—it's a holistic wellness experience
+            The Fever Studio is more than a workout—it's a holistic wellness experience
             that transcends traditional fitness. We curate transformative pilates popup events
             in unique locations, creating intentional spaces for movement, connection, and community.
           </p>

@@ -60,7 +60,7 @@ const sendPostEventFollowUp = async (booking) => {
     `).join('');
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: booking.email,
       subject: `How was ${event.title}? Get 20% off your next booking!`,
       html: `
@@ -101,7 +101,7 @@ const sendPostEventFollowUp = async (booking) => {
 
           <p style="color: #666; font-size: 0.9em; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
             See you on the mat soon!<br>
-            The Fever Collective Team
+            The Fever Studio Team
           </p>
         </div>
       `
@@ -146,7 +146,7 @@ const sendWinBackEmail = async (user) => {
     `).join('');
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: `We miss you! Come back with 30% off 💫`,
       html: `
@@ -157,7 +157,7 @@ const sendWinBackEmail = async (user) => {
 
           <p>Hi ${user.name},</p>
 
-          <p>It's been a while since we've seen you on the mat. The Fever Collective community isn't the same without you!</p>
+          <p>It's been a while since we've seen you on the mat. The Fever Studio community isn't the same without you!</p>
 
           <div style="background-color: rgba(201, 168, 106, 0.1); padding: 25px; margin: 25px 0; border: 2px solid #c9a86a; text-align: center;">
             <h2 style="color: #c9a86a; margin: 0 0 15px 0;">🎉 Welcome Back Offer!</h2>
@@ -187,7 +187,7 @@ const sendWinBackEmail = async (user) => {
 
           <p style="color: #666; font-size: 0.9em; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
             Hope to see you soon!<br>
-            The Fever Collective Team
+            The Fever Studio Team
           </p>
         </div>
       `
@@ -211,7 +211,7 @@ const sendBirthdayEmail = async (user) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: `🎂 Happy Birthday ${user.name.split(' ')[0]}! Your gift awaits...`,
       html: `
@@ -255,7 +255,7 @@ const sendBirthdayEmail = async (user) => {
 
           <p style="color: #666; font-size: 0.9em; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center;">
             With love,<br>
-            The Fever Collective Team 💛
+            The Fever Studio Team 💛
           </p>
         </div>
       `
@@ -279,7 +279,7 @@ const sendAbandonedBookingReminder = async (userEmail, event) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+      from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
       to: userEmail,
       subject: `Don't forget! ${event.title} is waiting for you...`,
       html: `

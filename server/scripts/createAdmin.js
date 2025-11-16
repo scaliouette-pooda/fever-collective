@@ -12,7 +12,7 @@ const createAdminUser = async () => {
     console.log('Connected to MongoDB');
 
     const email = 'info@thefevercollective.com';
-    const name = 'The Fever Collective';
+    const name = 'The Fever Studio';
     const phone = '555-0100'; // Placeholder phone
     const password = 'FeverDesigner2025!'; // Different password for new admin
 

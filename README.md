@@ -1,4 +1,4 @@
-# The Fever Collective
+# The Fever Studio
 
 A sophisticated pilates popup event booking platform with admin dashboard, event management, and payment processing capabilities.
 

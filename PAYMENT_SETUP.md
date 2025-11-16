@@ -1,6 +1,6 @@
 # Payment Setup Guide
 
-The Fever Collective now supports **PayPal** and **Venmo** payments for event bookings.
+The Fever Studio now supports **PayPal** and **Venmo** payments for event bookings.
 
 ## How It Works
 

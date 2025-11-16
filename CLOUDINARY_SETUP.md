@@ -1,6 +1,6 @@
 # Cloudinary Image Upload Setup Guide
 
-This guide will help you set up Cloudinary for handling event images in The Fever Collective application.
+This guide will help you set up Cloudinary for handling event images in The Fever Studio application.
 
 ## Why Cloudinary?
 
@@ -48,7 +48,7 @@ CLOUDINARY_API_SECRET=your_api_secret_here
 
 1. Go to your Vercel dashboard
 2. Select your project
-3. Go to **Settings** ’ **Environment Variables**
+3. Go to **Settings** ï¿½ **Environment Variables**
 4. Add these three variables:
    - `CLOUDINARY_CLOUD_NAME` = your cloud name
    - `CLOUDINARY_API_KEY` = your API key
@@ -122,7 +122,7 @@ For a small to medium events site, this should last you a **very long time**. At
 
 Check your Cloudinary usage:
 1. Log in to [Cloudinary Dashboard](https://cloudinary.com/console)
-2. View your usage under **Dashboard** ’ **Usage**
+2. View your usage under **Dashboard** ï¿½ **Usage**
 3. Monitor storage, bandwidth, and transformations
 
 ## Need Help?
@@ -138,4 +138,4 @@ Once Cloudinary is set up:
 3. Your MongoDB costs stay low (only storing URLs)
 4. Images are automatically optimized for web delivery
 
-Enjoy your new image upload capability! <‰
+Enjoy your new image upload capability! <ï¿½

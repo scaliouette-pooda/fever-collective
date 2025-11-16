@@ -1,7 +1,7 @@
 {
   "name": "fever-collective-server",
   "version": "1.0.0",
-  "description": "Backend API for The Fever Collective",
+  "description": "Backend API for The Fever Studio",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

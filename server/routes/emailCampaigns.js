@@ -225,7 +225,7 @@ async function sendCampaignEmails(campaign, emails) {
     let emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #1a1a1a; border-bottom: 2px solid #c9a86a; padding-bottom: 10px;">
-          The Fever Collective
+          The Fever Studio
         </h1>
 
         <div style="padding: 20px 0;">
@@ -260,7 +260,7 @@ async function sendCampaignEmails(campaign, emails) {
     for (const email of emails) {
       try {
         await transporter.sendMail({
-          from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+          from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
           to: email,
           subject: campaign.subject,
           html: emailHtml

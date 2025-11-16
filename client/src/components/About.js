@@ -14,7 +14,7 @@ function About() {
         <div className="mission-content">
           <h2>Our Mission</h2>
           <p>
-            The Fever Collective is more than a workout—it's a holistic wellness experience
+            The Fever Studio is more than a workout—it's a holistic wellness experience
             that transcends traditional fitness. We curate transformative pilates popup events
             in unique locations, creating intentional spaces for movement, connection, and community.
           </p>

@@ -1,6 +1,6 @@
 # Deployment Checklist for Review
 
-Follow these steps to deploy The Fever Collective for external review.
+Follow these steps to deploy The Fever Studio for external review.
 
 ## ✅ Step 1: Create GitHub Repository (5 minutes)
 
@@ -161,7 +161,7 @@ Example: `https://fever-collective-api.onrender.com`
 
 ### Test Frontend
 1. Visit your Vercel URL: `https://fever-collective.vercel.app`
-2. Should see The Fever Collective homepage
+2. Should see The Fever Studio homepage
 3. Navigation should work: About, Events, Contact
 
 ### Test Backend Connection
@@ -253,7 +253,7 @@ Once everything works:
 
 Example message:
 ```
-Hi! Here's The Fever Collective for review:
+Hi! Here's The Fever Studio for review:
 
 🌐 Website: https://fever-collective.vercel.app
 

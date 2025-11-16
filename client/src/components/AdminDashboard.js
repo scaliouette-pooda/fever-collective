@@ -2511,7 +2511,7 @@ function AdminDashboard() {
                     type="text"
                     value={settings.emailConfig?.fromName || ''}
                     onChange={(e) => handleSettingsChange('emailConfig', 'fromName', e.target.value)}
-                    placeholder="The Fever Collective"
+                    placeholder="The Fever Studio"
                   />
                 </div>
                 <div className="form-group">
@@ -2592,7 +2592,7 @@ function AdminDashboard() {
                     type="text"
                     value={settings.siteInfo?.siteName || ''}
                     onChange={(e) => handleSettingsChange('siteInfo', 'siteName', e.target.value)}
-                    placeholder="The Fever Collective"
+                    placeholder="The Fever Studio"
                   />
                 </div>
                 <div className="form-group">

@@ -62,7 +62,7 @@ app.use('/api/referrals', referralRoutes);
 app.use('/api/class-packs', classPackRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'The Fever Collective API' });
+  res.json({ message: 'The Fever Studio API' });
 });
 
 const PORT = process.env.PORT || 5001;

@@ -1,4 +1,4 @@
-# The Fever Collective - Setup Guide
+# The Fever Studio - Setup Guide
 
 ## Quick Start (5 Minutes)
 

@@ -1,6 +1,6 @@
 # Environment Variables Reference Guide
 
-Complete reference for all environment variables used in The Fever Collective application.
+Complete reference for all environment variables used in The Fever Studio application.
 
 ---
 

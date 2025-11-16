@@ -43,7 +43,7 @@ const settingsSchema = new mongoose.Schema({
   emailConfig: {
     fromName: {
       type: String,
-      default: 'The Fever Collective'
+      default: 'The Fever Studio'
     },
     fromEmail: {
       type: String,
@@ -83,7 +83,7 @@ const settingsSchema = new mongoose.Schema({
   siteInfo: {
     siteName: {
       type: String,
-      default: 'The Fever Collective'
+      default: 'The Fever Studio'
     },
     tagline: {
       type: String,

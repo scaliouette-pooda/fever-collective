@@ -79,7 +79,7 @@ router.post('/',
         try {
           const transporter = createTransporter();
           await transporter.sendMail({
-            from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+            from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: `Waitlist Confirmation - ${event.title}`,
             html: `
@@ -172,7 +172,7 @@ router.post('/notify/:eventId', authenticateUser, requireAdmin, async (req, res)
     if (process.env.EMAIL_USER) {
       const transporter = createTransporter();
       await transporter.sendMail({
-        from: `"The Fever Collective" <${process.env.EMAIL_USER}>`,
+        from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
         to: nextPerson.email,
         subject: `Spot Available - ${event.title}`,
         html: `

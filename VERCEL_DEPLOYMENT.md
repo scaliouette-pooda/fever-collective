@@ -11,7 +11,7 @@
 
 ## Project Structure
 
-The Fever Collective is deployed as a monorepo on Vercel:
+The Fever Studio is deployed as a monorepo on Vercel:
 - **Frontend** (client/) - React application
 - **Backend** (server/) - Express API (deployed as Vercel Serverless Functions)
 

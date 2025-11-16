@@ -27,7 +27,7 @@ const resetAdminPassword = async () => {
 
     // Create new admin user with fresh password
     const adminUser = new User({
-      name: 'The Fever Collective',
+      name: 'The Fever Studio',
       email: email,
       phone: '555-0100',
       password: hashedPassword,

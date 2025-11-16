@@ -1,4 +1,4 @@
-# The Fever Collective - Deployment Guide
+# The Fever Studio - Deployment Guide
 
 ## Quick Deploy to Production (Free Hosting)
 
