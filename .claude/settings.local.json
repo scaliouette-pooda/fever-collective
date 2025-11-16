@@ -22,7 +22,9 @@
       "Bash(node scripts/resetAdminPassword.js:*)",
       "Bash(serverroutesupload.js)",
       "Bash(node -e:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(nslookup:*)",
+      "Bash(node scripts/createAdminWithDNS.js:*)"
     ],
     "deny": [],
     "ask": []
