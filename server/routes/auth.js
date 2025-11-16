@@ -64,21 +64,44 @@ router.post('/register',
 router.post('/login',
   sanitizeInput,
   [
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('password').notEmpty().withMessage('Password is required')
+    body('email').isEmail().withMessage('Valid email is required')
+    // Removed password validation to allow blank passwords
   ],
   validateRequestBody(),
   async (req, res) => {
     try {
       const { email, password } = req.body;
 
+      console.log('🔐 Login attempt:', {
+        email,
+        passwordLength: password ? password.length : 0,
+        passwordIsBlank: password === '' || !password
+      });
+
       const user = await User.findOne({ email });
       if (!user) {
+        console.log('❌ User not found:', email);
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
-      const isMatch = await user.comparePassword(password);
+      console.log('✅ User found:', {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        hasPassword: !!user.password
+      });
+
+      const passwordToCompare = password || '';
+      console.log('🔍 Comparing password:', {
+        inputPasswordLength: passwordToCompare.length,
+        isBlank: passwordToCompare === ''
+      });
+
+      const isMatch = await user.comparePassword(passwordToCompare);
+      console.log('🔑 Password match result:', isMatch);
+
       if (!isMatch) {
+        console.log('❌ Password mismatch');
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
@@ -87,6 +110,8 @@ router.post('/login',
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
+
+      console.log('✅ Login successful for:', email);
 
       res.json({
         message: 'Login successful',
@@ -99,7 +124,7 @@ router.post('/login',
         }
       });
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ Login error:', error);
       res.status(500).json({ error: 'Failed to login' });
     }
   }
