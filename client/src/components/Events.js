@@ -25,6 +25,13 @@ function Events() {
     }
   };
 
+  // Helper function to parse date without timezone conversion
+  const parseEventDate = (dateString) => {
+    const dateStr = dateString.split('T')[0]; // Get YYYY-MM-DD part only
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // Create date in local timezone
+  };
+
   // Generate time slots every 30 minutes from 6:30 AM to 5:30 PM
   const generateTimeSlots = () => {
     const slots = [];
@@ -92,8 +99,7 @@ function Events() {
     events.forEach(event => {
       // Parse date without timezone conversion
       const dateStr = event.date.split('T')[0]; // Get YYYY-MM-DD part only
-      const [year, month, day] = dateStr.split('-').map(Number);
-      const eventDate = new Date(year, month - 1, day); // Create date in local timezone
+      const eventDate = parseEventDate(event.date);
 
       console.log('Event:', event.title, 'Original date:', event.date, 'Parsed date:', eventDate.toISOString(), 'Time:', event.time);
 
@@ -228,7 +234,7 @@ function Events() {
                       <div className="detail">
                         <span className="detail-label">Date</span>
                         <span className="detail-value">
-                          {new Date(event.date).toLocaleDateString('en-US', {
+                          {parseEventDate(event.date).toLocaleDateString('en-US', {
                             weekday: 'long',
                             month: 'long',
                             day: 'numeric',

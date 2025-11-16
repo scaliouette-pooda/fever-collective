@@ -107,6 +107,8 @@
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.2s;
+  background: white;
+  color: #333;
 }
 
 .form-group input[type="text"]:focus,

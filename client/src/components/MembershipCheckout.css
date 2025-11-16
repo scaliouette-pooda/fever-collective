@@ -391,6 +391,8 @@
   font-size: 16px;
   font-family: inherit;
   transition: border-color 0.3s;
+  background: white;
+  color: #333;
 }
 
 .form-group select:focus,
