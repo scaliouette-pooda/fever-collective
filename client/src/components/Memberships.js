@@ -119,6 +119,13 @@ function Memberships() {
         <p className="brand-tagline">
           Get Hot. Get Strong. Get Fever.
         </p>
+
+        <div className="drop-in-notice">
+          <p>
+            <strong>First time at Fever?</strong> Try a drop-in class for <strong>$30</strong> before committing.
+            Love it? Sign up for membership the same day and get <strong>15% off your first month!</strong>
+          </p>
+        </div>
       </div>
 
       {currentMembership && (

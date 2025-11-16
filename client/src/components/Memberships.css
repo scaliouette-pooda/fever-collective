@@ -29,7 +29,29 @@
   font-weight: 700;
   color: #c9a86a;
   font-style: italic;
+  margin: 0 auto 25px;
+}
+
+.drop-in-notice {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px 30px;
+  border-radius: 12px;
   margin: 0 auto;
+  max-width: 700px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.drop-in-notice p {
+  color: white;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.drop-in-notice strong {
+  font-weight: 700;
+  color: #ffd700;
 }
 
 .loading {

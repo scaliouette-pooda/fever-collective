@@ -50,7 +50,6 @@ function Profile() {
         name: response.data.name,
         email: response.data.email,
         phone: response.data.phone,
-        availableCredits: response.data.availableCredits || 0,
         referralTier: response.data.referralTier || 'starter',
         referralCount: response.data.referralCount || 0,
         totalReferralEarnings: response.data.totalReferralEarnings || 0
@@ -308,45 +307,6 @@ function Profile() {
               </form>
             </>
           )}
-        </div>
-
-        {/* Class Credits Section */}
-        <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-          <h3 style={{ marginBottom: '20px', color: '#c9a86a' }}>Your Class Credits</h3>
-
-          <div style={{
-            background: 'rgba(201, 168, 106, 0.1)',
-            border: '1px solid rgba(201, 168, 106, 0.3)',
-            padding: '30px',
-            textAlign: 'center',
-            marginBottom: '20px'
-          }}>
-            <div style={{ fontSize: '3rem', color: '#c9a86a', fontWeight: '300', marginBottom: '10px' }}>
-              {profileData.availableCredits || 0}
-            </div>
-            <div style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '20px' }}>
-              Available Credits
-            </div>
-            <button
-              onClick={() => navigate('/class-packs')}
-              style={{
-                padding: '12px 30px',
-                backgroundColor: '#c9a86a',
-                color: '#1a1a1a',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}
-            >
-              Purchase Class Pack
-            </button>
-          </div>
-          <p style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', textAlign: 'center' }}>
-            Use credits to book any class. 1 credit = 1 class booking.
-          </p>
         </div>
 
         {/* Referral Section */}

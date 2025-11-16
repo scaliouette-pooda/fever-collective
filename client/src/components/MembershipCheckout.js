@@ -256,17 +256,17 @@ function MembershipCheckout() {
         {step === 2 && (
           <div className="checkout-step">
             <div className="waiver-step-card">
-              <h2>Liability Waiver Required</h2>
+              <h2>🔥 Ready to Get Heated?</h2>
               <p>
-                Before we can activate your membership, we need you to read and sign
-                our liability waiver. This is a standard requirement for all members.
+                Let's make it official. Sign your waiver so we can get you into the studio
+                and transforming. Quick, simple, and gets you one step closer to your first class.
               </p>
 
               {hasWaiver ? (
                 <div className="waiver-completed">
                   <div className="success-icon">✓</div>
-                  <h3>Waiver Already Signed</h3>
-                  <p>You have a valid waiver on file. You can proceed to payment.</p>
+                  <h3>You're All Set!</h3>
+                  <p>Your waiver is signed and ready. Let's move forward with your membership.</p>
                   <button
                     className="btn-primary btn-large"
                     onClick={() => setStep(3)}
@@ -280,8 +280,16 @@ function MembershipCheckout() {
                     className="btn-primary btn-large"
                     onClick={() => setShowWaiverModal(true)}
                   >
-                    Sign Waiver
+                    Sign Your Waiver
                   </button>
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#999',
+                    marginTop: '15px',
+                    textAlign: 'center'
+                  }}>
+                    Takes less than 2 minutes
+                  </p>
                 </div>
               )}
 
