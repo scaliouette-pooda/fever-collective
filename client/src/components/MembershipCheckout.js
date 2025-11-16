@@ -76,10 +76,14 @@ function MembershipCheckout() {
     try {
       const response = await api.post('/api/memberships/admin/assign', {
         userId: user.id,
-        membershipTierId: selectedTier._id,
+        membershipTier: selectedTier.name,
+        pricingTier: selectedTier.pricingTier,
+        monthlyPrice: isUpgrade ? discountedPrice : selectedTier.price,
         paymentMethod: formData.paymentMethod,
-        notes: formData.notes,
-        startDate: new Date()
+        creditsTotal: selectedTier.classesPerMonth || 0,
+        hasFirstMonthDiscount: isUpgrade && upgradeDiscount > 0,
+        firstMonthDiscountPercent: isUpgrade ? upgradeDiscount * 100 : 0,
+        notes: formData.notes
       });
 
       // Success - redirect to profile with success message

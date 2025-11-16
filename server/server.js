@@ -33,9 +33,16 @@ const corsOptions = {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
+    // Check if origin is in allowed list
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
-    } else {
+    }
+    // Allow Vercel preview deployments (fever-collective-*.vercel.app)
+    else if (origin && origin.match(/https:\/\/fever-collective-.*\.vercel\.app$/)) {
+      console.log('✅ CORS allowed Vercel preview:', origin);
+      callback(null, true);
+    }
+    else {
       console.log('❌ CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }

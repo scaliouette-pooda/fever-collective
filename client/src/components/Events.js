@@ -90,22 +90,23 @@ function Events() {
     console.log('Week end:', weekEnd.toISOString());
 
     events.forEach(event => {
-      const eventDate = new Date(event.date);
-      eventDate.setHours(0, 0, 0, 0);
+      // Parse date without timezone conversion
+      const dateStr = event.date.split('T')[0]; // Get YYYY-MM-DD part only
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const eventDate = new Date(year, month - 1, day); // Create date in local timezone
 
-      console.log('Event:', event.title, 'Date:', eventDate.toISOString(), 'Time:', event.time);
+      console.log('Event:', event.title, 'Original date:', event.date, 'Parsed date:', eventDate.toISOString(), 'Time:', event.time);
 
       if (eventDate >= weekStart && eventDate <= weekEnd) {
-        const dateKey = eventDate.toISOString().split('T')[0];
-        const timeSlot = event.time;
+        const dateKey = dateStr; // Use the original date string as key
 
-        console.log('✓ Event in range. DateKey:', dateKey, 'TimeSlot:', timeSlot, 'Match found:', times.includes(timeSlot));
+        console.log('✓ Event in range. DateKey:', dateKey, 'TimeSlot:', event.time, 'Match found:', times.includes(event.time));
 
         if (schedule[dateKey]) {
-          if (!schedule[dateKey][timeSlot]) {
-            schedule[dateKey][timeSlot] = [];
+          if (!schedule[dateKey][event.time]) {
+            schedule[dateKey][event.time] = [];
           }
-          schedule[dateKey][timeSlot].push(event);
+          schedule[dateKey][event.time].push(event);
         }
       } else {
         console.log('✗ Event out of range');
