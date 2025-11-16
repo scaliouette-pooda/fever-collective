@@ -227,13 +227,25 @@ function MembershipCheckout() {
                 <h3>Membership Details:</h3>
                 <ul>
                   <li>Month-to-month commitment</li>
-                  <li>30-day cancellation notice required</li>
                   <li>Access to all milestone rewards</li>
                   <li>Referral program eligible ($50 off per referral)</li>
                   {selectedTier.classesPerMonth && (
                     <li>Credits expire after 2 months</li>
                   )}
                 </ul>
+              </div>
+
+              <div className="cancellation-policy-notice">
+                <h3>⚠️ Cancellation Policy</h3>
+                <p>
+                  <strong>30-day written notice required for cancellation.</strong> Your membership
+                  will remain active during the 30-day notice period, and you may continue to use
+                  your credits. After the notice period, your membership will be cancelled and no
+                  further charges will be applied.
+                </p>
+                <p style={{ fontSize: '14px', color: '#999', marginTop: '10px' }}>
+                  To cancel, please contact our team at least 30 days before your desired end date.
+                </p>
               </div>
 
               <button

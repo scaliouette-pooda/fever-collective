@@ -234,6 +234,40 @@
   font-size: 18px;
 }
 
+/* Cancellation Policy Notice */
+.cancellation-policy-notice {
+  background: #fff3e0;
+  border: 2px solid #ff9800;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.cancellation-policy-notice h3 {
+  font-size: 20px;
+  color: #e65100;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancellation-policy-notice p {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.cancellation-policy-notice p:last-child {
+  margin-bottom: 0;
+}
+
+.cancellation-policy-notice strong {
+  font-weight: 700;
+  color: #e65100;
+}
+
 /* Waiver Step */
 .waiver-step-card {
   max-width: 600px;

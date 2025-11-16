@@ -25,10 +25,13 @@ I hereby release, waive, discharge, and covenant not to sue The Fever Studio, it
 4. MEDICAL TREATMENT
 I authorize The Fever Studio to obtain emergency medical treatment if necessary and agree to be financially responsible for any costs incurred.
 
-5. PHOTO/VIDEO RELEASE
+5. MEMBERSHIP CANCELLATION POLICY
+I understand and agree that if I purchase a membership, a 30-day written notice is required for cancellation. My membership will remain active during the 30-day notice period, and I may continue to use my credits. After the notice period, my membership will be cancelled and no further charges will be applied.
+
+6. PHOTO/VIDEO RELEASE
 I grant The Fever Studio permission to use photographs and videos taken during classes and events for promotional purposes.
 
-6. ACKNOWLEDGMENT
+7. ACKNOWLEDGMENT
 I have read this waiver and fully understand its contents. I voluntarily agree to its terms and conditions.`,
 
       minor: `PARENTAL CONSENT AND LIABILITY WAIVER
@@ -50,10 +53,13 @@ I authorize The Fever Studio to obtain emergency medical treatment for my child 
 5. SUPERVISION
 I understand that The Fever Studio provides instruction but does not provide childcare services outside of class time.
 
-6. PHOTO/VIDEO RELEASE
+6. MEMBERSHIP CANCELLATION POLICY
+I understand and agree that if I purchase a membership for my child, a 30-day written notice is required for cancellation. The membership will remain active during the 30-day notice period, and my child may continue to use credits. After the notice period, the membership will be cancelled and no further charges will be applied.
+
+7. PHOTO/VIDEO RELEASE
 I grant permission for The Fever Studio to use photographs and videos of my child for promotional purposes.
 
-7. ACKNOWLEDGMENT
+8. ACKNOWLEDGMENT
 I have read and fully understand this waiver and voluntarily agree to its terms on behalf of my child.`
     };
 
