@@ -127,15 +127,27 @@ const settingsSchema = new mongoose.Schema({
   siteInfo: {
     siteName: {
       type: String,
-      default: 'The Fever Studio'
+      default: '🔥 Fever'
     },
     tagline: {
       type: String,
-      default: 'Exclusive Pilates Popup Events'
+      default: 'Get Hot. Get Strong. Get Fever.'
+    },
+    secondaryTagline: {
+      type: String,
+      default: 'Heat That Heals. Movement That Empowers.'
     },
     description: {
       type: String,
-      default: 'Join us for unique pilates experiences in stunning locations'
+      default: 'Fever is a boutique heated mat Pilates studio in Berkeley designed to elevate strength, flexibility, and community. With a music-driven, energizing environment, members experience a high-intensity Pilates workout in a warm, welcoming studio.'
+    },
+    concept: {
+      type: String,
+      default: 'A fever is your body\'s natural response to burn out what doesn\'t serve you — it raises your temperature to heal and reset. Likewise, Fever the studio represents using heat, movement, and intensity to transform your body and renew your energy.'
+    },
+    offeringTypes: {
+      type: [String],
+      default: ['Heated Mat Pilates', 'Non-Heated Pilates', 'Yoga Sculpt']
     }
   },
 

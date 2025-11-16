@@ -105,7 +105,10 @@ function Memberships() {
       <div className="memberships-header">
         <h1>Choose Your Membership</h1>
         <p className="subtitle">
-          Select the perfect plan for your fitness journey at The Fever Studio
+          Select the perfect plan for your fitness journey at Fever
+        </p>
+        <p className="brand-tagline">
+          Get Hot. Get Strong. Get Fever.
         </p>
       </div>
 
