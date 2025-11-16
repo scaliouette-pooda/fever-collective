@@ -19,10 +19,19 @@ function Profile() {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [referralData, setReferralData] = useState(null);
   const [showReferralCopied, setShowReferralCopied] = useState(false);
+  const [membershipData, setMembershipData] = useState(null);
+  const [milestones] = useState([
+    { classes: 50, reward: 'Sweat Towel' },
+    { classes: 100, reward: 'Tote Bag' },
+    { classes: 150, reward: 'Water Bottle' },
+    { classes: 200, reward: 'Hat' },
+    { classes: 250, reward: 'Hoodie' }
+  ]);
 
   useEffect(() => {
     fetchProfile();
     fetchReferralData();
+    fetchMembershipData();
   }, []);
 
   const fetchProfile = async () => {
@@ -70,6 +79,23 @@ function Profile() {
       setReferralData(response.data);
     } catch (error) {
       console.error('Error fetching referral data:', error);
+    }
+  };
+
+  const fetchMembershipData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await api.get('/api/memberships/my-membership', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.hasMembership) {
+        setMembershipData(response.data.membership);
+      }
+    } catch (error) {
+      console.error('Error fetching membership data:', error);
     }
   };
 
@@ -445,6 +471,238 @@ function Profile() {
                   Credits Earned
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Membership Section */}
+        {membershipData && (
+          <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <h3 style={{ marginBottom: '20px', color: '#c9a86a' }}>Your Membership</h3>
+
+            {/* Membership Overview Card */}
+            <div style={{
+              background: 'linear-gradient(135deg, #c9a86a 0%, #b8965a 100%)',
+              padding: '25px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '15px' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 5px 0', fontSize: '1.5rem', color: '#1a1a1a' }}>
+                    {membershipData.membershipTier?.displayName}
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#1a1a1a', opacity: 0.8 }}>
+                    ${membershipData.membershipTier?.price}/month
+                  </p>
+                </div>
+                <span style={{
+                  padding: '6px 12px',
+                  backgroundColor: membershipData.status === 'active' ? 'rgba(76, 175, 80, 0.9)' :
+                                  membershipData.status === 'pending-payment' ? 'rgba(255, 152, 0, 0.9)' :
+                                  'rgba(158, 158, 158, 0.9)',
+                  color: 'white',
+                  fontSize: '0.75rem',
+                  fontWeight: '700',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  borderRadius: '12px'
+                }}>
+                  {membershipData.status}
+                </span>
+              </div>
+
+              {membershipData.membershipTier?.isUnlimited ? (
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  padding: '15px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '1.8rem', color: '#1a1a1a', fontWeight: '700', marginBottom: '5px' }}>
+                    ∞ UNLIMITED
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#1a1a1a' }}>
+                    Book as many classes as you want!
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  padding: '15px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '2.5rem', color: '#1a1a1a', fontWeight: '700', marginBottom: '5px' }}>
+                    {membershipData.creditsRemaining}
+                    <span style={{ fontSize: '1.2rem', opacity: 0.7 }}>
+                      /{membershipData.creditsTotal}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#1a1a1a' }}>
+                    Credits Remaining This Month
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Billing Information */}
+            <div style={{
+              background: 'rgba(201, 168, 106, 0.1)',
+              border: '1px solid rgba(201, 168, 106, 0.3)',
+              padding: '20px',
+              marginBottom: '20px'
+            }}>
+              <h4 style={{ margin: '0 0 15px 0', fontSize: '1rem', color: '#c9a86a' }}>Billing Information</h4>
+              <div style={{ display: 'grid', gap: '10px', fontSize: '0.9rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'rgba(232, 232, 232, 0.7)' }}>Start Date:</span>
+                  <strong style={{ color: '#e8e8e8' }}>
+                    {new Date(membershipData.startDate).toLocaleDateString()}
+                  </strong>
+                </div>
+                {membershipData.nextBillingDate && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'rgba(232, 232, 232, 0.7)' }}>Next Billing:</span>
+                    <strong style={{ color: '#e8e8e8' }}>
+                      {new Date(membershipData.nextBillingDate).toLocaleDateString()}
+                    </strong>
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'rgba(232, 232, 232, 0.7)' }}>Payment Method:</span>
+                  <strong style={{ color: '#e8e8e8', textTransform: 'capitalize' }}>
+                    {membershipData.paymentMethod || 'Manual'}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Milestone Progress */}
+            <div style={{
+              background: 'rgba(201, 168, 106, 0.1)',
+              border: '1px solid rgba(201, 168, 106, 0.3)',
+              padding: '20px',
+              marginBottom: '20px'
+            }}>
+              <h4 style={{ margin: '0 0 15px 0', fontSize: '1rem', color: '#c9a86a' }}>
+                Milestone Rewards - {membershipData.classesAttended || 0} Classes Attended
+              </h4>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {milestones.map((milestone, index) => {
+                  const isAchieved = (membershipData.classesAttended || 0) >= milestone.classes;
+                  const isNext = !isAchieved && (index === 0 || (membershipData.classesAttended || 0) >= milestones[index - 1].classes);
+                  const progress = Math.min(100, ((membershipData.classesAttended || 0) / milestone.classes) * 100);
+
+                  return (
+                    <div key={milestone.classes} style={{ position: 'relative' }}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '6px'
+                      }}>
+                        <span style={{
+                          fontSize: '0.85rem',
+                          color: isAchieved ? '#4caf50' : isNext ? '#c9a86a' : 'rgba(232, 232, 232, 0.5)',
+                          fontWeight: isNext ? '700' : '400'
+                        }}>
+                          {isAchieved && '✓ '}
+                          {milestone.classes} classes - {milestone.reward}
+                          {isNext && ' (Next Reward!)'}
+                        </span>
+                        {isNext && (
+                          <span style={{ fontSize: '0.75rem', color: '#c9a86a' }}>
+                            {milestone.classes - (membershipData.classesAttended || 0)} to go
+                          </span>
+                        )}
+                      </div>
+                      <div style={{
+                        width: '100%',
+                        height: '8px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{
+                          width: `${progress}%`,
+                          height: '100%',
+                          background: isAchieved ? '#4caf50' : 'linear-gradient(90deg, #c9a86a, #b8965a)',
+                          transition: 'width 0.3s ease'
+                        }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Membership Actions */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button
+                onClick={() => navigate('/memberships')}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  backgroundColor: 'transparent',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  color: '#e8e8e8',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600'
+                }}
+              >
+                Upgrade Membership
+              </button>
+              <button
+                onClick={() => navigate('/events')}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  backgroundColor: '#c9a86a',
+                  border: 'none',
+                  color: '#1a1a1a',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600'
+                }}
+              >
+                Book a Class
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* No Membership CTA */}
+        {!membershipData && !loading && (
+          <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <h3 style={{ marginBottom: '20px', color: '#c9a86a' }}>Join Our Community</h3>
+            <div style={{
+              background: 'rgba(201, 168, 106, 0.1)',
+              border: '1px solid rgba(201, 168, 106, 0.3)',
+              padding: '30px',
+              textAlign: 'center'
+            }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '1.3rem', color: '#e8e8e8' }}>
+                Become a Member
+              </h4>
+              <p style={{ fontSize: '0.95rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '20px', lineHeight: '1.6' }}>
+                Get unlimited access to classes, milestone rewards, priority booking, and exclusive member benefits. Start your transformation with Fever today!
+              </p>
+              <button
+                onClick={() => navigate('/memberships')}
+                style={{
+                  padding: '15px 40px',
+                  backgroundColor: '#c9a86a',
+                  color: '#1a1a1a',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: '700',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}
+              >
+                View Membership Options
+              </button>
             </div>
           </div>
         )}

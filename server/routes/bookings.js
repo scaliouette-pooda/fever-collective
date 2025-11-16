@@ -4,6 +4,7 @@ const { body } = require('express-validator');
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
 const PromoCode = require('../models/PromoCode');
+const { UserMembership } = require('../models/Membership');
 const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -31,6 +32,101 @@ router.post('/',
 
       if (event.availableSpots < spots) {
         return res.status(400).json({ error: 'Not enough spots available' });
+      }
+
+      // Check if user has an active membership (if authenticated)
+      let membership = null;
+      let userId = null;
+
+      // Try to get userId from JWT token if present
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.substring(7);
+          const jwt = require('jsonwebtoken');
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          userId = decoded.id;
+        } catch (err) {
+          // Token invalid or expired, continue without user
+        }
+      }
+
+      if (userId) {
+        membership = await UserMembership.findOne({
+          user: userId,
+          status: 'active'
+        }).populate('membershipTier');
+      }
+
+      // If user has active membership, use credits instead of payment
+      if (membership) {
+        const creditsNeeded = spots; // 1 credit per spot
+
+        // Check if user has enough credits (or unlimited)
+        if (!membership.membershipTier.isUnlimited && membership.creditsRemaining < creditsNeeded) {
+          return res.status(400).json({
+            error: 'Insufficient membership credits',
+            message: `You need ${creditsNeeded} credits but only have ${membership.creditsRemaining} remaining.`
+          });
+        }
+
+        // Deduct credits (if not unlimited)
+        if (!membership.membershipTier.isUnlimited) {
+          await membership.deductCredits(creditsNeeded);
+        }
+
+        // Record attendance for milestone tracking
+        await membership.recordAttendance();
+
+        // Create booking with membership payment
+        const booking = new Booking({
+          event: eventId,
+          user: userId,
+          name,
+          email,
+          phone,
+          spots,
+          totalAmount: 0,
+          originalAmount: event.price * spots,
+          discountAmount: event.price * spots,
+          paymentIntentId: `membership_${membership._id}_${Date.now()}`,
+          paymentStatus: 'completed',
+          paymentMethod: 'membership',
+          status: 'confirmed'
+        });
+
+        await booking.save();
+
+        // Reduce available spots immediately
+        event.availableSpots -= spots;
+        await event.save();
+
+        // Send confirmation email
+        try {
+          await sendBookingConfirmation({
+            to: email,
+            name,
+            eventTitle: event.title,
+            eventDate: event.date,
+            eventTime: event.time,
+            eventLocation: event.location,
+            spots,
+            totalAmount: 0,
+            bookingId: booking._id,
+            qrCode: booking.qrCode,
+            paymentMethod: 'Membership Credits'
+          });
+        } catch (emailError) {
+          console.error('Error sending confirmation email:', emailError);
+        }
+
+        return res.status(201).json({
+          booking,
+          paymentMethod: 'membership',
+          membershipCreditsUsed: creditsNeeded,
+          creditsRemaining: membership.membershipTier.isUnlimited ? 'unlimited' : membership.creditsRemaining,
+          message: 'Booking confirmed with membership credits!'
+        });
       }
 
       let originalAmount = event.price * spots;

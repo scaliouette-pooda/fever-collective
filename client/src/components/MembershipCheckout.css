@@ -1,0 +1,518 @@
+.membership-checkout {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.checkout-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.checkout-header {
+  background: linear-gradient(135deg, #c9a86a 0%, #b8965a 100%);
+  color: white;
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.checkout-header h1 {
+  margin: 0 0 30px 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+/* Progress Steps */
+.progress-steps {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+  position: relative;
+}
+
+.progress-steps::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 30%;
+  right: 30%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.step.active .step-number {
+  background: white;
+  color: #c9a86a;
+  border-color: white;
+}
+
+.step.completed .step-number {
+  background: rgba(76, 175, 80, 0.9);
+  border-color: rgba(76, 175, 80, 0.9);
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Error Message */
+.error-message {
+  background: #fee;
+  color: #c33;
+  padding: 15px 20px;
+  margin: 20px 30px;
+  border-radius: 8px;
+  border-left: 4px solid #c33;
+}
+
+/* Checkout Steps */
+.checkout-step {
+  padding: 40px 30px;
+}
+
+/* Tier Review Card */
+.tier-review-card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.tier-review-header {
+  text-align: center;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.tier-review-header h2 {
+  font-size: 32px;
+  color: #333;
+  margin: 0;
+}
+
+.badge-founder {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.upgrade-notice {
+  background: #f1f8f4;
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.upgrade-notice p {
+  margin: 5px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.upgrade-notice strong {
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.tier-review-price {
+  text-align: center;
+  padding: 30px 0;
+  border-top: 2px solid #f0f0f0;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 25px;
+}
+
+.price-amount {
+  font-size: 56px;
+  font-weight: 700;
+  color: #333;
+}
+
+.price-period {
+  font-size: 18px;
+  color: #666;
+  margin-left: 5px;
+}
+
+.slots-info {
+  text-align: center;
+  padding: 12px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-size: 15px;
+  color: #1976d2;
+}
+
+.slots-info strong {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.tier-review-benefits,
+.tier-review-details {
+  margin-bottom: 30px;
+}
+
+.tier-review-benefits h3,
+.tier-review-details h3 {
+  font-size: 20px;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.tier-review-benefits ul,
+.tier-review-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tier-review-benefits li,
+.tier-review-details li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.tier-review-benefits .checkmark {
+  color: #4caf50;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tier-review-details li::before {
+  content: '•';
+  color: #c9a86a;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Waiver Step */
+.waiver-step-card {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.waiver-step-card h2 {
+  font-size: 28px;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.waiver-step-card > p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.waiver-completed {
+  background: #f1f8f4;
+  border: 2px solid #4caf50;
+  border-radius: 12px;
+  padding: 40px 30px;
+  margin-bottom: 30px;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: white;
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.waiver-completed h3 {
+  font-size: 24px;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.waiver-completed p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.waiver-required {
+  margin-bottom: 30px;
+}
+
+/* Payment Form */
+.payment-form-card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.payment-form-card h2 {
+  font-size: 28px;
+  color: #333;
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+.payment-summary {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #666;
+}
+
+.summary-row.total {
+  border-top: 2px solid #c9a86a;
+  padding-top: 15px;
+  margin-top: 10px;
+  font-size: 20px;
+  color: #333;
+}
+
+.summary-row strong {
+  font-weight: 700;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #c9a86a;
+}
+
+.form-help {
+  font-size: 13px;
+  color: #999;
+  margin: 8px 0 0 0;
+  font-style: italic;
+}
+
+.payment-notice {
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.payment-notice h4 {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.payment-notice ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 15px;
+}
+
+.btn-large {
+  font-size: 18px;
+  padding: 18px;
+}
+
+.btn-primary {
+  background: #c9a86a;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #b8965a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(201, 168, 106, 0.4);
+}
+
+.btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: white;
+  color: #666;
+  border: 2px solid #e0e0e0;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: #c9a86a;
+  color: #c9a86a;
+  transform: translateY(-2px);
+}
+
+.loading {
+  text-align: center;
+  padding: 100px 20px;
+  font-size: 18px;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .membership-checkout {
+    padding: 20px 15px;
+  }
+
+  .checkout-header {
+    padding: 30px 20px;
+  }
+
+  .checkout-header h1 {
+    font-size: 26px;
+  }
+
+  .progress-steps {
+    gap: 20px;
+  }
+
+  .progress-steps::before {
+    left: 20%;
+    right: 20%;
+  }
+
+  .step-label {
+    font-size: 11px;
+  }
+
+  .checkout-step {
+    padding: 30px 20px;
+  }
+
+  .tier-review-header h2,
+  .payment-form-card h2,
+  .waiver-step-card h2 {
+    font-size: 24px;
+  }
+
+  .price-amount {
+    font-size: 48px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    font-size: 16px;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .progress-steps {
+    gap: 15px;
+  }
+
+  .step-number {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .step-label {
+    font-size: 10px;
+  }
+
+  .price-amount {
+    font-size: 42px;
+  }
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import './AdminDashboard.css';
+import AdminMembershipSection from './AdminMembershipSection';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -1076,6 +1077,12 @@ function AdminDashboard() {
           onClick={() => setActiveTab('emailAutomation')}
         >
           Email Automation
+        </button>
+        <button
+          className={activeTab === 'memberships' ? 'active' : ''}
+          onClick={() => setActiveTab('memberships')}
+        >
+          Memberships
         </button>
       </div>
 
@@ -3444,6 +3451,11 @@ function AdminDashboard() {
               </ul>
             </div>
           </div>
+        )}
+
+        {/* Memberships Tab */}
+        {activeTab === 'memberships' && (
+          <AdminMembershipSection />
         )}
 
         {/* Reviews Tab */}

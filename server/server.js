@@ -67,6 +67,7 @@ const referralRoutes = require('./routes/referrals');
 const classPackRoutes = require('./routes/classPacks');
 const waiverRoutes = require('./routes/waivers');
 const membershipRoutes = require('./routes/memberships');
+const userRoutes = require('./routes/users');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -81,6 +82,7 @@ app.use('/api/referrals', referralRoutes);
 app.use('/api/class-packs', classPackRoutes);
 app.use('/api/waivers', waiverRoutes);
 app.use('/api/memberships', membershipRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Studio API' });

@@ -57,12 +57,21 @@ function Memberships() {
   const handleSelectMembership = (tier) => {
     if (!user.id) {
       alert('Please log in or register to select a membership');
-      navigate('/login');
+      navigate('/login', { state: { returnTo: '/memberships' } });
       return;
     }
 
-    // For now, show contact message (will be replaced with checkout flow)
-    alert(`Great choice! Please contact us to complete your ${tier.displayName} membership signup.\n\nEmail: info@thefeverstudio.com\nPhone: (555) 123-4567`);
+    // Check if user is upgrading/downgrading
+    const isUpgrade = currentMembership && tier._id !== currentMembership.membershipTier?._id;
+
+    // Navigate to checkout with selected tier and upgrade flag
+    navigate('/membership-checkout', {
+      state: {
+        tier,
+        isUpgrade,
+        currentMembership: isUpgrade ? currentMembership : null
+      }
+    });
   };
 
   const getPricingTierLabel = (pricingTier) => {
