@@ -76,6 +76,50 @@ const settingsSchema = new mongoose.Schema({
     acceptCash: {
       type: Boolean,
       default: true
+    },
+    // Payment Gateway Configuration
+    paymentGateway: {
+      type: String,
+      enum: ['manual', 'stripe', 'paypal', 'square'],
+      default: 'manual'
+    },
+    stripeEnabled: {
+      type: Boolean,
+      default: false
+    },
+    stripePublishableKey: {
+      type: String,
+      default: ''
+    },
+    stripeSecretKey: {
+      type: String,
+      default: ''
+    },
+    // Membership Settings
+    membershipPaymentMode: {
+      type: String,
+      enum: ['manual', 'automated'],
+      default: 'manual'
+    },
+    requireWaiverForMembership: {
+      type: Boolean,
+      default: true
+    },
+    allowDropIns: {
+      type: Boolean,
+      default: true
+    },
+    dropInRate: {
+      type: Number,
+      default: 30
+    },
+    sameDaySignupDiscount: {
+      type: Number,
+      default: 15 // percentage
+    },
+    upgradeDiscount: {
+      type: Number,
+      default: 15 // percentage
     }
   },
 
