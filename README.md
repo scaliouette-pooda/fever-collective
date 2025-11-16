@@ -47,7 +47,7 @@ A sophisticated pilates popup event booking platform with admin dashboard, event
 - Multer + Cloudinary for image uploads
 
 ### Deployment
-- Frontend: Vercel (https://thefevercollective.com)
+- Frontend: Vercel (https://thefeverstudio.com)
 - Backend: Vercel
 - Database: MongoDB Atlas
 - Email: Custom SMTP (info@thefeverstudio.com)

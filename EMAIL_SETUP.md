@@ -130,7 +130,7 @@ EMAIL_PASSWORD=your-password
 
 1. Add environment variables to Vercel (see above)
 2. Wait for Vercel to redeploy (automatic)
-3. Register at https://thefevercollective.com/register
+3. Register at https://thefeverstudio.com/register
 4. Check inbox
 
 ---

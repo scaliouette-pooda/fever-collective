@@ -11,7 +11,7 @@ Complete reference for all environment variables used in The Fever Studio applic
 ```env
 MONGODB_URI=mongodb+srv://fever_admin:wtSF3WV9tiDZ3mCG@cluster0.zvsajyi.mongodb.net/fever-collective?retryWrites=true&w=majority
 JWT_SECRET=f1e62c8e923229be2736c30a8ccf1f6d
-CLIENT_URL=https://thefevercollective.com
+CLIENT_URL=https://thefeverstudio.com
 PORT=5001
 EMAIL_SERVICE=custom
 EMAIL_USER=info@thefeverstudio.com
@@ -85,9 +85,9 @@ openssl rand -hex 32
 **Required:** Yes
 
 **Values by environment:**
-- **Production:** `https://thefevercollective.com`
+- **Production:** `https://thefeverstudio.com`
 - **Local:** `http://localhost:3000`
-- **Staging:** `https://staging.thefevercollective.com`
+- **Staging:** `https://staging.thefeverstudio.com`
 
 ---
 
@@ -159,7 +159,7 @@ openssl rand -hex 32
 **Type:** String (hostname)
 **Required:** Yes (when EMAIL_SERVICE=custom)
 
-**Current Value:** `mail.thefevercollective.com`
+**Current Value:** `mail.thefeverstudio.com`
 
 **Common values:**
 - Gmail: `smtp.gmail.com`
@@ -310,7 +310,7 @@ SMTP_PORT=587
 
 Same as local, but CLIENT_URL should be:
 ```
-CLIENT_URL=https://thefevercollective.com
+CLIENT_URL=https://thefeverstudio.com
 ```
 
 And REACT_APP_API_URL should point to your backend:

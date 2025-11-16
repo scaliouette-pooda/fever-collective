@@ -2552,7 +2552,7 @@ function AdminDashboard() {
                     type="email"
                     value={settings.payment?.paypalEmail || ''}
                     onChange={(e) => handleSettingsChange('payment', 'paypalEmail', e.target.value)}
-                    placeholder="payments@thefevercollective.com"
+                    placeholder="payments@thefeverstudio.com"
                   />
                 </div>
                 <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '20px' }}>

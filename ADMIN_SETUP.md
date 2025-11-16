@@ -7,12 +7,12 @@
 
 **Login URLs:**
 - Production: https://thefeverstudio.com/login
-- Alternative Domain: https://thefevercollective.com/login
+- Alternative Domain: https://thefeverstudio.com/login
 - Local: http://localhost:3000/login
 
 **Admin Dashboard:**
 - Production: https://thefeverstudio.com/admin
-- Alternative Domain: https://thefevercollective.com/admin
+- Alternative Domain: https://thefeverstudio.com/admin
 - Local: http://localhost:3000/admin
 
 ---

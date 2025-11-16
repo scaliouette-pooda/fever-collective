@@ -2,7 +2,7 @@
 
 ## Current Deployment Status
 
-**Live Site:** https://thefevercollective.com
+**Live Site:** https://thefeverstudio.com
 **Platform:** Vercel (Frontend & Backend)
 **Database:** MongoDB Atlas
 **Status:** ✅ Deployed and Live
@@ -23,7 +23,7 @@ The Fever Studio is deployed as a monorepo on Vercel:
 
 - GitHub repository connected to Vercel
 - MongoDB Atlas account with database created
-- Custom domain configured (thefevercollective.com)
+- Custom domain configured (thefeverstudio.com)
 
 ### 2. Deploy to Vercel
 
@@ -81,7 +81,7 @@ MONGODB_URI=mongodb+srv://fever_admin:wtSF3WV9tiDZ3mCG@cluster0.zvsajyi.mongodb.
 
 JWT_SECRET=f1e62c8e923229be2736c30a8ccf1f6d
 
-CLIENT_URL=https://thefevercollective.com
+CLIENT_URL=https://thefeverstudio.com
 
 PORT=5001
 
@@ -105,8 +105,8 @@ SMTP_PORT=587
 ### 1. Connect Domain to Vercel
 
 1. Go to Vercel Dashboard → Client Project → Settings → Domains
-2. Add custom domain: `thefevercollective.com`
-3. Add www variant: `www.thefevercollective.com`
+2. Add custom domain: `thefeverstudio.com`
+3. Add www variant: `www.thefeverstudio.com`
 
 ### 2. Configure DNS Records
 
@@ -138,7 +138,7 @@ Vercel automatically provisions SSL certificates. Wait 24-48 hours for DNS propa
 
 After deployment, verify these items:
 
-- [ ] Frontend loads at https://thefevercollective.com
+- [ ] Frontend loads at https://thefeverstudio.com
 - [ ] Backend API is accessible
 - [ ] Environment variables are set correctly
 - [ ] Database connection works
@@ -155,18 +155,18 @@ After deployment, verify these items:
 ## Testing the Deployment
 
 ### Test User Registration
-1. Go to https://thefevercollective.com/register
+1. Go to https://thefeverstudio.com/register
 2. Create a new account
 3. Check email for welcome message
 
 ### Test Password Reset
-1. Go to https://thefevercollective.com/forgot-password
+1. Go to https://thefeverstudio.com/forgot-password
 2. Enter your email
 3. Check email for reset link
 4. Click link and reset password
 
 ### Test Admin Access
-1. Go to https://thefeverstudio.com/login (or https://thefevercollective.com/login)
+1. Go to https://thefeverstudio.com/login (or https://thefeverstudio.com/login)
 2. Login with: info@thefeverstudio.com / Laurcalmilo123!
 3. Verify admin dashboard loads
 4. Try creating/editing an event
