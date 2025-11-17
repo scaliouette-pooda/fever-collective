@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
 import './AutomatedCampaigns.css';
+import { getTemplateOptions, getTemplate } from '../utils/campaignTemplates';
 
 function AutomatedCampaigns() {
   const [campaigns, setCampaigns] = useState([]);
@@ -10,6 +11,7 @@ function AutomatedCampaigns() {
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [campaignStats, setCampaignStats] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState('');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -159,6 +161,30 @@ function AutomatedCampaigns() {
     }
   };
 
+  const handleTemplateSelect = (e) => {
+    const templateKey = e.target.value;
+    setSelectedTemplate(templateKey);
+
+    if (templateKey === '') {
+      // Reset to empty form for custom campaign
+      resetForm();
+      return;
+    }
+
+    const template = getTemplate(templateKey);
+    if (template) {
+      setFormData({
+        name: template.name,
+        description: template.description,
+        triggerType: template.triggerType,
+        triggerConfig: template.triggerConfig,
+        emailSequence: template.emailSequence,
+        targetAudience: template.targetAudience,
+        isActive: template.isActive
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -233,6 +259,7 @@ function AutomatedCampaigns() {
   const resetForm = () => {
     setShowForm(false);
     setEditingCampaign(null);
+    setSelectedTemplate('');
     setFormData({
       name: '',
       description: '',
@@ -390,6 +417,44 @@ function AutomatedCampaigns() {
       {showForm && (
         <div className="campaign-form">
           <h3>{editingCampaign ? 'Edit Campaign' : 'Create New Campaign'}</h3>
+
+          {!editingCampaign && (
+            <div className="form-group" style={{
+              background: 'rgba(201, 168, 106, 0.1)',
+              padding: '20px',
+              borderRadius: '8px',
+              border: '2px solid rgba(201, 168, 106, 0.3)',
+              marginBottom: '25px'
+            }}>
+              <label style={{ fontSize: '1.1rem', color: '#c9a86a', marginBottom: '10px' }}>
+                ✨ Start with a Template
+              </label>
+              <select
+                value={selectedTemplate}
+                onChange={handleTemplateSelect}
+                style={{
+                  fontSize: '1rem',
+                  padding: '14px',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  border: '1px solid rgba(201, 168, 106, 0.5)'
+                }}
+              >
+                {getTemplateOptions().map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <p style={{
+                fontSize: '0.9rem',
+                color: 'rgba(232, 232, 232, 0.7)',
+                marginTop: '10px',
+                marginBottom: 0
+              }}>
+                Choose a pre-built template to get started quickly, or select "Custom Campaign" to build from scratch.
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">

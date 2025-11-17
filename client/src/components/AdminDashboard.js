@@ -878,77 +878,84 @@ function AdminDashboard() {
       </div>
 
       <div className="admin-tabs">
+        {/* Core Operations */}
         <button
           className={activeTab === 'events' ? 'active' : ''}
           onClick={() => setActiveTab('events')}
         >
-          Events
+          📅 Events
         </button>
         <button
           className={activeTab === 'bookings' ? 'active' : ''}
           onClick={() => setActiveTab('bookings')}
         >
-          Bookings
-        </button>
-        <button
-          className={activeTab === 'promoCodes' ? 'active' : ''}
-          onClick={() => setActiveTab('promoCodes')}
-        >
-          Promo Codes
-        </button>
-        <button
-          className={activeTab === 'emailMarketing' ? 'active' : ''}
-          onClick={() => setActiveTab('emailMarketing')}
-        >
-          Email Marketing
-        </button>
-        <button
-          className={activeTab === 'reviews' ? 'active' : ''}
-          onClick={() => setActiveTab('reviews')}
-        >
-          Reviews
-        </button>
-        <button
-          className={activeTab === 'waitlist' ? 'active' : ''}
-          onClick={() => setActiveTab('waitlist')}
-        >
-          Waitlist
-        </button>
-        <button
-          className={activeTab === 'referrals' ? 'active' : ''}
-          onClick={() => setActiveTab('referrals')}
-        >
-          Referrals
+          📋 Bookings
         </button>
         <button
           className={activeTab === 'checkin' ? 'active' : ''}
           onClick={() => setActiveTab('checkin')}
         >
-          Check-In
+          ✅ Check-In
+        </button>
+
+        {/* Customer Engagement */}
+        <button
+          className={activeTab === 'memberships' ? 'active' : ''}
+          onClick={() => setActiveTab('memberships')}
+        >
+          💎 Memberships
         </button>
         <button
-          className={activeTab === 'analytics' ? 'active' : ''}
-          onClick={() => setActiveTab('analytics')}
+          className={activeTab === 'reviews' ? 'active' : ''}
+          onClick={() => setActiveTab('reviews')}
         >
-          Analytics
+          ⭐ Reviews
         </button>
         <button
-          className={activeTab === 'settings' ? 'active' : ''}
-          onClick={() => setActiveTab('settings')}
+          className={activeTab === 'referrals' ? 'active' : ''}
+          onClick={() => setActiveTab('referrals')}
         >
-          Settings
+          🎯 Referrals
+        </button>
+        <button
+          className={activeTab === 'waitlist' ? 'active' : ''}
+          onClick={() => setActiveTab('waitlist')}
+        >
+          ⏳ Waitlist
+        </button>
+
+        {/* Marketing & Promotions */}
+        <button
+          className={activeTab === 'promoCodes' ? 'active' : ''}
+          onClick={() => setActiveTab('promoCodes')}
+        >
+          🎫 Promo Codes
+        </button>
+        <button
+          className={activeTab === 'emailMarketing' ? 'active' : ''}
+          onClick={() => setActiveTab('emailMarketing')}
+        >
+          📧 Email Marketing
         </button>
         <button
           className={activeTab === 'emailAutomation' ? 'active' : ''}
           onClick={() => setActiveTab('emailAutomation')}
         >
-          Email Automation
+          🤖 Email Automation
+        </button>
+
+        {/* Admin & Insights */}
+        <button
+          className={activeTab === 'analytics' ? 'active' : ''}
+          onClick={() => setActiveTab('analytics')}
+        >
+          📊 Analytics
         </button>
         <button
-          className={activeTab === 'memberships' ? 'active' : ''}
-          onClick={() => setActiveTab('memberships')}
+          className={activeTab === 'settings' ? 'active' : ''}
+          onClick={() => setActiveTab('settings')}
         >
-          Memberships
+          ⚙️ Settings
         </button>
       </div>
 

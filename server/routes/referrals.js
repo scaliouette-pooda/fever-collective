@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Booking = require('../models/Booking');
+const Membership = require('../models/Membership');
 const { authenticateUser, requireAdmin } = require('../middleware/auth');
 
 // Get or create user's referral code
@@ -11,6 +12,19 @@ router.get('/my-code', authenticateUser, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if user has Epidemic membership
+    const membership = await Membership.findOne({
+      user: req.user.userId,
+      status: 'active'
+    });
+
+    if (!membership || membership.membershipTier !== 'epidemic') {
+      return res.status(403).json({
+        error: 'Referral program is only available for Epidemic members',
+        requiredTier: 'epidemic'
+      });
     }
 
     // Generate referral code if doesn't exist
@@ -66,6 +80,19 @@ router.get('/validate/:code', async (req, res) => {
 router.get('/stats', authenticateUser, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
+
+    // Check if user has Epidemic membership
+    const membership = await Membership.findOne({
+      user: req.user.userId,
+      status: 'active'
+    });
+
+    if (!membership || membership.membershipTier !== 'epidemic') {
+      return res.status(403).json({
+        error: 'Referral program is only available for Epidemic members',
+        requiredTier: 'epidemic'
+      });
+    }
 
     // Get referred users
     const referredUsers = await User.find({ referredBy: req.user.userId })

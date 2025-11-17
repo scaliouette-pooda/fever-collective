@@ -378,10 +378,24 @@ function Profile() {
           )}
         </div>
 
-        {/* Referral Section */}
-        {referralData && (
+        {/* Referral Section - Epidemic Members Only */}
+        {referralData && membershipData && (membershipData.membershipTier === 'epidemic' || membershipData.membershipTier?.name === 'epidemic') && (
           <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-            <h3 style={{ marginBottom: '20px', color: '#c9a86a' }}>Your Referral Program</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+              <h3 style={{ margin: 0, color: '#c9a86a' }}>Your Referral Program</h3>
+              <span style={{
+                background: 'linear-gradient(135deg, #c9a86a, #d4b883)',
+                color: '#000',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                fontSize: '0.7rem',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                💎 Epidemic Exclusive
+              </span>
+            </div>
 
             {/* Referral Tier Badge */}
             <div style={{

@@ -1,9 +1,9 @@
-# 🔥 Fever - Brand Identity Guide
+# Fever - Brand Identity Guide
 
 ## Studio Overview
 
 ### Studio Name
-**🔥 Fever**
+**Fever**
 
 ### Class Offerings
 - Heated Mat Pilates

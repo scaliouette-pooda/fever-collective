@@ -76,8 +76,8 @@ function Memberships() {
 
   const getPricingTierLabel = (pricingTier) => {
     const labels = {
-      'founders-1': 'Founders Tier 1 - Dec 1 (Limited to 100)',
-      'founders-2': 'Founders Tier 2 - Jan 1 (Limited to 100)',
+      'founders-1': 'Founders Tier 1 - Dec 1 ',
+      'founders-2': 'Founders Tier 2 - Jan 1 ',
       'general': 'General Membership - Feb 1'
     };
     return labels[pricingTier];
@@ -129,21 +129,20 @@ function Memberships() {
       </div>
 
       {currentMembership && (
-        <div className="current-membership-banner">
-          <div className="banner-content">
-            <h3>Your Current Membership</h3>
-            <p>
-              <strong>{currentMembership.membershipTier === 'fever-starter' ? 'The Fever Starter' :
-                       currentMembership.membershipTier === 'outbreak' ? 'The Outbreak' :
-                       'The Epidemic'}</strong>
-              {' - '}
-              {currentMembership.membershipTier === 'epidemic' ? 'Unlimited classes' :
-               `${currentMembership.creditsRemaining} of ${currentMembership.creditsTotal} credits remaining`}
-            </p>
-            <span className={`status-badge status-${currentMembership.status}`}>
-              {currentMembership.status}
-            </span>
-          </div>
+        <div className="current-membership-compact">
+          <span className="membership-tier-name">
+            {currentMembership.membershipTier === 'fever-starter' ? '🌟 The Fever Starter' :
+             currentMembership.membershipTier === 'outbreak' ? '🔥 The Outbreak' :
+             '💎 The Epidemic'}
+          </span>
+          <span className="membership-divider">•</span>
+          <span className="membership-credits">
+            {currentMembership.membershipTier === 'epidemic' ? 'Unlimited classes' :
+             `${currentMembership.creditsRemaining} / ${currentMembership.creditsTotal} credits`}
+          </span>
+          <span className={`status-badge-compact status-${currentMembership.status}`}>
+            {currentMembership.status}
+          </span>
         </div>
       )}
 

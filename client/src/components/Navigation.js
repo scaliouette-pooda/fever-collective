@@ -31,7 +31,7 @@ function Navigation() {
   return (
     <nav>
       <div className="nav-content">
-        <Link to="/" className="nav-logo">🔥 Fever</Link>
+        <Link to="/" className="nav-logo">Fever</Link>
         <ul>
           <li><Link to="/events">Events</Link></li>
           <li><Link to="/memberships">Memberships</Link></li>

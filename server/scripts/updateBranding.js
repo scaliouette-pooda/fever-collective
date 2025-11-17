@@ -16,7 +16,7 @@ const updateBranding = async () => {
       { _id: 'site_settings' },
       {
         $set: {
-          'siteInfo.siteName': '🔥 Fever',
+          'siteInfo.siteName': 'Fever',
           'siteInfo.tagline': 'Get Hot. Get Strong. Get Fever.',
           'siteInfo.secondaryTagline': 'Heat That Heals. Movement That Empowers.',
           'siteInfo.description': 'Fever is a boutique heated mat Pilates studio in Berkeley designed to elevate strength, flexibility, and community. With a music-driven, energizing environment, members experience a high-intensity Pilates workout in a warm, welcoming studio.',

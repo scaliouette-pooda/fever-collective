@@ -127,7 +127,7 @@ const settingsSchema = new mongoose.Schema({
   siteInfo: {
     siteName: {
       type: String,
-      default: '🔥 Fever'
+      default: 'Fever'
     },
     tagline: {
       type: String,
