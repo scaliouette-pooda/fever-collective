@@ -27,7 +27,10 @@
       "Bash(node scripts/createAdminWithDNS.js:*)",
       "Bash(node scripts/seedMembershipTiers.js:*)",
       "Bash(git log:*)",
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(node scripts/seedClassPassCampaigns.js:*)",
+      "Bash(node -c:*)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []
