@@ -46,7 +46,10 @@ const automatedCampaignSchema = new mongoose.Schema({
       'milestone_achieved',    // After reaching class milestone
       'membership_expiring',   // Before membership ends
       'post_class',            // After attending a class
-      'abandoned_booking'      // Started booking but didn't complete
+      'abandoned_booking',     // Started booking but didn't complete
+      'classpass_first_visit', // After first ClassPass booking
+      'classpass_second_visit',// After second ClassPass booking
+      'classpass_hot_lead'     // ClassPass user with 3+ visits, not converted
     ],
     required: true
   },

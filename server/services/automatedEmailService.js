@@ -389,6 +389,116 @@ async function sendScheduledEmails() {
   }
 }
 
+/**
+ * Trigger ClassPass first visit campaign
+ */
+async function triggerClassPassFirstVisit(userId, userEmail, eventData) {
+  try {
+    console.log(`Triggering ClassPass first visit campaign for user ${userId}`);
+
+    const campaigns = await AutomatedCampaign.find({
+      triggerType: 'classpass_first_visit',
+      isActive: true
+    });
+
+    for (const campaign of campaigns) {
+      if (campaign.shouldTriggerForUser(userId, 'all')) {
+        const user = await User.findById(userId);
+        await campaign.scheduleForUser(userId, userEmail, {
+          userName: user?.name || 'Friend',
+          eventTitle: eventData.eventTitle,
+          eventDate: new Date(eventData.eventDate).toLocaleDateString(),
+          studioPhone: process.env.STUDIO_PHONE || '',
+          studioEmail: process.env.STUDIO_EMAIL || 'info@thefeverstudio.com',
+          studioWebsite: process.env.STUDIO_WEBSITE || 'https://thefeverstudio.com'
+        });
+        console.log(`Scheduled ClassPass first visit campaign for ${userEmail}`);
+      }
+    }
+  } catch (error) {
+    console.error('Error triggering ClassPass first visit campaigns:', error);
+  }
+}
+
+/**
+ * Trigger ClassPass second visit campaign
+ */
+async function triggerClassPassSecondVisit(userId, userEmail, eventData) {
+  try {
+    console.log(`Triggering ClassPass second visit campaign for user ${userId}`);
+
+    const campaigns = await AutomatedCampaign.find({
+      triggerType: 'classpass_second_visit',
+      isActive: true
+    });
+
+    const user = await User.findById(userId);
+    if (!user) return;
+
+    for (const campaign of campaigns) {
+      if (campaign.shouldTriggerForUser(userId, 'all')) {
+        await campaign.scheduleForUser(userId, userEmail, {
+          userName: user.name || 'Friend',
+          eventTitle: eventData.eventTitle,
+          eventDate: new Date(eventData.eventDate).toLocaleDateString(),
+          firstClassDate: user.firstClassPassBooking ? new Date(user.firstClassPassBooking).toLocaleDateString() : 'Recently',
+          studioPhone: process.env.STUDIO_PHONE || '',
+          studioEmail: process.env.STUDIO_EMAIL || 'info@thefeverstudio.com'
+        });
+        console.log(`Scheduled ClassPass second visit campaign for ${userEmail}`);
+      }
+    }
+  } catch (error) {
+    console.error('Error triggering ClassPass second visit campaigns:', error);
+  }
+}
+
+/**
+ * Trigger ClassPass hot lead campaign
+ */
+async function triggerClassPassHotLead(userId, userEmail) {
+  try {
+    console.log(`Triggering ClassPass hot lead campaign for user ${userId}`);
+
+    const campaigns = await AutomatedCampaign.find({
+      triggerType: 'classpass_hot_lead',
+      isActive: true
+    });
+
+    const user = await User.findById(userId);
+    if (!user) return;
+
+    // Calculate ClassPass spending (rough estimate)
+    const avgClassPassRate = 22; // Average payout
+    const classPassTotal = (user.classPassBookingCount || 0) * avgClassPassRate;
+
+    // Calculate days since first booking
+    const daysSinceFirst = user.firstClassPassBooking
+      ? Math.floor((new Date() - new Date(user.firstClassPassBooking)) / (1000 * 60 * 60 * 24))
+      : 0;
+
+    // Conversion window (30 days default)
+    const conversionWindow = 30;
+    const daysRemaining = Math.max(0, conversionWindow - daysSinceFirst);
+
+    for (const campaign of campaigns) {
+      if (campaign.shouldTriggerForUser(userId, 'all')) {
+        await campaign.scheduleForUser(userId, userEmail, {
+          userName: user.name || 'Friend',
+          bookingCount: user.classPassBookingCount || 0,
+          classPassTotal: classPassTotal.toFixed(2),
+          daysInWindow: daysRemaining,
+          studioPhone: process.env.STUDIO_PHONE || '',
+          studioEmail: process.env.STUDIO_EMAIL || 'info@thefeverstudio.com'
+        });
+        console.log(`Scheduled ClassPass hot lead campaign for ${userEmail}`);
+      }
+    }
+  } catch (error) {
+    console.error('Error triggering ClassPass hot lead campaigns:', error);
+  }
+}
+
 module.exports = {
   triggerNewRegistration,
   triggerClassReminders,
@@ -396,5 +506,8 @@ module.exports = {
   triggerPostClassCampaign,
   triggerMilestoneAchieved,
   triggerCreditExpiringCampaigns,
-  sendScheduledEmails
+  sendScheduledEmails,
+  triggerClassPassFirstVisit,
+  triggerClassPassSecondVisit,
+  triggerClassPassHotLead
 };

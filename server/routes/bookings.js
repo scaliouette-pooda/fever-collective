@@ -9,7 +9,7 @@ const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sendBookingConfirmation, sendPaymentConfirmation } = require('../services/emailService');
-const { triggerPostClassCampaign, triggerMilestoneAchieved } = require('../services/automatedEmailService');
+const { triggerPostClassCampaign, triggerMilestoneAchieved, triggerClassPassFirstVisit, triggerClassPassSecondVisit, triggerClassPassHotLead } = require('../services/automatedEmailService');
 const EmailSubscriber = require('../models/EmailSubscriber');
 const User = require('../models/User');
 
@@ -52,6 +52,8 @@ router.post('/',
         try {
           const user = await User.findById(userId);
           if (user) {
+            const previousBookingCount = user.classPassBookingCount || 0;
+
             // Set acquisition source if this is their first booking
             if (!user.acquisitionSource || user.acquisitionSource === 'direct') {
               user.acquisitionSource = 'classpass';
@@ -63,9 +65,33 @@ router.post('/',
             }
 
             // Increment ClassPass booking count
-            user.classPassBookingCount = (user.classPassBookingCount || 0) + 1;
+            user.classPassBookingCount = previousBookingCount + 1;
 
             await user.save();
+
+            // Trigger automated email campaigns based on booking count
+            const eventData = {
+              eventTitle: event.title,
+              eventDate: event.date,
+              eventTime: event.time
+            };
+
+            if (user.classPassBookingCount === 1) {
+              // First visit - trigger welcome campaign
+              triggerClassPassFirstVisit(userId, email, eventData).catch(err =>
+                console.error('Error triggering first visit campaign:', err)
+              );
+            } else if (user.classPassBookingCount === 2) {
+              // Second visit - trigger nurture campaign
+              triggerClassPassSecondVisit(userId, email, eventData).catch(err =>
+                console.error('Error triggering second visit campaign:', err)
+              );
+            } else if (user.classPassBookingCount === 3 && !user.convertedToMember) {
+              // Third visit - trigger hot lead campaign
+              triggerClassPassHotLead(userId, email).catch(err =>
+                console.error('Error triggering hot lead campaign:', err)
+              );
+            }
           }
         } catch (userError) {
           console.error('Error tracking ClassPass user:', userError);
