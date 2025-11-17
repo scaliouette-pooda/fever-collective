@@ -503,3 +503,222 @@ td button:last-of-type:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Help Tab Styles */
+.help-content-wrapper {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  min-height: 600px;
+}
+
+.help-sidebar {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.help-sidebar-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #e8e8e8;
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  border-left: 3px solid transparent;
+}
+
+.help-sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-left-color: rgba(201, 168, 106, 0.5);
+}
+
+.help-sidebar-item.active {
+  background: rgba(201, 168, 106, 0.2);
+  color: #c9a86a;
+  font-weight: 600;
+  border-left-color: #c9a86a;
+}
+
+.help-content-area {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.help-section-content {
+  color: #e8e8e8;
+  line-height: 1.8;
+}
+
+.help-section-content h3 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  border-bottom: 2px solid #c9a86a;
+  padding-bottom: 0.75rem;
+}
+
+.help-section-content h4 {
+  font-size: 1.4rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #c9a86a;
+}
+
+.help-section-content p {
+  margin-bottom: 1rem;
+  color: rgba(232, 232, 232, 0.9);
+}
+
+.help-section-content ul {
+  margin: 1rem 0 1.5rem 1.5rem;
+  line-height: 1.8;
+}
+
+.help-section-content ul li {
+  margin-bottom: 0.75rem;
+  color: rgba(232, 232, 232, 0.85);
+}
+
+.help-section-content strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.help-expandable {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 168, 106, 0.3);
+  border-left: 3px solid #c9a86a;
+  border-radius: 4px;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+}
+
+.help-expandable strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #c9a86a;
+}
+
+.help-code-block {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 1rem 1.5rem;
+  color: rgba(232, 232, 232, 0.95);
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  line-height: 1.6;
+  margin: 1rem 0;
+}
+
+.help-checklist {
+  list-style: none;
+  padding-left: 0;
+  margin: 1rem 0;
+}
+
+.help-checklist li {
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.75rem;
+  color: rgba(232, 232, 232, 0.9);
+}
+
+.help-checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4rem;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #c9a86a;
+  border-radius: 3px;
+  background: transparent;
+}
+
+.help-flow-diagram {
+  background: rgba(201, 168, 106, 0.05);
+  border: 2px solid rgba(201, 168, 106, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.help-flow-diagram strong {
+  color: #c9a86a;
+  font-size: 1.1rem;
+}
+
+.help-section-content table {
+  color: #e8e8e8;
+  margin: 1.5rem 0;
+}
+
+.help-section-content table th {
+  color: #fff;
+  font-weight: 600;
+}
+
+.help-section-content table td,
+.help-section-content table th {
+  color: rgba(232, 232, 232, 0.9);
+}
+
+/* Scrollbar Styling for Help Section */
+.help-sidebar::-webkit-scrollbar,
+.help-content-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.help-sidebar::-webkit-scrollbar-track,
+.help-content-area::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.help-sidebar::-webkit-scrollbar-thumb,
+.help-content-area::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 106, 0.5);
+  border-radius: 4px;
+}
+
+.help-sidebar::-webkit-scrollbar-thumb:hover,
+.help-content-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 168, 106, 0.7);
+}
+
+/* Responsive Help Tab */
+@media (max-width: 968px) {
+  .help-content-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .help-sidebar {
+    position: static;
+    max-height: none;
+    margin-bottom: 2rem;
+  }
+
+  .help-sidebar-item {
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  .help-content-area {
+    max-height: none;
+  }
+}

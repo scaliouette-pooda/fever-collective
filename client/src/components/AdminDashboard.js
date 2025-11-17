@@ -45,6 +45,7 @@ function AdminDashboard() {
   const [editingPromo, setEditingPromo] = useState(null);
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [recipientPreview, setRecipientPreview] = useState(null);
+  const [activeHelpSection, setActiveHelpSection] = useState('getting-started');
 
   const [bookingForm, setBookingForm] = useState({
     name: '',
@@ -1306,6 +1307,12 @@ function AdminDashboard() {
           onClick={() => setActiveTab('settings')}
         >
           Settings
+        </button>
+        <button
+          className={activeTab === 'help' ? 'active' : ''}
+          onClick={() => setActiveTab('help')}
+        >
+          Help
         </button>
       </div>
 
@@ -4227,6 +4234,998 @@ jane@example.com,Jane Smith
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Help Tab */}
+        {activeTab === 'help' && (
+          <div className="help-section">
+            <div className="section-header">
+              <h2>ClassPass Integration Help</h2>
+              <p>Complete guide to understanding and managing the ClassPass integration</p>
+            </div>
+
+            <div className="help-content-wrapper">
+              {/* Sidebar Navigation */}
+              <div className="help-sidebar">
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'getting-started' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('getting-started')}
+                >
+                  Getting Started
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'configuration' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('configuration')}
+                >
+                  Configuration Setup
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'email-campaigns' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('email-campaigns')}
+                >
+                  Email Campaigns
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'user-journey' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('user-journey')}
+                >
+                  User Journey & Flow
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'analytics' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('analytics')}
+                >
+                  Analytics & Metrics
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'pricing' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('pricing')}
+                >
+                  Pricing & Revenue
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'troubleshooting' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('troubleshooting')}
+                >
+                  Troubleshooting
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'quick-reference' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('quick-reference')}
+                >
+                  Quick Reference
+                </div>
+              </div>
+
+              {/* Content Area */}
+              <div className="help-content-area">
+                {/* Getting Started Section */}
+                {activeHelpSection === 'getting-started' && (
+                  <div className="help-section-content">
+                    <h3>Getting Started with ClassPass Integration</h3>
+
+                    <h4>What is ClassPass Integration?</h4>
+                    <p>
+                      The ClassPass integration allows you to track and manage customers who book classes through the ClassPass platform.
+                      This system helps you understand ClassPass customer behavior, track conversions to direct memberships,
+                      and automate marketing efforts to convert ClassPass users into regular members.
+                    </p>
+
+                    <h4>How It Works</h4>
+                    <p>When enabled, the system:</p>
+                    <ul>
+                      <li>Tracks all bookings made through ClassPass separately from direct bookings</li>
+                      <li>Automatically tags ClassPass users in your email system</li>
+                      <li>Sends targeted email campaigns based on visit frequency</li>
+                      <li>Monitors conversion from ClassPass to membership</li>
+                      <li>Provides detailed analytics on ClassPass customer behavior and revenue</li>
+                    </ul>
+
+                    <h4>Benefits for Your Studio</h4>
+                    <ul>
+                      <li><strong>Customer Acquisition:</strong> Reach new customers through ClassPass marketplace</li>
+                      <li><strong>Conversion Tracking:</strong> Identify which ClassPass users become regular members</li>
+                      <li><strong>Automated Marketing:</strong> Nurture ClassPass leads with targeted email sequences</li>
+                      <li><strong>Revenue Analytics:</strong> Compare ClassPass vs direct booking revenue</li>
+                      <li><strong>Data-Driven Decisions:</strong> Use conversion metrics to optimize your offerings</li>
+                    </ul>
+
+                    <h4>Quick Start Checklist</h4>
+                    <div className="help-checklist">
+                      <li>Enable ClassPass Integration in Settings</li>
+                      <li>Configure default payout rate for revenue tracking</li>
+                      <li>Set conversion tracking window (default: 30 days)</li>
+                      <li>Activate Email Automation campaigns</li>
+                      <li>Customize email templates with your studio details</li>
+                      <li>Test with a ClassPass booking</li>
+                      <li>Monitor ClassPass Analytics dashboard</li>
+                    </div>
+                  </div>
+                )}
+
+                {/* Configuration Setup Section */}
+                {activeHelpSection === 'configuration' && (
+                  <div className="help-section-content">
+                    <h3>Configuration Setup</h3>
+
+                    <p>
+                      Follow these steps to properly configure ClassPass integration for your studio.
+                    </p>
+
+                    <h4>Step 1: Enable Integration (Settings Tab)</h4>
+                    <p>Navigate to Settings tab and find the ClassPass Integration section:</p>
+                    <div className="help-code-block">
+                      1. Check "Enable ClassPass Integration" checkbox<br/>
+                      2. This activates ClassPass tracking across all bookings<br/>
+                      3. Reveals ClassPass Analytics tab in Admin & Insights section
+                    </div>
+
+                    <h4>Step 2: Configure Integration Settings</h4>
+                    <ul>
+                      <li>
+                        <strong>Auto-tag ClassPass users:</strong> Automatically adds "classpass" tag to email subscribers
+                        for targeted campaign delivery (recommended: enabled)
+                      </li>
+                      <li>
+                        <strong>Track ClassPass to member conversions:</strong> Monitor when ClassPass users purchase memberships
+                        or become regular direct-booking customers (recommended: enabled)
+                      </li>
+                      <li>
+                        <strong>Conversion Goal (Days):</strong> Number of days to track conversion from first ClassPass booking
+                        to membership purchase (default: 30 days, range: 1-180)
+                      </li>
+                      <li>
+                        <strong>Default Payout Rate:</strong> Average payout per ClassPass booking for revenue analytics
+                        when specific payout not recorded (typical: $18-$25)
+                      </li>
+                    </ul>
+
+                    <h4>Step 3: Activate Email Campaigns (Email Automation Tab)</h4>
+                    <p>Navigate to Email Automation and activate these campaigns:</p>
+                    <div className="help-code-block">
+                      Campaign 1: "ClassPass - First Visit Welcome"<br/>
+                      - Sends 2 hours after first booking<br/>
+                      - Introduces studio and membership benefits<br/>
+                      <br/>
+                      Campaign 2: "ClassPass - Second Visit Nurture"<br/>
+                      - Sends 1 day after second booking<br/>
+                      - Includes 15% membership discount offer<br/>
+                      <br/>
+                      Campaign 3: "ClassPass - Hot Lead Conversion"<br/>
+                      - Sends 12 hours after 3rd+ booking<br/>
+                      - Strong conversion offer: 20% off + FREE gift<br/>
+                      - Follow-up reminder 4 days later
+                    </div>
+
+                    <h4>Step 4: Customize Email Templates</h4>
+                    <p>Edit campaign email content to include:</p>
+                    <ul>
+                      <li>Your studio's unique value proposition</li>
+                      <li>Current membership pricing and benefits</li>
+                      <li>Studio contact information (phone, email, website)</li>
+                      <li>Links to membership purchase page</li>
+                      <li>Testimonials from converted members</li>
+                    </ul>
+
+                    <h4>Configuration Verification Checklist</h4>
+                    <div className="help-checklist">
+                      <li>ClassPass Integration enabled in Settings</li>
+                      <li>Default payout rate set (e.g., $22)</li>
+                      <li>Conversion window configured (e.g., 30 days)</li>
+                      <li>Auto-tagging enabled</li>
+                      <li>All three email campaigns activated</li>
+                      <li>Email templates customized with studio details</li>
+                      <li>ClassPass Analytics tab visible in dashboard</li>
+                    </div>
+                  </div>
+                )}
+
+                {/* Email Campaigns Section */}
+                {activeHelpSection === 'email-campaigns' && (
+                  <div className="help-section-content">
+                    <h3>Email Campaign Management</h3>
+
+                    <p>
+                      ClassPass email campaigns are automatically triggered based on user behavior.
+                      Understanding how each campaign works helps you optimize conversion rates.
+                    </p>
+
+                    <h4>Campaign Triggers & Timing</h4>
+
+                    <div className="help-expandable">
+                      <strong>First Visit Welcome Campaign</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <p><strong>Trigger:</strong> After customer creates first ClassPass booking</p>
+                        <p><strong>Delay:</strong> 2 hours after booking</p>
+                        <p><strong>Purpose:</strong> Introduce studio, create positive first impression</p>
+                        <p><strong>Content Strategy:</strong></p>
+                        <ul>
+                          <li>Welcome message and excitement about their upcoming class</li>
+                          <li>What to expect: location, parking, what to bring</li>
+                          <li>Brief studio history and mission</li>
+                          <li>Highlight membership benefits vs ClassPass</li>
+                          <li>Call-to-action: Learn more about memberships</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>Second Visit Nurture Campaign</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <p><strong>Trigger:</strong> After customer creates second ClassPass booking</p>
+                        <p><strong>Delay:</strong> 1 day after booking</p>
+                        <p><strong>Purpose:</strong> Reinforce community connection, introduce conversion offer</p>
+                        <p><strong>Content Strategy:</strong></p>
+                        <ul>
+                          <li>Acknowledge they're coming back - "We noticed you're becoming a regular!"</li>
+                          <li>Emphasize community and belonging</li>
+                          <li>Share member testimonials or success stories</li>
+                          <li>Present initial conversion incentive: 15% off first month</li>
+                          <li>Show the math: ClassPass credits vs membership value</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>Hot Lead Conversion Campaign</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <p><strong>Trigger:</strong> After customer reaches 3+ ClassPass bookings</p>
+                        <p><strong>Delay:</strong> 12 hours after booking (+ reminder at 4 days)</p>
+                        <p><strong>Purpose:</strong> Strong conversion push with urgency and value</p>
+                        <p><strong>Content Strategy:</strong></p>
+                        <ul>
+                          <li>Personalized message: "You've taken X classes - you're part of the family!"</li>
+                          <li>Value comparison: Show estimated ClassPass spend vs membership cost</li>
+                          <li>Premium offer: 20% off first month + FREE branded gift</li>
+                          <li>Create urgency: Limited time offer (7 days)</li>
+                          <li>Two-email sequence: Initial offer + reminder before expiration</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <h4>Email Placeholders</h4>
+                    <p>Use these dynamic placeholders in your campaign templates:</p>
+                    <div className="help-code-block">
+                      Available Placeholders:<br/>
+                      <br/>
+                      User Information:<br/>
+                      - {`{{userName}}`} = Customer's name<br/>
+                      <br/>
+                      Booking Details:<br/>
+                      - {`{{eventTitle}}`} = Class name<br/>
+                      - {`{{eventDate}}`} = Class date<br/>
+                      - {`{{eventTime}}`} = Class time<br/>
+                      - {`{{firstClassDate}}`} = Date of first ClassPass visit<br/>
+                      <br/>
+                      Analytics:<br/>
+                      - {`{{bookingCount}}`} = Total ClassPass bookings<br/>
+                      - {`{{classPassTotal}}`} = Estimated spending via ClassPass<br/>
+                      - {`{{daysInWindow}}`} = Days remaining in conversion window<br/>
+                      <br/>
+                      Studio Contact:<br/>
+                      - {`{{studioPhone}}`} = Your phone number<br/>
+                      - {`{{studioEmail}}`} = Your email<br/>
+                      - {`{{studioWebsite}}`} = Your website URL
+                    </div>
+
+                    <h4>Campaign Metrics</h4>
+                    <p>Monitor these key performance indicators in Email Automation:</p>
+                    <ul>
+                      <li><strong>Triggered:</strong> Number of times campaign criteria were met</li>
+                      <li><strong>Sent:</strong> Successfully delivered emails</li>
+                      <li><strong>Opened:</strong> Recipients who opened the email (tracked via pixel)</li>
+                      <li><strong>Clicked:</strong> Recipients who clicked links in email</li>
+                      <li><strong>Open Rate:</strong> Opens / Sent (target: 25-35%)</li>
+                      <li><strong>Click Rate:</strong> Clicks / Opens (target: 15-25%)</li>
+                    </ul>
+
+                    <h4>Optimization Tips</h4>
+                    <ul>
+                      <li>Test different subject lines to improve open rates</li>
+                      <li>A/B test discount amounts (15% vs 20% vs free month)</li>
+                      <li>Adjust timing delays based on your class schedule patterns</li>
+                      <li>Include social proof (testimonials, community photos)</li>
+                      <li>Make membership CTAs prominent and clear</li>
+                    </ul>
+                  </div>
+                )}
+
+                {/* User Journey Section */}
+                {activeHelpSection === 'user-journey' && (
+                  <div className="help-section-content">
+                    <h3>User Journey & Flow</h3>
+
+                    <p>
+                      Understanding the complete ClassPass user journey helps you identify optimization opportunities
+                      and improve conversion rates.
+                    </p>
+
+                    <h4>Complete Flow Diagram</h4>
+                    <div className="help-flow-diagram">
+                      <div style={{ padding: '1.5rem', lineHeight: '1.8' }}>
+                        <strong>Stage 1: BOOKING</strong><br/>
+                        - User books class via ClassPass platform<br/>
+                        - Booking source automatically set to "classpass"<br/>
+                        - ClassPass booking ID stored (optional)<br/>
+                        - ClassPass payout amount stored (optional)<br/>
+                        - Event available spots reduced<br/>
+                        <br/>
+                        <strong>Stage 2: USER TRACKING</strong><br/>
+                        - Acquisition source set to "classpass" (first time only)<br/>
+                        - First ClassPass booking date recorded<br/>
+                        - ClassPass booking count incremented<br/>
+                        - User automatically subscribed to email list<br/>
+                        - "classpass" tag applied for targeted campaigns<br/>
+                        <br/>
+                        <strong>Stage 3: CAMPAIGN TRIGGER</strong><br/>
+                        1st booking → First Visit Welcome (sent in 2 hours)<br/>
+                        2nd booking → Second Visit Nurture (sent in 1 day)<br/>
+                        3rd booking → Hot Lead Conversion (sent in 12 hours + reminder in 4 days)<br/>
+                        <br/>
+                        <strong>Stage 4: CHECK-IN</strong><br/>
+                        - Admin scans QR code or manual check-in<br/>
+                        - Booking marked as checked in with timestamp<br/>
+                        - Post-class follow-up campaign triggered<br/>
+                        - Analytics updated with attendance data<br/>
+                        <br/>
+                        <strong>Stage 5: CONVERSION TRACKING</strong><br/>
+                        - User purchases membership or makes direct booking<br/>
+                        - "Converted to member" flag set to true<br/>
+                        - Conversion metrics updated in analytics<br/>
+                        - User removed from "hot leads" list<br/>
+                        - Days to conversion calculated<br/>
+                        <br/>
+                        <strong>Stage 6: ANALYTICS</strong><br/>
+                        - Total ClassPass bookings tracked<br/>
+                        - Revenue calculations (sum of payouts)<br/>
+                        - Conversion rate computed<br/>
+                        - Hot leads list maintained<br/>
+                        - Funnel visualization updated
+                      </div>
+                    </div>
+
+                    <h4>Booking Types Comparison</h4>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+                      <thead>
+                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Type</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Revenue</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Tracking</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Goal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}><strong>ClassPass</strong></td>
+                          <td style={{ padding: '0.75rem' }}>Lower (~$18-25/class)</td>
+                          <td style={{ padding: '0.75rem' }}>Separate analytics, conversion tracking</td>
+                          <td style={{ padding: '0.75rem' }}>Convert to membership</td>
+                        </tr>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}><strong>Membership</strong></td>
+                          <td style={{ padding: '0.75rem' }}>Monthly recurring ($199 Unlimited, $99-$159 Limited)</td>
+                          <td style={{ padding: '0.75rem' }}>Credit usage, class attendance, milestones</td>
+                          <td style={{ padding: '0.75rem' }}>Retain and engage</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '0.75rem' }}><strong>Direct</strong></td>
+                          <td style={{ padding: '0.75rem' }}>Full price per class</td>
+                          <td style={{ padding: '0.75rem' }}>Standard booking analytics</td>
+                          <td style={{ padding: '0.75rem' }}>Convert to membership</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <h4>Credit System (Memberships Only)</h4>
+                    <p>How credits work for membership-based check-ins:</p>
+                    <ul>
+                      <li><strong>1 Credit = 1 Class:</strong> Standard deduction for limited plans</li>
+                      <li><strong>Unlimited Plans (Epidemic):</strong> No credit deduction, unlimited access</li>
+                      <li><strong>Limited Plans:</strong> Credits checked at check-in, booking fails if insufficient</li>
+                      <li><strong>Monthly Reset:</strong> Credits refresh on billing cycle date</li>
+                      <li><strong>Walk-Ins:</strong> Credits deducted at check-in even without pre-booking</li>
+                    </ul>
+
+                    <h4>Milestone Rewards System</h4>
+                    <p>Automatic rewards triggered at class attendance milestones:</p>
+                    <div className="help-code-block">
+                      50 classes   → Sweat Towel<br/>
+                      100 classes  → Branded Tote Bag<br/>
+                      150 classes  → Water Bottle<br/>
+                      200 classes  → Studio Hat<br/>
+                      250 classes  → Premium Hoodie
+                    </div>
+                  </div>
+                )}
+
+                {/* Analytics & Metrics Section */}
+                {activeHelpSection === 'analytics' && (
+                  <div className="help-section-content">
+                    <h3>Analytics & Metrics</h3>
+
+                    <p>
+                      The ClassPass Analytics dashboard provides insights into acquisition, conversion,
+                      and revenue impact from ClassPass bookings.
+                    </p>
+
+                    <h4>Accessing Analytics</h4>
+                    <p>
+                      Navigate to Admin & Insights → ClassPass (only visible when integration is enabled)
+                    </p>
+
+                    <h4>Key Metrics Explained</h4>
+
+                    <div className="help-expandable">
+                      <strong>Total Bookings</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem' }}>
+                        <p>Total number of class bookings made through ClassPass</p>
+                        <p><strong>Includes:</strong> All booking statuses (pending, confirmed, completed, cancelled)</p>
+                        <p><strong>Completed Bookings:</strong> Subset showing only attended classes</p>
+                        <p><strong>Use for:</strong> Understanding ClassPass volume and attendance rate</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>Total Revenue</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem' }}>
+                        <p>Sum of all payouts received from ClassPass bookings</p>
+                        <p><strong>Calculation:</strong> Uses recorded payout amounts or default payout rate</p>
+                        <p><strong>Average Payout:</strong> Total revenue / completed bookings</p>
+                        <p><strong>Use for:</strong> Financial planning and comparing to direct booking revenue</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>Unique Customers</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem' }}>
+                        <p>Number of distinct ClassPass users who have booked with your studio</p>
+                        <p><strong>Tracked by:</strong> User account (email)</p>
+                        <p><strong>Use for:</strong> Understanding reach and customer acquisition from ClassPass</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>Converted to Members</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem' }}>
+                        <p>Number of ClassPass users who purchased a membership</p>
+                        <p><strong>Conversion Rate:</strong> Converted / Unique Customers</p>
+                        <p><strong>Time Window:</strong> Based on "Conversion Goal Days" setting</p>
+                        <p><strong>Benchmark:</strong> Industry average is 8-15%, aim for 15%+</p>
+                        <p><strong>Use for:</strong> Measuring effectiveness of conversion campaigns</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>Hot Leads</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem' }}>
+                        <p>ClassPass users with 2+ bookings who haven't converted to membership</p>
+                        <p><strong>Why important:</strong> These are high-intent prospects likely to convert</p>
+                        <p><strong>Action:</strong> Prioritize personal outreach to hot leads</p>
+                        <p><strong>Use for:</strong> Targeted conversion efforts and retention campaigns</p>
+                      </div>
+                    </div>
+
+                    <h4>Conversion Funnel</h4>
+                    <p>Visual representation of customer progression:</p>
+                    <div className="help-code-block">
+                      First Visit (100% baseline)<br/>
+                      │<br/>
+                      ▼ % who return<br/>
+                      Second Visit<br/>
+                      │<br/>
+                      ▼ % who become regulars<br/>
+                      3+ Visits (Hot Leads)<br/>
+                      │<br/>
+                      ▼ % conversion rate<br/>
+                      Converted to Member<br/>
+                      <br/>
+                      Optimize: Identify where most drop-off occurs
+                    </div>
+
+                    <h4>Revenue Comparison</h4>
+                    <p>Compare ClassPass vs Direct booking revenue:</p>
+                    <ul>
+                      <li><strong>ClassPass Revenue:</strong> Total payouts from ClassPass</li>
+                      <li><strong>Direct Revenue:</strong> Full-price bookings and memberships</li>
+                      <li><strong>Blended Revenue:</strong> Combined total from all sources</li>
+                      <li><strong>Use case:</strong> Determine if ClassPass is profitable customer acquisition channel</li>
+                    </ul>
+
+                    <h4>Interpreting Your Data</h4>
+
+                    <strong>Healthy Metrics:</strong>
+                    <ul>
+                      <li>Conversion rate: 15%+</li>
+                      <li>Average bookings per user: 2.5+</li>
+                      <li>Second visit rate: 40%+</li>
+                      <li>Hot lead conversion: 25%+</li>
+                    </ul>
+
+                    <strong>If conversion rate is low (&lt;10%):</strong>
+                    <ul>
+                      <li>Review email campaign content and offers</li>
+                      <li>Increase discount incentives</li>
+                      <li>Improve in-class experience and instructor engagement</li>
+                      <li>Add personal follow-up for hot leads</li>
+                    </ul>
+
+                    <strong>If few return visits:</strong>
+                    <ul>
+                      <li>Send post-class feedback survey</li>
+                      <li>Improve first-time customer experience</li>
+                      <li>Offer ClassPass-exclusive class times or formats</li>
+                      <li>Build community through social media</li>
+                    </ul>
+                  </div>
+                )}
+
+                {/* Pricing & Revenue Section */}
+                {activeHelpSection === 'pricing' && (
+                  <div className="help-section-content">
+                    <h3>Pricing & Revenue</h3>
+
+                    <p>
+                      Understanding ClassPass payouts and revenue calculations is essential for profitability analysis
+                      and pricing strategy.
+                    </p>
+
+                    <h4>How ClassPass Payouts Work</h4>
+                    <p>
+                      ClassPass pays studios a negotiated rate per booking, typically lower than your regular class price.
+                      The exact payout depends on your agreement with ClassPass and class demand.
+                    </p>
+
+                    <h4>Typical Payout Ranges</h4>
+                    <div className="help-code-block">
+                      Industry Standards:<br/>
+                      <br/>
+                      Premium Studios:  $22-30 per class<br/>
+                      Standard Studios: $18-25 per class<br/>
+                      Budget Studios:   $12-18 per class<br/>
+                      <br/>
+                      Note: Your actual payout may vary based on:<br/>
+                      - Studio location and market<br/>
+                      - Class type and duration<br/>
+                      - Time of day (peak vs off-peak)<br/>
+                      - ClassPass partnership tier
+                    </div>
+
+                    <h4>Setting Default Payout Rate</h4>
+                    <p>
+                      In Settings → ClassPass Integration, set your default payout rate. This is used for revenue
+                      calculations when specific booking payout is not recorded.
+                    </p>
+                    <ul>
+                      <li><strong>Recommended:</strong> Use your average or median payout from ClassPass reports</li>
+                      <li><strong>Conservative approach:</strong> Use lowest typical payout for baseline projections</li>
+                      <li><strong>Update regularly:</strong> Adjust as your ClassPass agreement changes</li>
+                    </ul>
+
+                    <h4>Revenue Calculation Methods</h4>
+
+                    <strong>Method 1: Specific Payout Tracking (Most Accurate)</strong>
+                    <div className="help-code-block">
+                      When creating booking:<br/>
+                      {`{`}<br/>
+                      &nbsp;&nbsp;bookingSource: "classpass",<br/>
+                      &nbsp;&nbsp;classPassBookingId: "CP-12345-67890",<br/>
+                      &nbsp;&nbsp;classPassPayout: 25.00  // Actual payout amount<br/>
+                      {`}`}<br/>
+                      <br/>
+                      Revenue = Sum of all classPassPayout values
+                    </div>
+
+                    <strong>Method 2: Default Rate Estimation</strong>
+                    <div className="help-code-block">
+                      If classPassPayout not provided:<br/>
+                      <br/>
+                      Revenue = (Number of ClassPass bookings) × (Default payout rate)<br/>
+                      <br/>
+                      Example:<br/>
+                      50 bookings × $22 = $1,100 estimated revenue
+                    </div>
+
+                    <h4>Cost Comparison Example</h4>
+                    <p>Understanding value proposition for conversion campaigns:</p>
+
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+                      <thead>
+                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Scenario</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'right' }}>ClassPass</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'right' }}>Membership</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'right' }}>Savings</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}>4 classes/month</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right' }}>~$80 in credits</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right' }}>$99 Fever Starter</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right', color: '#34c759' }}>+$19 value</td>
+                        </tr>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}>8 classes/month</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right' }}>~$160 in credits</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right' }}>$159 Outbreak</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right', color: '#34c759' }}>+$1 value</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '0.75rem' }}>Unlimited</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right' }}>~$200+ in credits</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right' }}>$199 Epidemic</td>
+                          <td style={{ padding: '0.75rem', textAlign: 'right', color: '#34c759' }}>Unlimited access</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <h4>ROI Tracking Strategy</h4>
+
+                    <strong>Customer Lifetime Value (CLV) Calculation:</strong>
+                    <div className="help-code-block">
+                      Initial Phase (ClassPass):<br/>
+                      - Average bookings: 2.5 classes<br/>
+                      - Revenue per booking: $22<br/>
+                      - Initial revenue: $55<br/>
+                      <br/>
+                      Post-Conversion (Membership):<br/>
+                      - Monthly membership: $159 (Outbreak)<br/>
+                      - Average retention: 8 months<br/>
+                      - Membership revenue: $1,272<br/>
+                      <br/>
+                      Total CLV: $55 + $1,272 = $1,327<br/>
+                      <br/>
+                      ROI: Even low ClassPass payouts become profitable<br/>
+                      when converted to long-term members
+                    </div>
+
+                    <strong>Break-Even Analysis:</strong>
+                    <p>
+                      If ClassPass payout is lower than your cost per class (instructor, space, etc.),
+                      ClassPass functions as a customer acquisition channel. The goal is conversion to direct
+                      membership to achieve profitability.
+                    </p>
+
+                    <h4>Pricing Strategy Tips</h4>
+                    <ul>
+                      <li><strong>View ClassPass as marketing:</strong> Customer acquisition cost vs direct advertising</li>
+                      <li><strong>Optimize class timing:</strong> Offer ClassPass slots during off-peak hours to fill capacity</li>
+                      <li><strong>Capacity management:</strong> Limit ClassPass spots per class to preserve premium pricing</li>
+                      <li><strong>Conversion incentives:</strong> Discount offers should exceed ClassPass credit value to customer</li>
+                      <li><strong>Track cohorts:</strong> Compare CLV of ClassPass converts vs direct sign-ups</li>
+                    </ul>
+                  </div>
+                )}
+
+                {/* Troubleshooting Section */}
+                {activeHelpSection === 'troubleshooting' && (
+                  <div className="help-section-content">
+                    <h3>Troubleshooting</h3>
+
+                    <p>
+                      Common issues and solutions for ClassPass integration problems.
+                    </p>
+
+                    <h4>Campaigns Not Sending</h4>
+
+                    <strong>Symptoms:</strong>
+                    <p>Email campaigns show "triggered" but not "sent", or sent count is much lower than triggered count.</p>
+
+                    <strong>Possible Causes & Solutions:</strong>
+                    <ul>
+                      <li>
+                        <strong>Campaign not activated:</strong> Check Email Automation tab, ensure campaign status is "Active"
+                      </li>
+                      <li>
+                        <strong>Email service not configured:</strong> Verify SMTP settings in server environment variables
+                      </li>
+                      <li>
+                        <strong>Scheduler not running:</strong> Confirm automated email scheduler is running (typically hourly cron job)
+                      </li>
+                      <li>
+                        <strong>User has no email:</strong> Verify ClassPass bookings include valid email addresses
+                      </li>
+                      <li>
+                        <strong>User unsubscribed:</strong> Check email subscriber status, respect unsubscribe preferences
+                      </li>
+                      <li>
+                        <strong>Duplicate prevention:</strong> System prevents sending same campaign multiple times to same user
+                      </li>
+                    </ul>
+
+                    <strong>How to Test:</strong>
+                    <div className="help-code-block">
+                      1. Create test ClassPass booking with your email<br/>
+                      2. Wait for campaign delay period<br/>
+                      3. Check Email Automation → Campaign → Logs<br/>
+                      4. Review sent emails list for your test<br/>
+                      5. Check spam folder if not in inbox
+                    </div>
+
+                    <h4>Credit Deduction Issues</h4>
+
+                    <strong>Symptoms:</strong>
+                    <p>Members report incorrect credit balance, or check-in fails with credit error.</p>
+
+                    <strong>Possible Causes & Solutions:</strong>
+                    <ul>
+                      <li>
+                        <strong>Membership tier mismatch:</strong> Verify user's membership tier and credit allocation
+                      </li>
+                      <li>
+                        <strong>Billing cycle confusion:</strong> Credits reset on billing date, not calendar month
+                      </li>
+                      <li>
+                        <strong>Multiple check-ins:</strong> System should prevent double check-in, verify booking status
+                      </li>
+                      <li>
+                        <strong>Unlimited plan not recognized:</strong> Check membership tier is exactly "epidemic" (lowercase)
+                      </li>
+                      <li>
+                        <strong>Expired membership:</strong> Membership may have lapsed, verify end date
+                      </li>
+                    </ul>
+
+                    <strong>Manual Credit Adjustment:</strong>
+                    <p>If needed, admin can manually adjust credits in Memberships tab → Edit member → Credits field.</p>
+
+                    <h4>Booking Source Not Tracking</h4>
+
+                    <strong>Symptoms:</strong>
+                    <p>ClassPass bookings not showing in ClassPass Analytics, or marked as "direct" instead.</p>
+
+                    <strong>Possible Causes & Solutions:</strong>
+                    <ul>
+                      <li>
+                        <strong>Missing bookingSource field:</strong> Ensure booking creation includes bookingSource: "classpass"
+                      </li>
+                      <li>
+                        <strong>Integration not enabled:</strong> Verify Settings → ClassPass Integration → Enabled is checked
+                      </li>
+                      <li>
+                        <strong>Manual booking entry:</strong> Admin-created bookings need bookingSource manually set
+                      </li>
+                      <li>
+                        <strong>Case sensitivity:</strong> Must be lowercase "classpass", not "ClassPass" or "Classpass"
+                      </li>
+                    </ul>
+
+                    <strong>Correct Booking Format:</strong>
+                    <div className="help-code-block">
+                      {`{`}<br/>
+                      &nbsp;&nbsp;userId: "user_id_here",<br/>
+                      &nbsp;&nbsp;eventId: "event_id_here",<br/>
+                      &nbsp;&nbsp;bookingSource: "classpass",  // Required<br/>
+                      &nbsp;&nbsp;classPassBookingId: "CP-12345",  // Optional<br/>
+                      &nbsp;&nbsp;classPassPayout: 22.00,  // Optional but recommended<br/>
+                      &nbsp;&nbsp;paymentStatus: "completed"<br/>
+                      {`}`}
+                    </div>
+
+                    <h4>Analytics Not Updating</h4>
+
+                    <strong>Symptoms:</strong>
+                    <p>ClassPass Analytics tab shows stale data or zeros.</p>
+
+                    <strong>Possible Causes & Solutions:</strong>
+                    <ul>
+                      <li>
+                        <strong>Cache issue:</strong> Hard refresh browser (Ctrl+Shift+R or Cmd+Shift+R)
+                      </li>
+                      <li>
+                        <strong>No ClassPass bookings yet:</strong> Analytics only show after first ClassPass booking created
+                      </li>
+                      <li>
+                        <strong>Date filter:</strong> Check if date range filter is excluding recent bookings
+                      </li>
+                      <li>
+                        <strong>API error:</strong> Check browser console for errors, verify backend connection
+                      </li>
+                    </ul>
+
+                    <h4>Common Configuration Errors</h4>
+
+                    <strong>Error: "ClassPass Analytics tab not visible"</strong>
+                    <ul>
+                      <li>Solution: Enable ClassPass Integration in Settings tab, save, refresh page</li>
+                    </ul>
+
+                    <strong>Error: "Email campaigns trigger but show wrong data"</strong>
+                    <ul>
+                      <li>Solution: Check placeholder syntax, ensure template uses correct variables like {`{{userName}}`}</li>
+                      <li>Verify user data is complete in database (name, email, etc.)</li>
+                    </ul>
+
+                    <strong>Error: "Conversion rate shows 0% despite conversions"</strong>
+                    <ul>
+                      <li>Solution: Verify "Track ClassPass to member conversions" is enabled in Settings</li>
+                      <li>Check that new membership bookings have user with acquisitionSource: "classpass"</li>
+                      <li>Ensure conversion occurred within tracking window (default 30 days)</li>
+                    </ul>
+
+                    <h4>Getting Additional Help</h4>
+                    <p>If issues persist:</p>
+                    <ul>
+                      <li>Check server logs for error messages</li>
+                      <li>Verify database connection and schema</li>
+                      <li>Review environment variables for SMTP and API configuration</li>
+                      <li>Test with minimal example (single test booking)</li>
+                      <li>Contact technical support with specific error messages and steps to reproduce</li>
+                    </ul>
+                  </div>
+                )}
+
+                {/* Quick Reference Section */}
+                {activeHelpSection === 'quick-reference' && (
+                  <div className="help-section-content">
+                    <h3>Quick Reference</h3>
+
+                    <p>Fast access to key information, code examples, and configuration values.</p>
+
+                    <h4>API Booking Fields</h4>
+                    <div className="help-code-block">
+                      Required Fields:<br/>
+                      - userId: String (user _id)<br/>
+                      - eventId: String (event/class _id)<br/>
+                      - bookingSource: "classpass" | "direct" | "membership" | "referral"<br/>
+                      <br/>
+                      ClassPass-Specific Optional Fields:<br/>
+                      - classPassBookingId: String (CP tracking ID)<br/>
+                      - classPassPayout: Number (actual payout amount in dollars)<br/>
+                      <br/>
+                      Example:<br/>
+                      {`POST /api/bookings`}<br/>
+                      {`{`}<br/>
+                      &nbsp;&nbsp;"userId": "abc123",<br/>
+                      &nbsp;&nbsp;"eventId": "xyz789",<br/>
+                      &nbsp;&nbsp;"bookingSource": "classpass",<br/>
+                      &nbsp;&nbsp;"classPassBookingId": "CP-2024-12345",<br/>
+                      &nbsp;&nbsp;"classPassPayout": 23.50,<br/>
+                      &nbsp;&nbsp;"paymentStatus": "completed"<br/>
+                      {`}`}
+                    </div>
+
+                    <h4>Email Template Placeholders</h4>
+                    <div className="help-code-block">
+                      User Data:<br/>
+                      {`{{userName}}`} - Customer's first and last name<br/>
+                      <br/>
+                      Class Information:<br/>
+                      {`{{eventTitle}}`} - Class name/title<br/>
+                      {`{{eventDate}}`} - Formatted date<br/>
+                      {`{{eventTime}}`} - Class start time<br/>
+                      {`{{firstClassDate}}`} - Date of first visit<br/>
+                      <br/>
+                      Analytics:<br/>
+                      {`{{bookingCount}}`} - Total ClassPass bookings<br/>
+                      {`{{classPassTotal}}`} - Estimated $ spent via ClassPass<br/>
+                      {`{{daysInWindow}}`} - Days left in conversion window<br/>
+                      <br/>
+                      Studio Contact:<br/>
+                      {`{{studioPhone}}`} - Studio phone number<br/>
+                      {`{{studioEmail}}`} - Studio email address<br/>
+                      {`{{studioWebsite}}`} - Studio website URL
+                    </div>
+
+                    <h4>Campaign Timing Reference</h4>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+                      <thead>
+                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Campaign</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Trigger</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Delay</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}>First Visit Welcome</td>
+                          <td style={{ padding: '0.75rem' }}>1st booking</td>
+                          <td style={{ padding: '0.75rem' }}>2 hours</td>
+                        </tr>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}>Second Visit Nurture</td>
+                          <td style={{ padding: '0.75rem' }}>2nd booking</td>
+                          <td style={{ padding: '0.75rem' }}>1 day</td>
+                        </tr>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}>Hot Lead Conversion</td>
+                          <td style={{ padding: '0.75rem' }}>3rd+ booking</td>
+                          <td style={{ padding: '0.75rem' }}>12 hours</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '0.75rem' }}>Hot Lead Reminder</td>
+                          <td style={{ padding: '0.75rem' }}>3rd+ booking</td>
+                          <td style={{ padding: '0.75rem' }}>4 days</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <h4>Settings Configuration Checklist</h4>
+                    <div className="help-checklist">
+                      <li>ClassPass Integration enabled</li>
+                      <li>Auto-tag users: ON (recommended)</li>
+                      <li>Track conversions: ON (recommended)</li>
+                      <li>Conversion window: 30 days (adjustable 1-180)</li>
+                      <li>Default payout rate: $18-30 (match your agreement)</li>
+                      <li>Studio contact info complete (phone, email, website)</li>
+                      <li>SMTP email service configured</li>
+                    </div>
+
+                    <h4>Membership Tiers & Credits</h4>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+                      <thead>
+                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Tier</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Classes/Month</th>
+                          <th style={{ padding: '0.75rem', textAlign: 'left' }}>Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}>Fever Starter</td>
+                          <td style={{ padding: '0.75rem' }}>4 credits</td>
+                          <td style={{ padding: '0.75rem' }}>$99/month</td>
+                        </tr>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td style={{ padding: '0.75rem' }}>Outbreak</td>
+                          <td style={{ padding: '0.75rem' }}>8 credits</td>
+                          <td style={{ padding: '0.75rem' }}>$159/month</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '0.75rem' }}>Epidemic</td>
+                          <td style={{ padding: '0.75rem' }}>Unlimited</td>
+                          <td style={{ padding: '0.75rem' }}>$199/month</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <h4>Benchmark Metrics</h4>
+                    <div className="help-code-block">
+                      Target Performance Indicators:<br/>
+                      <br/>
+                      Conversion Rate: 15%+ (Converted / Unique Customers)<br/>
+                      Second Visit Rate: 40%+ (2+ bookings / Total unique)<br/>
+                      Hot Lead Conversion: 25%+ (Converted / Hot leads)<br/>
+                      Email Open Rate: 25-35%<br/>
+                      Email Click Rate: 15-25%<br/>
+                      Average Bookings per User: 2.5+<br/>
+                      Time to Conversion: &lt;21 days (median)
+                    </div>
+
+                    <h4>Database Collections</h4>
+                    <div className="help-code-block">
+                      Relevant Collections:<br/>
+                      <br/>
+                      - users: User accounts and ClassPass tracking fields<br/>
+                      - bookings: All class bookings with source tracking<br/>
+                      - events: Classes/events available for booking<br/>
+                      - memberships: Membership subscriptions and credits<br/>
+                      - automated_campaigns: Email campaign definitions<br/>
+                      - automated_email_logs: Individual email send records<br/>
+                      - settings: Global configuration including ClassPass settings
+                    </div>
+
+                    <h4>Useful Admin Shortcuts</h4>
+                    <ul>
+                      <li><strong>View hot leads:</strong> ClassPass Analytics → Hot Leads section</li>
+                      <li><strong>Check email status:</strong> Email Automation → Select campaign → View logs</li>
+                      <li><strong>Manual check-in:</strong> Bookings tab → Find booking → Check-in button</li>
+                      <li><strong>Adjust member credits:</strong> Memberships tab → Edit member → Credits field</li>
+                      <li><strong>Test campaign:</strong> Create ClassPass booking with your email, wait for delay</li>
+                    </ul>
+
+                    <h4>Support Resources</h4>
+                    <ul>
+                      <li>Server logs: Check for error messages and API failures</li>
+                      <li>Browser console: View client-side errors and network requests</li>
+                      <li>Database queries: Direct inspection of collections for troubleshooting</li>
+                      <li>Environment variables: Verify SMTP, API keys, and configuration</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
