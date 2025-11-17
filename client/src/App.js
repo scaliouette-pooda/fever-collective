@@ -9,6 +9,7 @@ import Contact from './components/Contact';
 import Booking from './components/Booking';
 import BookingConfirmation from './components/BookingConfirmation';
 import Registration from './components/Registration';
+import RegistrationConfirmation from './components/RegistrationConfirmation';
 import Login from './components/Login';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
@@ -31,6 +32,7 @@ function App() {
           <Route path="/booking/:eventId" element={<Booking />} />
           <Route path="/confirmation/:bookingId" element={<BookingConfirmation />} />
           <Route path="/register" element={<Registration />} />
+          <Route path="/registration-confirmation" element={<RegistrationConfirmation />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />

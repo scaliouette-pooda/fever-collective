@@ -1,0 +1,140 @@
+.confirmation-container {
+  max-width: 700px;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #c9a86a, #d4b883);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #000;
+  font-weight: bold;
+}
+
+.confirmation-content {
+  margin-top: 2rem;
+}
+
+.confirmation-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #c9a86a;
+}
+
+.next-steps {
+  margin: 2rem 0;
+}
+
+.step {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  align-items: flex-start;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  background: rgba(201, 168, 106, 0.2);
+  border: 2px solid #c9a86a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #c9a86a;
+  flex-shrink: 0;
+}
+
+.step-content h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #e8e8e8;
+}
+
+.step-content p {
+  font-size: 0.95rem;
+  color: rgba(232, 232, 232, 0.7);
+  line-height: 1.6;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 1rem;
+  margin: 3rem 0 2rem;
+}
+
+.confirmation-actions a {
+  flex: 1;
+  text-decoration: none;
+}
+
+.confirmation-actions button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c9a86a, #d4b883);
+  color: #000;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(201, 168, 106, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #c9a86a;
+  border: 2px solid #c9a86a;
+}
+
+.btn-secondary:hover {
+  background: rgba(201, 168, 106, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .step {
+    gap: 1rem;
+  }
+
+  .step-number {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .step-content h3 {
+    font-size: 1rem;
+  }
+
+  .step-content p {
+    font-size: 0.9rem;
+  }
+
+  .confirmation-actions {
+    flex-direction: column;
+  }
+
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+}

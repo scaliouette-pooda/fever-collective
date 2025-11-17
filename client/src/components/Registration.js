@@ -23,8 +23,7 @@ function Registration() {
     e.preventDefault();
     try {
       await api.post('/api/auth/register', formData);
-      alert('Registration successful! Please login.');
-      navigate('/login');
+      navigate('/registration-confirmation');
     } catch (error) {
       console.error('Error registering:', error);
       alert('Registration failed. Please try again.');

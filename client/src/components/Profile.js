@@ -452,7 +452,7 @@ function Profile() {
                     {membershipData.membershipTier?.displayName}
                   </h4>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: '#1a1a1a', opacity: 0.8 }}>
-                    ${membershipData.membershipTier?.price}/month
+                    Monthly Payment: ${membershipData.monthlyPrice || membershipData.membershipTier?.price}
                   </p>
                 </div>
                 <span style={{
@@ -497,7 +497,7 @@ function Profile() {
                     </span>
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#1a1a1a' }}>
-                    Credits Remaining This Month
+                    Available Credits
                   </div>
                 </div>
               )}
