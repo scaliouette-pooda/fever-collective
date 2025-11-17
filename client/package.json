@@ -5,6 +5,8 @@
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.4.0",
+    "html5-qrcode": "^2.3.8",
+    "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

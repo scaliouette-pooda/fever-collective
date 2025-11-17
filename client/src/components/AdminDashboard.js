@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import './AdminDashboard.css';
 import AdminMembershipSection from './AdminMembershipSection';
+import QRScanner from './QRScanner';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -3048,119 +3049,7 @@ function AdminDashboard() {
 
         {/* Check-In Tab */}
         {activeTab === 'checkin' && (
-          <div>
-            <h2>Event Check-In</h2>
-
-            <div className="section-description">
-              <h3>How to Check In Attendees</h3>
-              <p>
-                Quickly verify and check in attendees at your events using QR codes from their booking confirmations.
-              </p>
-
-              <div className="promo-features">
-                <h4>Three Ways to Check In</h4>
-                <ul>
-                  <li><strong>QR Code Scanner:</strong> Use a barcode scanner device to scan QR codes from booking confirmation emails</li>
-                  <li><strong>Manual Entry:</strong> Type or paste the booking ID from the confirmation email</li>
-                  <li><strong>Table View:</strong> Click on bookings in the table below to manually check in attendees</li>
-                </ul>
-              </div>
-
-              <div className="promo-tips">
-                <h4>Scanner Setup Instructions</h4>
-                <ul>
-                  <li><strong>Step 1:</strong> Click in the input field below to focus it</li>
-                  <li><strong>Step 2:</strong> Scan the QR code with your barcode scanner (or paste the booking ID)</li>
-                  <li><strong>Step 3:</strong> Press Enter or click "Check In" to complete</li>
-                  <li><strong>Note:</strong> Only bookings with completed payments can be checked in</li>
-                  <li><strong>Tip:</strong> QR codes are sent in booking confirmation emails - attendees can show them on their phone</li>
-                </ul>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '3rem', maxWidth: '800px' }}>
-              <h3 style={{ marginBottom: '1rem' }}>QR Code Scanner</h3>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <input
-                  type="text"
-                  value={qrScanInput}
-                  onChange={(e) => setQrScanInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleQRScan()}
-                  placeholder="Scan QR code or paste booking ID (e.g., BOOKING:12345...)"
-                  style={{
-                    flex: 1,
-                    padding: '1rem',
-                    backgroundColor: 'rgba(26, 26, 26, 0.6)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#e8e8e8',
-                    fontSize: '1rem'
-                  }}
-                />
-                <button onClick={handleQRScan} style={{ padding: '1rem 2rem' }}>
-                  Check In
-                </button>
-              </div>
-
-              {scanResult && (
-                <div style={{
-                  marginTop: '2rem',
-                  padding: '1.5rem',
-                  backgroundColor: scanResult.success ? 'rgba(100, 255, 100, 0.1)' : 'rgba(255, 200, 100, 0.1)',
-                  border: `1px solid ${scanResult.success ? 'rgba(100, 255, 100, 0.3)' : 'rgba(255, 200, 100, 0.3)'}`
-                }}>
-                  <h4>{scanResult.message}</h4>
-                  {scanResult.booking && (
-                    <div style={{ marginTop: '1rem' }}>
-                      <p><strong>Name:</strong> {scanResult.booking.name}</p>
-                      <p><strong>Event:</strong> {scanResult.booking.event}</p>
-                      <p><strong>Spots:</strong> {scanResult.booking.spots}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div style={{ marginTop: '3rem' }}>
-
-              <h3>Recent Bookings</h3>
-              <div className="bookings-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Event</th>
-                      <th>Spots</th>
-                      <th>Payment</th>
-                      <th>Check-In Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookings.slice(0, 20).map(booking => (
-                      <tr key={booking._id}>
-                        <td>{booking.name}</td>
-                        <td>{booking.event?.title || 'N/A'}</td>
-                        <td>{booking.spots}</td>
-                        <td>
-                          <span className={`status-badge ${booking.paymentStatus}`}>
-                            {booking.paymentStatus}
-                          </span>
-                        </td>
-                        <td>
-                          {booking.checkedIn ? (
-                            <span className="status-badge completed">
-                              ✓ {new Date(booking.checkedInAt).toLocaleString()}
-                            </span>
-                          ) : (
-                            <span className="status-badge pending">Not checked in</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <QRScanner />
         )}
       </div>
     </div>

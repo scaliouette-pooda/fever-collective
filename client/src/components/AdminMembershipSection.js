@@ -24,6 +24,7 @@ function AdminMembershipSection() {
   });
 
   const [updateForm, setUpdateForm] = useState({
+    membershipTierId: '',
     status: '',
     notes: ''
   });
@@ -102,12 +103,29 @@ function AdminMembershipSection() {
       setError('');
       setSuccess('');
 
-      await api.patch(`/api/memberships/admin/${selectedMembership._id}`, updateForm);
+      const updates = {
+        status: updateForm.status,
+        notes: updateForm.notes
+      };
+
+      // If tier is being changed, include tier details
+      if (updateForm.membershipTierId && updateForm.membershipTierId !== selectedMembership.membershipTier?._id) {
+        const newTier = tiers.find(t => t._id === updateForm.membershipTierId);
+        if (newTier) {
+          updates.membershipTier = newTier.name;
+          updates.pricingTier = newTier.pricingTier;
+          updates.monthlyPrice = newTier.price;
+          updates.creditsTotal = newTier.classesPerMonth || 0;
+          updates.creditsRemaining = newTier.classesPerMonth || 0;
+        }
+      }
+
+      await api.patch(`/api/memberships/admin/${selectedMembership._id}`, updates);
 
       setSuccess('Membership updated successfully!');
       setShowUpdateForm(false);
       setSelectedMembership(null);
-      setUpdateForm({ status: '', notes: '' });
+      setUpdateForm({ membershipTierId: '', status: '', notes: '' });
       fetchData();
     } catch (err) {
       console.error('Error updating membership:', err);
@@ -137,6 +155,7 @@ function AdminMembershipSection() {
   const openUpdateForm = (membership) => {
     setSelectedMembership(membership);
     setUpdateForm({
+      membershipTierId: membership.membershipTier?._id || '',
       status: membership.status,
       notes: membership.notes || ''
     });
@@ -275,6 +294,7 @@ function AdminMembershipSection() {
         <table className="memberships-table">
           <thead>
             <tr>
+              <th>Membership #</th>
               <th>Member</th>
               <th>Tier</th>
               <th>Status</th>
@@ -288,11 +308,16 @@ function AdminMembershipSection() {
           <tbody>
             {filteredMemberships.length === 0 ? (
               <tr>
-                <td colSpan="8" className="no-data">No memberships found</td>
+                <td colSpan="9" className="no-data">No memberships found</td>
               </tr>
             ) : (
               filteredMemberships.map(membership => (
                 <tr key={membership._id}>
+                  <td>
+                    <strong style={{ fontFamily: 'monospace', fontSize: '0.9rem', color: '#c9a86a' }}>
+                      {membership.membershipNumber || 'N/A'}
+                    </strong>
+                  </td>
                   <td>
                     <div className="member-info">
                       <strong>{membership.user?.name || 'Unknown'}</strong>
@@ -391,8 +416,8 @@ function AdminMembershipSection() {
                   <option value="">Select a tier...</option>
                   {tiers.map(tier => (
                     <option key={tier._id} value={tier._id}>
-                      {tier.displayName} - ${tier.price}/mo
-                      {tier.founderSlotsTotal && ` (${tier.founderSlotsTotal - tier.founderSlotsUsed} spots left)`}
+                      {tier.displayName} ({tier.pricingTier.replace('founders-', 'Founders ').replace('general', 'General')}) - ${tier.price}/mo
+                      {tier.founderSlotsTotal && ` - ${tier.founderSlotsTotal - tier.founderSlotsUsed} spots left`}
                     </option>
                   ))}
                 </select>
@@ -456,8 +481,24 @@ function AdminMembershipSection() {
             <form onSubmit={handleUpdateSubmit}>
               <div className="current-membership-info">
                 <p><strong>Member:</strong> {selectedMembership.userId?.name || selectedMembership.user?.name || 'Unknown'}</p>
-                <p><strong>Tier:</strong> {selectedMembership.membershipTier?.displayName || selectedMembership.membershipTier || 'Unknown'}</p>
                 <p><strong>Credits:</strong> {selectedMembership.creditsRemaining} / {selectedMembership.creditsTotal}</p>
+              </div>
+
+              <div className="form-group">
+                <label>Membership Tier</label>
+                <select
+                  value={updateForm.membershipTierId}
+                  onChange={(e) => setUpdateForm({ ...updateForm, membershipTierId: e.target.value })}
+                  required
+                >
+                  <option value="">Select a tier...</option>
+                  {tiers.map(tier => (
+                    <option key={tier._id} value={tier._id}>
+                      {tier.displayName} ({tier.pricingTier.replace('founders-', 'Founders ').replace('general', 'General')}) - ${tier.price}/mo
+                      {tier.founderSlotsTotal && ` - ${tier.founderSlotsTotal - tier.founderSlotsUsed} spots left`}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-group">

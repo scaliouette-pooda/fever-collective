@@ -606,4 +606,127 @@ router.post('/check-in/scan', authenticateUser, requireAdmin, async (req, res) =
   }
 });
 
+// Membership-based QR Check-in
+router.post('/check-in', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const { userId, eventId, membershipNumber } = req.body;
+
+    console.log('=== MEMBERSHIP CHECK-IN REQUEST ===');
+    console.log('User ID:', userId);
+    console.log('Event ID:', eventId);
+    console.log('Membership Number:', membershipNumber);
+
+    // Verify event exists
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    // Get user's active membership
+    const membership = await UserMembership.findOne({
+      userId: userId,
+      membershipNumber: membershipNumber,
+      status: { $in: ['active', 'pending-cancellation'] }
+    });
+
+    if (!membership) {
+      return res.status(404).json({
+        success: false,
+        message: 'No active membership found for this user'
+      });
+    }
+
+    console.log('Membership found:', membership.membershipTier);
+
+    // Check if member has a booking for this event (optional - can check in without booking)
+    let booking = await Booking.findOne({
+      userId: userId,
+      event: eventId,
+      paymentStatus: 'completed'
+    });
+
+    // If they have a booking, mark it as checked in
+    if (booking) {
+      if (booking.checkedIn) {
+        return res.json({
+          success: true,
+          message: 'Already checked in for this class',
+          creditsRemaining: membership.creditsRemaining,
+          alreadyCheckedIn: true
+        });
+      }
+
+      booking.checkedIn = true;
+      booking.checkedInAt = new Date();
+      await booking.save();
+      console.log('Booking marked as checked in');
+    } else {
+      console.log('No booking found - walk-in check-in');
+
+      // No booking - this is a walk-in, need to deduct credits if not unlimited
+      if (membership.membershipTier !== 'epidemic') {
+        // Check if they have credits
+        if (membership.creditsRemaining <= 0) {
+          return res.status(400).json({
+            success: false,
+            message: 'No credits remaining. Please purchase additional classes or upgrade membership.'
+          });
+        }
+
+        // Deduct 1 credit
+        const deducted = membership.deductCredits(1);
+        if (!deducted) {
+          return res.status(400).json({
+            success: false,
+            message: 'Insufficient credits'
+          });
+        }
+
+        await membership.save();
+        console.log('Credit deducted. Remaining:', membership.creditsRemaining);
+      }
+    }
+
+    // Increment class attendance count for milestone rewards
+    membership.incrementClassCount();
+    const reward = membership.checkMilestoneReward();
+    await membership.save();
+
+    console.log('Class attendance recorded. Total:', membership.totalClassesAttended);
+    if (reward) {
+      console.log('🎉 Milestone reward earned:', reward);
+    }
+
+    // Update event available spots if walk-in
+    if (!booking) {
+      if (event.availableSpots > 0) {
+        event.availableSpots -= 1;
+        await event.save();
+      }
+    }
+
+    res.json({
+      success: true,
+      message: reward
+        ? `Check-in successful! 🎉 You've earned a ${reward.reward} for attending ${reward.milestone} classes!`
+        : 'Check-in successful! Welcome to class.',
+      creditsRemaining: membership.membershipTier === 'epidemic' ? 'unlimited' : membership.creditsRemaining,
+      totalClassesAttended: membership.totalClassesAttended,
+      reward: reward || null
+    });
+
+  } catch (error) {
+    console.error('=== CHECK-IN ERROR ===');
+    console.error('Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Check-in failed. Please try again or see staff for assistance.',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

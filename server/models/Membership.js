@@ -67,6 +67,11 @@ const membershipTierSchema = new mongoose.Schema({
 });
 
 const userMembershipSchema = new mongoose.Schema({
+  membershipNumber: {
+    type: String,
+    unique: true,
+    required: true
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -175,6 +180,28 @@ const userMembershipSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+// Generate unique membership number
+userMembershipSchema.statics.generateMembershipNumber = async function() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const datePrefix = `FC-${year}${month}${day}`;
+
+  // Find the highest number for today
+  const lastMembership = await this.findOne({
+    membershipNumber: new RegExp(`^${datePrefix}-`)
+  }).sort({ membershipNumber: -1 });
+
+  let sequenceNumber = 1;
+  if (lastMembership) {
+    const lastNumber = lastMembership.membershipNumber.split('-').pop();
+    sequenceNumber = parseInt(lastNumber, 10) + 1;
+  }
+
+  return `${datePrefix}-${String(sequenceNumber).padStart(3, '0')}`;
+};
 
 // Update timestamp on save
 userMembershipSchema.pre('save', function(next) {

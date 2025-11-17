@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
+import QRCode from 'qrcode';
 import './Auth.css';
 
 function Profile() {
@@ -9,8 +10,10 @@ function Profile() {
   const [profileData, setProfileData] = useState({
     name: '',
     email: '',
-    phone: ''
+    phone: '',
+    userId: ''
   });
+  const qrCodeRef = useRef(null);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -34,6 +37,35 @@ function Profile() {
     fetchMembershipData();
   }, []);
 
+  // Generate QR Code when profile and membership data are loaded
+  useEffect(() => {
+    const generateQRCode = async () => {
+      if (qrCodeRef.current && profileData.userId && membershipData) {
+        try {
+          const qrData = JSON.stringify({
+            userId: profileData.userId,
+            membershipNumber: membershipData.membershipNumber,
+            name: profileData.name,
+            membershipTier: membershipData.membershipTier?.name || membershipData.membershipTier
+          });
+
+          await QRCode.toCanvas(qrCodeRef.current, qrData, {
+            width: 250,
+            margin: 2,
+            color: {
+              dark: '#1a1a1a',
+              light: '#ffffff'
+            }
+          });
+        } catch (err) {
+          console.error('Error generating QR code:', err);
+        }
+      }
+    };
+
+    generateQRCode();
+  }, [profileData.userId, membershipData]);
+
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -50,6 +82,7 @@ function Profile() {
         name: response.data.name,
         email: response.data.email,
         phone: response.data.phone,
+        userId: response.data._id,
         referralTier: response.data.referralTier || 'starter',
         referralCount: response.data.referralCount || 0,
         totalReferralEarnings: response.data.totalReferralEarnings || 0
@@ -627,6 +660,39 @@ function Profile() {
               >
                 Book a Class
               </button>
+            </div>
+
+            {/* QR Code Section */}
+            <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+              <h4 style={{ margin: '0 0 15px 0', fontSize: '1rem', color: '#c9a86a', textAlign: 'center' }}>
+                Your Check-In QR Code
+              </h4>
+              <div style={{
+                background: 'rgba(201, 168, 106, 0.1)',
+                border: '1px solid rgba(201, 168, 106, 0.3)',
+                padding: '20px',
+                textAlign: 'center'
+              }}>
+                <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '20px' }}>
+                  Show this QR code when checking in to classes
+                </p>
+                <div style={{
+                  background: 'white',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  display: 'inline-block'
+                }}>
+                  <canvas ref={qrCodeRef} />
+                </div>
+                <div style={{ marginTop: '15px', fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                  <p style={{ margin: '5px 0' }}>
+                    <strong style={{ color: '#c9a86a' }}>Membership #:</strong> {membershipData.membershipNumber || 'N/A'}
+                  </p>
+                  <p style={{ margin: '5px 0', fontSize: '0.75rem' }}>
+                    For assistance, contact staff
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}

@@ -161,6 +161,10 @@ router.post('/admin/assign', authenticateUser, requireAdmin, async (req, res) =>
       }
     }
 
+    // Generate unique membership number
+    const membershipNumber = await UserMembership.generateMembershipNumber();
+    console.log('Generated membership number:', membershipNumber);
+
     // Calculate next billing date (1 month from now)
     const nextBillingDate = new Date();
     nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
@@ -170,6 +174,7 @@ router.post('/admin/assign', authenticateUser, requireAdmin, async (req, res) =>
     creditsExpireDate.setMonth(creditsExpireDate.getMonth() + 2);
 
     const membership = new UserMembership({
+      membershipNumber,
       userId,
       membershipTier,
       pricingTier,
