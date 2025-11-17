@@ -118,7 +118,7 @@ emailListSchema.methods.getDynamicSubscribers = async function() {
 
   if (criteria.birthdayMonth) {
     const users = await User.find({
-      $expr: { $eq: [{ $month: '$dateOfBirth' }, criteria.birthdayMonth] }
+      'birthday.month': criteria.birthdayMonth
     });
     matchingEmails.push(...users.map(u => u.email));
   }

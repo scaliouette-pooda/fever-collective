@@ -412,6 +412,32 @@ function AutomatedCampaigns() {
         </button>
       </div>
 
+      <div className="section-description" style={{
+        background: 'rgba(201, 168, 106, 0.05)',
+        padding: '20px',
+        borderRadius: '8px',
+        marginBottom: '25px',
+        border: '1px solid rgba(201, 168, 106, 0.2)'
+      }}>
+        <h3 style={{ fontSize: '1.1rem', color: '#c9a86a', marginBottom: '10px', marginTop: 0 }}>
+          What are Automated Email Campaigns?
+        </h3>
+        <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: 'rgba(255,255,255,0.8)', margin: '0 0 15px 0' }}>
+          Automated campaigns send emails based on specific triggers and conditions. Set up a campaign once, and it will automatically send personalized emails to your members when the trigger event occurs.
+        </p>
+        <div style={{ fontSize: '0.9rem', lineHeight: '1.6', color: 'rgba(255,255,255,0.7)' }}>
+          <strong style={{ color: '#c9a86a', display: 'block', marginBottom: '8px' }}>Key Features:</strong>
+          <ul style={{ margin: '0', paddingLeft: '20px' }}>
+            <li><strong>Trigger-Based:</strong> Automatically send emails when events occur (new registration, inactive users, expiring credits, etc.)</li>
+            <li><strong>Email Sequences:</strong> Create multi-step email journeys with custom delays between messages</li>
+            <li><strong>Personalization:</strong> Use placeholders like {'{name}'}, {'{email}'}, {'{membershipTier}'} in your messages</li>
+            <li><strong>Audience Targeting:</strong> Target all members or specific membership tiers</li>
+            <li><strong>Templates:</strong> Start with pre-built templates for common scenarios (welcome series, re-engagement, etc.)</li>
+            <li><strong>Statistics:</strong> Track sends, opens, clicks, and conversions for each campaign</li>
+          </ul>
+        </div>
+      </div>
+
       {error && <div className="alert alert-error">{error}</div>}
 
       {showForm && (

@@ -62,6 +62,18 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  birthday: {
+    month: {
+      type: Number,
+      min: 1,
+      max: 12
+    },
+    day: {
+      type: Number,
+      min: 1,
+      max: 31
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now

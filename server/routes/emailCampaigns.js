@@ -160,6 +160,113 @@ router.post('/',
   }
 );
 
+// Test send email (admin only) - Send to specific test email addresses
+router.post('/test-send', authenticateUser, requireAdmin, async (req, res) => {
+  try {
+    const { subject, message, testEmails, promoCode } = req.body;
+
+    if (!testEmails || testEmails.length === 0) {
+      return res.status(400).json({ error: 'At least one test email is required' });
+    }
+
+    if (!subject || !message) {
+      return res.status(400).json({ error: 'Subject and message are required' });
+    }
+
+    // Check email configuration
+    const useSendGrid = !!process.env.SENDGRID_API_KEY;
+    const useSMTP = !!process.env.EMAIL_USER;
+
+    if (!useSendGrid && !useSMTP) {
+      return res.status(500).json({ error: 'Email not configured on server. Please set SENDGRID_API_KEY or EMAIL_USER.' });
+    }
+
+    // Get unsubscribe URL
+    const unsubscribeUrl = `${process.env.CLIENT_URL}/unsubscribe`;
+
+    // Build email HTML
+    let emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+          <strong style="color: #c9a86a;">TEST EMAIL</strong> - This is a test send. No campaign has been created.
+        </div>
+
+        <h1 style="color: #1a1a1a; border-bottom: 2px solid #c9a86a; padding-bottom: 10px;">
+          The Fever Studio
+        </h1>
+
+        <div style="padding: 20px 0;">
+          ${message.replace(/\n/g, '<br>')}
+        </div>
+
+        ${promoCode ? `
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+            <h2 style="margin: 0 0 10px 0; font-size: 18px;">Special Offer</h2>
+            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; display: inline-block;">
+              <div style="font-size: 14px; margin-bottom: 5px;">Use Code:</div>
+              <div style="font-size: 28px; font-weight: bold; letter-spacing: 2px;">${promoCode}</div>
+            </div>
+          </div>
+        ` : ''}
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #666;">
+          <p>The Fever Studio | Your Fitness Journey</p>
+          <p><a href="${unsubscribeUrl}" style="color: #c9a86a;">Unsubscribe</a></p>
+        </div>
+      </div>
+    `;
+
+    let successCount = 0;
+    let failureCount = 0;
+    const errors = [];
+
+    // Send to each test email
+    for (const email of testEmails) {
+      try {
+        if (useSendGrid) {
+          await sgMail.send({
+            to: email,
+            from: process.env.SENDGRID_FROM_EMAIL || 'noreply@feverstudio.com',
+            subject: `[TEST] ${subject}`,
+            html: emailHtml
+          });
+        } else {
+          const nodemailer = require('nodemailer');
+          const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASSWORD
+            }
+          });
+
+          await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: `[TEST] ${subject}`,
+            html: emailHtml
+          });
+        }
+        successCount++;
+      } catch (error) {
+        console.error(`Failed to send test email to ${email}:`, error);
+        failureCount++;
+        errors.push({ email, error: error.message });
+      }
+    }
+
+    res.json({
+      message: `Test email sent to ${successCount} recipient(s)`,
+      successCount,
+      failureCount,
+      errors: errors.length > 0 ? errors : undefined
+    });
+  } catch (error) {
+    console.error('Error sending test email:', error);
+    res.status(500).json({ error: 'Failed to send test email' });
+  }
+});
+
 // Send email campaign (admin only)
 router.post('/:id/send', authenticateUser, requireAdmin, async (req, res) => {
   try {

@@ -11,7 +11,11 @@ function Profile() {
     name: '',
     email: '',
     phone: '',
-    userId: ''
+    userId: '',
+    birthday: {
+      month: '',
+      day: ''
+    }
   });
   const qrCodeRef = useRef(null);
   const [passwordData, setPasswordData] = useState({
@@ -85,7 +89,11 @@ function Profile() {
         userId: response.data._id,
         referralTier: response.data.referralTier || 'starter',
         referralCount: response.data.referralCount || 0,
-        totalReferralEarnings: response.data.totalReferralEarnings || 0
+        totalReferralEarnings: response.data.totalReferralEarnings || 0,
+        birthday: {
+          month: response.data.birthday?.month || '',
+          day: response.data.birthday?.day || ''
+        }
       });
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -285,6 +293,58 @@ function Profile() {
               onChange={handleProfileChange}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Birthday (Optional)</label>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <select
+                name="birthday.month"
+                value={profileData.birthday?.month || ''}
+                onChange={(e) => setProfileData({
+                  ...profileData,
+                  birthday: {
+                    ...profileData.birthday,
+                    month: e.target.value
+                  }
+                })}
+                style={{ flex: 1 }}
+              >
+                <option value="">Month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+              <select
+                name="birthday.day"
+                value={profileData.birthday?.day || ''}
+                onChange={(e) => setProfileData({
+                  ...profileData,
+                  birthday: {
+                    ...profileData.birthday,
+                    day: e.target.value
+                  }
+                })}
+                style={{ flex: 1 }}
+              >
+                <option value="">Day</option>
+                {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                  <option key={day} value={day}>{day}</option>
+                ))}
+              </select>
+            </div>
+            <small style={{ display: 'block', marginTop: '5px', color: 'rgba(255,255,255,0.6)', fontSize: '0.9em' }}>
+              Used for birthday campaigns and special offers (year not required)
+            </small>
           </div>
 
           <button type="submit" className="auth-submit">

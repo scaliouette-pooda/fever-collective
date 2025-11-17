@@ -91,6 +91,8 @@ function AdminDashboard() {
   const [editingList, setEditingList] = useState(null);
   const [showSubscriberImport, setShowSubscriberImport] = useState(false);
   const [selectedListForImport, setSelectedListForImport] = useState(null);
+  const [expandedListId, setExpandedListId] = useState(null);
+  const [listSubscribers, setListSubscribers] = useState({});
 
   const [listForm, setListForm] = useState({
     name: '',
@@ -755,6 +757,38 @@ function AdminDashboard() {
     }
   };
 
+  const handleTestSend = async () => {
+    const testEmail = prompt('Enter email address(es) to send test (comma-separated):');
+
+    if (!testEmail || testEmail.trim() === '') {
+      return;
+    }
+
+    if (!emailForm.subject || !emailForm.message) {
+      alert('Please fill in subject and message before sending test');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const testEmails = testEmail.split(',').map(e => e.trim()).filter(e => e);
+
+      const response = await api.post('/api/email-campaigns/test-send', {
+        subject: emailForm.subject,
+        message: emailForm.message,
+        testEmails: testEmails,
+        promoCode: emailForm.includedPromoCode
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error sending test email:', error);
+      alert(error.response?.data?.error || 'Failed to send test email');
+    }
+  };
+
   const handleDeleteCampaign = async (campaignId) => {
     if (!window.confirm('Are you sure you want to delete this campaign?')) return;
 
@@ -911,6 +945,29 @@ function AdminDashboard() {
       window.URL.revokeObjectURL(url);
 
       alert(`Exported ${response.data.count} subscribers!`);
+    } catch (error) {
+      console.error('Error exporting list:', error);
+      alert(error.response?.data?.error || 'Failed to export list');
+    }
+  };
+
+  const handleToggleViewSubscribers = async (listId) => {
+    if (expandedListId === listId) {
+      setExpandedListId(null);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(`/api/email-lists/${listId}/export`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setListSubscribers(prev => ({
+        ...prev,
+        [listId]: response.data.subscribers
+      }));
+      setExpandedListId(listId);
     } catch (error) {
       console.error('Error exporting list:', error);
       alert('Failed to export list');
@@ -1124,6 +1181,8 @@ function AdminDashboard() {
           Check-In
         </button>
 
+        <div style={{ width: '100%', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '8px 0' }}></div>
+
         {/* Customer Engagement */}
         <button
           className={activeTab === 'memberships' ? 'active' : ''}
@@ -1150,6 +1209,8 @@ function AdminDashboard() {
           Waitlist
         </button>
 
+        <div style={{ width: '100%', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '8px 0' }}></div>
+
         {/* Marketing & Promotions */}
         <button
           className={activeTab === 'promoCodes' ? 'active' : ''}
@@ -1175,6 +1236,8 @@ function AdminDashboard() {
         >
           Email Automation
         </button>
+
+        <div style={{ width: '100%', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '8px 0' }}></div>
 
         {/* Admin & Insights */}
         <button
@@ -2077,7 +2140,26 @@ function AdminDashboard() {
               <p>Send targeted email campaigns to your customers to announce new events, share promotions, and build loyalty.</p>
 
               <div className="promo-tips">
-                <h4>💡 Campaign Ideas:</h4>
+                <h4>How to Send a Campaign:</h4>
+                <ol style={{ fontSize: '0.95em', lineHeight: '1.6', marginBottom: '15px' }}>
+                  <li><strong>Click "Create New Campaign"</strong> - Start a new email campaign</li>
+                  <li><strong>Name Your Campaign</strong> - Give it a descriptive name for tracking</li>
+                  <li><strong>Choose Recipients:</strong>
+                    <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+                      <li><strong>All Customers</strong> - Everyone in your system</li>
+                      <li><strong>Past Customers</strong> - Users who have completed bookings</li>
+                      <li><strong>Recent</strong> - Users active in the last 30 days</li>
+                      <li><strong>Email Lists</strong> - Target specific lists you've created (VIP members, newsletter subscribers, etc.)</li>
+                      <li><strong>Custom</strong> - Paste specific email addresses</li>
+                    </ul>
+                  </li>
+                  <li><strong>Add Optional Promo Code</strong> - Include a discount or special offer</li>
+                  <li><strong>Write Your Message</strong> - Craft engaging subject line and email body</li>
+                  <li><strong>Preview Recipients</strong> - See exactly who will receive the email</li>
+                  <li><strong>Send!</strong> - Campaign will be sent immediately</li>
+                </ol>
+
+                <h4>Campaign Ideas:</h4>
                 <ul>
                   <li><strong>New Event Announcements:</strong> Email all customers when you launch a new popup</li>
                   <li><strong>Win-Back Campaigns:</strong> Re-engage customers who haven't booked recently</li>
@@ -2242,6 +2324,17 @@ function AdminDashboard() {
                         resetEmailForm();
                       }}>
                         Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleTestSend}
+                        style={{
+                          background: 'rgba(201, 168, 106, 0.2)',
+                          border: '2px solid #c9a86a',
+                          color: '#c9a86a'
+                        }}
+                      >
+                        Send Test Email
                       </button>
                       <button type="submit">
                         Create Campaign
@@ -2791,11 +2884,34 @@ function AdminDashboard() {
               <p>Create and manage subscriber lists for targeted email campaigns. Use static lists for manual management or dynamic lists that auto-populate based on criteria.</p>
 
               <div className="list-types-info">
-                <div className="list-type">
-                  <strong>Static Lists:</strong> Manually add/remove subscribers. Perfect for specific segments you curate manually.
+                <h4>How to Create an Email List:</h4>
+                <ol style={{ fontSize: '0.95em', lineHeight: '1.6', marginBottom: '15px' }}>
+                  <li><strong>Click "Create New List"</strong> - Opens the list creation form</li>
+                  <li><strong>Name & Describe Your List</strong> - e.g., "VIP Members", "Newsletter Subscribers"</li>
+                  <li><strong>Choose List Type:</strong>
+                    <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+                      <li><strong>Static:</strong> Manually add/remove subscribers. Perfect for curated segments.</li>
+                      <li><strong>Dynamic:</strong> Auto-populate based on criteria (membership tiers, booking status, birthday month, etc.). Always up-to-date!</li>
+                    </ul>
+                  </li>
+                  <li><strong>Set Dynamic Criteria (if applicable):</strong>
+                    <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+                      <li><strong>Membership Tiers</strong> - Target specific membership levels</li>
+                      <li><strong>Booking Status</strong> - Never booked, has booked, recent, or inactive users</li>
+                      <li><strong>Active Membership</strong> - Only users with active memberships</li>
+                      <li><strong>Expiring Credits/Membership</strong> - Target users with expiring benefits</li>
+                      <li><strong>Birthday Month</strong> - Send birthday campaigns (users must set birthday in profile)</li>
+                    </ul>
+                  </li>
+                  <li><strong>Save & Use</strong> - Use this list when creating email campaigns</li>
+                </ol>
+
+                <h4>List Type Comparison:</h4>
+                <div className="list-type" style={{ marginBottom: '10px' }}>
+                  <strong>Static Lists:</strong> You control exactly who's on the list. Great for: hand-picked VIPs, event-specific attendees, beta testers, special segments.
                 </div>
                 <div className="list-type">
-                  <strong>Dynamic Lists:</strong> Auto-populate based on membership tiers, booking history, or other criteria. Always up-to-date!
+                  <strong>Dynamic Lists:</strong> Automatically stays current based on your criteria. Great for: all VIP members, inactive users, users with expiring credits, birthday campaigns.
                 </div>
               </div>
             </div>
@@ -3064,60 +3180,120 @@ jane@example.com,Jane Smith
                     </tr>
                   ) : (
                     emailLists.map(list => (
-                      <tr key={list._id}>
-                        <td>
-                          <strong>{list.name}</strong>
-                        </td>
-                        <td>
-                          <span className={`badge badge-${list.type}`}>
-                            {list.type === 'static' ? 'Static' : 'Dynamic'}
-                          </span>
-                        </td>
-                        <td>{list.subscriberCount || 0}</td>
-                        <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {list.description || '-'}
-                        </td>
-                        <td>
-                          <span className={`status-badge ${list.isActive ? 'status-active' : 'status-inactive'}`}>
-                            {list.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td className="actions">
-                          <button
-                            onClick={() => handleEditList(list)}
-                            className="action-btn edit-btn"
-                            title="Edit"
-                          >
-                            Edit
-                          </button>
-                          {list.type === 'static' && (
+                      <React.Fragment key={list._id}>
+                        <tr>
+                          <td>
+                            <strong>{list.name}</strong>
+                          </td>
+                          <td>
+                            <span className={`badge badge-${list.type}`}>
+                              {list.type === 'static' ? 'Static' : 'Dynamic'}
+                            </span>
+                          </td>
+                          <td>{list.subscriberCount || 0}</td>
+                          <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {list.description || '-'}
+                          </td>
+                          <td>
+                            <span className={`status-badge ${list.isActive ? 'status-active' : 'status-inactive'}`}>
+                              {list.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </td>
+                          <td className="actions">
                             <button
-                              onClick={() => {
-                                setSelectedListForImport(list._id);
-                                setShowSubscriberImport(true);
-                              }}
-                              className="action-btn import-btn"
-                              title="Import Subscribers"
+                              onClick={() => handleToggleViewSubscribers(list._id)}
+                              className="action-btn view-btn"
+                              title="View Subscribers"
+                              style={{ background: expandedListId === list._id ? '#c9a86a' : 'rgba(201, 168, 106, 0.2)', color: expandedListId === list._id ? 'white' : '#c9a86a' }}
                             >
-                              Import
+                              {expandedListId === list._id ? 'Hide' : 'View'}
                             </button>
-                          )}
-                          <button
-                            onClick={() => handleExportList(list._id)}
-                            className="action-btn export-btn"
-                            title="Export"
-                          >
-                            Export
-                          </button>
-                          <button
-                            onClick={() => handleDeleteList(list._id)}
-                            className="action-btn delete-btn"
+                            <button
+                              onClick={() => handleEditList(list)}
+                              className="action-btn edit-btn"
+                              title="Edit"
+                            >
+                              Edit
+                            </button>
+                            {list.type === 'static' && (
+                              <button
+                                onClick={() => {
+                                  setSelectedListForImport(list._id);
+                                  setShowSubscriberImport(true);
+                                }}
+                                className="action-btn import-btn"
+                                title="Import Subscribers"
+                              >
+                                Import
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleExportList(list._id)}
+                              className="action-btn export-btn"
+                              title="Export"
+                            >
+                              Export
+                            </button>
+                            <button
+                              onClick={() => handleDeleteList(list._id)}
+                              className="action-btn delete-btn"
                             title="Delete"
                           >
                             Delete
                           </button>
                         </td>
                       </tr>
+                      {expandedListId === list._id && listSubscribers[list._id] && (
+                        <tr>
+                          <td colSpan="6" style={{ background: 'rgba(201, 168, 106, 0.05)', padding: '20px' }}>
+                            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                              <h4 style={{ marginTop: 0, marginBottom: '15px', color: '#c9a86a' }}>
+                                Subscribers ({listSubscribers[list._id].length})
+                              </h4>
+                              {listSubscribers[list._id].length === 0 ? (
+                                <p style={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                                  No subscribers in this list yet.
+                                </p>
+                              ) : (
+                                <table style={{ width: '100%', fontSize: '0.9em' }}>
+                                  <thead>
+                                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.2)' }}>
+                                      <th style={{ textAlign: 'left', padding: '8px' }}>Email</th>
+                                      <th style={{ textAlign: 'left', padding: '8px' }}>Name</th>
+                                      <th style={{ textAlign: 'center', padding: '8px' }}>Status</th>
+                                      <th style={{ textAlign: 'center', padding: '8px' }}>Emails Sent</th>
+                                      <th style={{ textAlign: 'center', padding: '8px' }}>Opened</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {listSubscribers[list._id].map((sub, idx) => (
+                                      <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                                        <td style={{ padding: '8px' }}>{sub.email}</td>
+                                        <td style={{ padding: '8px' }}>{sub.name || '-'}</td>
+                                        <td style={{ textAlign: 'center', padding: '8px' }}>
+                                          <span style={{
+                                            display: 'inline-block',
+                                            padding: '2px 8px',
+                                            borderRadius: '10px',
+                                            fontSize: '0.85em',
+                                            background: sub.isSubscribed ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                                            color: sub.isSubscribed ? '#4caf50' : '#f44336'
+                                          }}>
+                                            {sub.isSubscribed ? 'Active' : 'Unsubscribed'}
+                                          </span>
+                                        </td>
+                                        <td style={{ textAlign: 'center', padding: '8px' }}>{sub.totalEmailsSent || 0}</td>
+                                        <td style={{ textAlign: 'center', padding: '8px' }}>{sub.totalEmailsOpened || 0}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                     ))
                   )}
                 </tbody>

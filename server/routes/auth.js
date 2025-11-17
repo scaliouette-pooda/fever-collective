@@ -162,7 +162,7 @@ router.patch('/profile',
   validateRequestBody(),
   async (req, res) => {
     try {
-      const { name, phone, email } = req.body;
+      const { name, phone, email, birthday } = req.body;
       const user = await User.findById(req.user.userId);
 
       if (!user) {
@@ -181,6 +181,19 @@ router.patch('/profile',
       if (name) user.name = name;
       if (phone) user.phone = phone;
 
+      // Handle birthday update
+      if (birthday !== undefined) {
+        if (birthday && birthday.month && birthday.day) {
+          user.birthday = {
+            month: parseInt(birthday.month),
+            day: parseInt(birthday.day)
+          };
+        } else {
+          // Allow clearing birthday by sending null or empty object
+          user.birthday = undefined;
+        }
+      }
+
       await user.save();
 
       res.json({
@@ -190,7 +203,8 @@ router.patch('/profile',
           name: user.name,
           email: user.email,
           phone: user.phone,
-          role: user.role
+          role: user.role,
+          birthday: user.birthday
         }
       });
     } catch (error) {
