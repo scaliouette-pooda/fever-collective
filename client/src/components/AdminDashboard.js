@@ -10,6 +10,13 @@ function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('events');
   const [events, setEvents] = useState([]);
+
+  // Helper function to parse date without timezone conversion
+  const parseEventDate = (dateString) => {
+    const dateStr = dateString.split('T')[0]; // Get YYYY-MM-DD part only
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // Create date in local timezone
+  };
   const [bookings, setBookings] = useState([]);
   const [users, setUsers] = useState([]);
   const [settings, setSettings] = useState(null);
@@ -1629,7 +1636,7 @@ function AdminDashboard() {
                   {events.map(event => (
                     <tr key={event._id}>
                       <td>{event.title}</td>
-                      <td>{new Date(event.date).toLocaleDateString()}</td>
+                      <td>{parseEventDate(event.date).toLocaleDateString()}</td>
                       <td>{event.location}</td>
                       <td>${event.price}</td>
                       <td>{event.availableSpots}/{event.capacity}</td>

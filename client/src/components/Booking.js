@@ -9,6 +9,13 @@ function Booking() {
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Helper function to parse date without timezone conversion
+  const parseEventDate = (dateString) => {
+    const dateStr = dateString.split('T')[0]; // Get YYYY-MM-DD part only
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // Create date in local timezone
+  };
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -196,7 +203,7 @@ function Booking() {
             <div className="detail-item">
               <span className="detail-label">Date</span>
               <span className="detail-value">
-                {new Date(event.date).toLocaleDateString('en-US', {
+                {parseEventDate(event.date).toLocaleDateString('en-US', {
                   weekday: 'long',
                   month: 'long',
                   day: 'numeric',
