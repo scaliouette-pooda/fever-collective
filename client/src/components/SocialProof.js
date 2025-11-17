@@ -5,10 +5,17 @@ export function CountdownTimer({ eventDate, spotsLeft }) {
   const [timeLeft, setTimeLeft] = useState('');
   const [urgency, setUrgency] = useState('low');
 
+  // Helper function to parse date without timezone conversion
+  const parseEventDate = (dateString) => {
+    const dateStr = dateString.split('T')[0]; // Get YYYY-MM-DD part only
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // Create date in local timezone
+  };
+
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
-      const eventTime = new Date(eventDate).getTime();
+      const eventTime = parseEventDate(eventDate).getTime();
       const difference = eventTime - now;
 
       if (difference <= 0) {

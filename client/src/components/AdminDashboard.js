@@ -3630,9 +3630,42 @@ jane@example.com,Jane Smith
         {activeTab === 'reviews' && (
           <div>
             <h2>Manage Reviews</h2>
-            <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
-              Approve, feature, or delete customer reviews. Featured reviews appear on the homepage.
-            </p>
+
+            <div className="section-description">
+              <h3>⭐ Review Management</h3>
+              <p style={{ marginBottom: '12px', lineHeight: '1.6' }}>
+                Moderate and showcase customer feedback. Reviews help build trust and credibility with potential customers. Manage review visibility, feature standout testimonials, and maintain quality standards.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px', marginTop: '15px', padding: '15px', background: 'rgba(201, 168, 106, 0.1)', borderRadius: '8px', marginBottom: '2rem' }}>
+                <div>
+                  <strong style={{ color: '#c9a86a' }}>✅ Review Approval:</strong>
+                  <ul style={{ marginTop: '8px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                    <li>New reviews start as "Pending"</li>
+                    <li>Click "Approve" to make visible</li>
+                    <li>Approved reviews appear publicly</li>
+                    <li>Review content before approving</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong style={{ color: '#c9a86a' }}>⭐ Featured Reviews:</strong>
+                  <ul style={{ marginTop: '8px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                    <li>Feature best testimonials</li>
+                    <li>Featured reviews show on homepage</li>
+                    <li>Highlight 5-star experiences</li>
+                    <li>Showcase diverse feedback</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong style={{ color: '#c9a86a' }}>🔧 Review Actions:</strong>
+                  <ul style={{ marginTop: '8px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                    <li>Delete inappropriate content</li>
+                    <li>Toggle featured status anytime</li>
+                    <li>View associated event details</li>
+                    <li>See customer name and rating</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
             {reviews.length === 0 ? (
               <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
