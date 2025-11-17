@@ -195,7 +195,7 @@ function Booking() {
       <div className="booking-container">
         <div className="booking-details">
           {/* Social Proof Widgets */}
-          <CountdownTimer eventDate={event.date} spotsLeft={event.availableSpots} />
+          <CountdownTimer eventDate={event.date} eventTime={event.time} spotsLeft={event.availableSpots} />
           <RecentlyViewedCounter viewCount={Math.floor(Math.random() * 20) + 10} />
 
           <div className="event-summary">

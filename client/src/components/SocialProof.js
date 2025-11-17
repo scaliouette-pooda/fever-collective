@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Countdown Timer Component
-export function CountdownTimer({ eventDate, spotsLeft }) {
+export function CountdownTimer({ eventDate, eventTime, spotsLeft }) {
   const [timeLeft, setTimeLeft] = useState('');
   const [urgency, setUrgency] = useState('low');
 
@@ -12,11 +12,38 @@ export function CountdownTimer({ eventDate, spotsLeft }) {
     return new Date(year, month - 1, day); // Create date in local timezone
   };
 
+  // Helper function to parse time string (e.g., "7:30 AM")
+  const parseEventTime = (timeString) => {
+    const timeParts = timeString.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!timeParts) return { hours: 0, minutes: 0 };
+
+    let hours = parseInt(timeParts[1]);
+    const minutes = parseInt(timeParts[2]);
+    const period = timeParts[3].toUpperCase();
+
+    // Convert to 24-hour format
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const now = new Date().getTime();
-      const eventTime = parseEventDate(eventDate).getTime();
-      const difference = eventTime - now;
+      const now = new Date();
+
+      // Parse date and time
+      const eventDateObj = parseEventDate(eventDate);
+      const { hours: eventHours, minutes: eventMinutes } = parseEventTime(eventTime);
+
+      // Set the time on the event date
+      eventDateObj.setHours(eventHours, eventMinutes, 0, 0);
+
+      const eventTimestamp = eventDateObj.getTime();
+      const difference = eventTimestamp - now.getTime();
 
       if (difference <= 0) {
         setTimeLeft('Event started');
@@ -49,7 +76,7 @@ export function CountdownTimer({ eventDate, spotsLeft }) {
     const timer = setInterval(calculateTimeLeft, 60000); // Update every minute
 
     return () => clearInterval(timer);
-  }, [eventDate]);
+  }, [eventDate, eventTime]);
 
   const getUrgencyColor = () => {
     if (urgency === 'high') return '#ff4444';
