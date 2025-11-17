@@ -296,13 +296,15 @@ function AdminMembershipSection() {
                   <td>
                     <div className="member-info">
                       <strong>{membership.user?.name || 'Unknown'}</strong>
-                      <span className="member-email">{membership.user?.email}</span>
+                      <span className="member-email">{membership.user?.email || ''}</span>
                     </div>
                   </td>
                   <td>
                     <div className="tier-info">
-                      <strong>{membership.membershipTier?.displayName}</strong>
-                      <span className="tier-price">${membership.membershipTier?.price}/mo</span>
+                      <strong>{membership.membershipTier?.displayName || 'Unknown'}</strong>
+                      <span className="tier-price">
+                        ${membership.membershipTier?.price || membership.monthlyPrice || 0}/mo
+                      </span>
                     </div>
                   </td>
                   <td>

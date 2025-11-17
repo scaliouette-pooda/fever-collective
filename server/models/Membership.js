@@ -84,8 +84,8 @@ const userMembershipSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['active', 'cancelled', 'pending-cancellation', 'expired', 'paused'],
-    default: 'active'
+    enum: ['active', 'cancelled', 'pending-cancellation', 'pending-payment', 'expired', 'paused'],
+    default: 'pending-payment' // Start as pending until payment confirmed
   },
   startDate: {
     type: Date,

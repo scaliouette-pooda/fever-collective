@@ -324,10 +324,30 @@ router.get('/admin/all', authenticateUser, requireAdmin, async (req, res) => {
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
+    // Fetch tier details for each membership
+    const membershipTierNames = [...new Set(memberships.map(m => m.membershipTier))];
+    const tiers = await MembershipTier.find({ name: { $in: membershipTierNames } });
+    const tierMap = {};
+    tiers.forEach(tier => {
+      tierMap[tier.name] = tier;
+    });
+
+    // Attach tier details to each membership
+    const membershipsWithTiers = memberships.map(membership => {
+      const membershipObj = membership.toObject();
+      const tierDetails = tierMap[membership.membershipTier];
+      return {
+        ...membershipObj,
+        membershipTier: tierDetails || membership.membershipTier,
+        // Keep user data from userId population
+        user: membershipObj.userId
+      };
+    });
+
     const count = await UserMembership.countDocuments(query);
 
     res.json({
-      memberships,
+      memberships: membershipsWithTiers,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
       total: count
