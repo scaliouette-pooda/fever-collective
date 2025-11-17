@@ -1,35 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const EmailCampaign = require('../models/EmailCampaign');
+const EmailList = require('../models/EmailList');
+const EmailSubscriber = require('../models/EmailSubscriber');
 const User = require('../models/User');
 const Booking = require('../models/Booking');
 const PromoCode = require('../models/PromoCode');
 const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { body, validationResult } = require('express-validator');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
-// Create email transporter
-const createTransporter = () => {
-  if (process.env.EMAIL_SERVICE === 'gmail') {
-    return nodemailer.createTransporter({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-  }
-
-  return nodemailer.createTransporter({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: process.env.SMTP_PORT || 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
-};
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 // Get all email campaigns (admin only)
 router.get('/', authenticateUser, requireAdmin, async (req, res) => {
@@ -67,7 +51,7 @@ router.get('/:id', authenticateUser, requireAdmin, async (req, res) => {
 // Get recipient count preview (admin only)
 router.post('/preview-recipients', authenticateUser, requireAdmin, async (req, res) => {
   try {
-    const { recipients, customEmails } = req.body;
+    const { recipients, customEmails, emailLists } = req.body;
 
     let emails = [];
 
@@ -87,6 +71,24 @@ router.post('/preview-recipients', authenticateUser, requireAdmin, async (req, r
       emails = bookings;
     } else if (recipients === 'custom' && customEmails) {
       emails = customEmails.filter(email => email.trim() !== '');
+    } else if (recipients === 'email_list' && emailLists && emailLists.length > 0) {
+      // Get subscribers from selected email lists
+      for (const listId of emailLists) {
+        const list = await EmailList.findById(listId);
+        if (list) {
+          if (list.type === 'static') {
+            const subscribers = await EmailSubscriber.find({
+              _id: { $in: list.subscribers },
+              isSubscribed: true,
+              isBlocked: false
+            });
+            emails.push(...subscribers.map(s => s.email));
+          } else {
+            const subscribers = await list.getDynamicSubscribers();
+            emails.push(...subscribers.filter(s => !s.isBlocked).map(s => s.email));
+          }
+        }
+      }
     }
 
     // Remove duplicates
@@ -126,6 +128,7 @@ router.post('/',
         templateType,
         recipients,
         customEmails,
+        emailLists,
         includedPromoCode,
         scheduledFor
       } = req.body;
@@ -137,6 +140,7 @@ router.post('/',
         templateType: templateType || 'custom',
         recipients,
         customEmails: customEmails || [],
+        emailLists: emailLists || [],
         includedPromoCode: includedPromoCode || null,
         scheduledFor: scheduledFor || null,
         status: 'draft',
@@ -170,8 +174,12 @@ router.post('/:id/send', authenticateUser, requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Campaign already sent' });
     }
 
-    if (!process.env.EMAIL_USER) {
-      return res.status(500).json({ error: 'Email not configured on server' });
+    // Check email configuration
+    const useSendGrid = !!process.env.SENDGRID_API_KEY;
+    const useSMTP = !!process.env.EMAIL_USER;
+
+    if (!useSendGrid && !useSMTP) {
+      return res.status(500).json({ error: 'Email not configured on server. Please set SENDGRID_API_KEY or EMAIL_USER.' });
     }
 
     // Get recipient emails
@@ -190,6 +198,24 @@ router.post('/:id/send', authenticateUser, requireAdmin, async (req, res) => {
       emails = bookings;
     } else if (campaign.recipients === 'custom') {
       emails = campaign.customEmails;
+    } else if (campaign.recipients === 'email_list') {
+      // Get subscribers from email lists
+      for (const listId of campaign.emailLists) {
+        const list = await EmailList.findById(listId);
+        if (list) {
+          if (list.type === 'static') {
+            const subscribers = await EmailSubscriber.find({
+              _id: { $in: list.subscribers },
+              isSubscribed: true,
+              isBlocked: false
+            });
+            emails.push(...subscribers.map(s => s.email));
+          } else {
+            const subscribers = await list.getDynamicSubscribers();
+            emails.push(...subscribers.filter(s => !s.isBlocked).map(s => s.email));
+          }
+        }
+      }
     }
 
     // Remove duplicates
@@ -216,10 +242,13 @@ router.post('/:id/send', authenticateUser, requireAdmin, async (req, res) => {
 // Function to send emails (runs in background)
 async function sendCampaignEmails(campaign, emails) {
   try {
-    const transporter = createTransporter();
+    const useSendGrid = !!process.env.SENDGRID_API_KEY;
     let successCount = 0;
     let failureCount = 0;
     const errors = [];
+
+    // Get unsubscribe URL
+    const unsubscribeUrl = `${process.env.CLIENT_URL}/unsubscribe`;
 
     // Build email HTML
     let emailHtml = `
@@ -253,32 +282,105 @@ async function sendCampaignEmails(campaign, emails) {
         <p style="color: #666; font-size: 0.9em; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
           Questions? Reply to this email and we'll be happy to help!
         </p>
+
+        <p style="color: #999; font-size: 0.75em; text-align: center; margin-top: 20px;">
+          <a href="${unsubscribeUrl}" style="color: #999;">Unsubscribe</a> |
+          <a href="${process.env.CLIENT_URL}/email-preferences" style="color: #999;">Manage Preferences</a>
+        </p>
       </div>
     `;
 
-    // Send to each recipient
-    for (const email of emails) {
-      try {
-        await transporter.sendMail({
-          from: `"The Fever Studio" <${process.env.EMAIL_USER}>`,
-          to: email,
-          subject: campaign.subject,
-          html: emailHtml
-        });
-        successCount++;
-        console.log(`Email sent to: ${email}`);
-      } catch (error) {
-        failureCount++;
-        errors.push({
-          email,
-          error: error.message,
-          timestamp: new Date()
-        });
-        console.error(`Failed to send to ${email}:`, error.message);
-      }
+    const fromEmail = process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER || 'noreply@feverstudio.com';
 
-      // Small delay to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 100));
+    // Send emails
+    if (useSendGrid) {
+      // Use SendGrid for sending
+      for (const email of emails) {
+        try {
+          await sgMail.send({
+            to: email,
+            from: {
+              email: fromEmail,
+              name: 'The Fever Studio'
+            },
+            subject: campaign.subject,
+            html: emailHtml,
+            trackingSettings: {
+              clickTracking: { enable: true },
+              openTracking: { enable: true }
+            }
+          });
+
+          // Update subscriber stats
+          const subscriber = await EmailSubscriber.findOne({ email: email.toLowerCase() });
+          if (subscriber) {
+            await subscriber.recordEmailSent();
+          }
+
+          successCount++;
+          console.log(`Email sent via SendGrid to: ${email}`);
+        } catch (error) {
+          failureCount++;
+          errors.push({
+            email,
+            error: error.message,
+            timestamp: new Date()
+          });
+          console.error(`Failed to send to ${email}:`, error.message);
+
+          // Record bounce if applicable
+          if (error.code === 550) {
+            const subscriber = await EmailSubscriber.findOne({ email: email.toLowerCase() });
+            if (subscriber) {
+              await subscriber.recordBounce('hard');
+            }
+          }
+        }
+
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    } else {
+      // Fallback to SMTP (nodemailer) - keeping for backward compatibility
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransporter({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: process.env.SMTP_PORT || 587,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      });
+
+      for (const email of emails) {
+        try {
+          await transporter.sendMail({
+            from: `"The Fever Studio" <${fromEmail}>`,
+            to: email,
+            subject: campaign.subject,
+            html: emailHtml
+          });
+
+          const subscriber = await EmailSubscriber.findOne({ email: email.toLowerCase() });
+          if (subscriber) {
+            await subscriber.recordEmailSent();
+          }
+
+          successCount++;
+          console.log(`Email sent via SMTP to: ${email}`);
+        } catch (error) {
+          failureCount++;
+          errors.push({
+            email,
+            error: error.message,
+            timestamp: new Date()
+          });
+          console.error(`Failed to send to ${email}:`, error.message);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
     }
 
     // Update campaign status

@@ -81,8 +81,11 @@ function AdminDashboard() {
     message: '',
     recipients: 'all',
     customEmails: '',
+    emailLists: [],
     includedPromoCode: ''
   });
+
+  const [emailLists, setEmailLists] = useState([]);
 
   useEffect(() => {
     // Check if user is admin
@@ -116,8 +119,15 @@ function AdminDashboard() {
         const res = await api.get('/api/promo-codes', config);
         setPromoCodes(res.data);
       } else if (activeTab === 'emailMarketing') {
-        const res = await api.get('/api/email-campaigns', config);
-        setEmailCampaigns(res.data);
+        // Fetch campaigns, promo codes, and email lists for the campaign form
+        const [campaignsRes, promoCodesRes, emailListsRes] = await Promise.all([
+          api.get('/api/email-campaigns', config),
+          api.get('/api/promo-codes', config),
+          api.get('/api/email-lists', config)
+        ]);
+        setEmailCampaigns(campaignsRes.data);
+        setPromoCodes(promoCodesRes.data);
+        setEmailLists(emailListsRes.data);
       } else if (activeTab === 'reviews') {
         const res = await api.get('/api/reviews/admin/all', config);
         setReviews(res.data);
@@ -649,6 +659,7 @@ function AdminDashboard() {
       message: '',
       recipients: 'all',
       customEmails: '',
+      emailLists: [],
       includedPromoCode: ''
     });
     setRecipientPreview(null);
@@ -659,7 +670,8 @@ function AdminDashboard() {
       const token = localStorage.getItem('token');
       const response = await api.post('/api/email-campaigns/preview-recipients', {
         recipients: emailForm.recipients,
-        customEmails: emailForm.customEmails.split(',').map(e => e.trim()).filter(e => e)
+        customEmails: emailForm.customEmails.split(',').map(e => e.trim()).filter(e => e),
+        emailLists: emailForm.emailLists
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -1915,6 +1927,7 @@ function AdminDashboard() {
                           <option value="all">All Customers</option>
                           <option value="past_customers">Past Customers (Completed Bookings)</option>
                           <option value="recent">Recent (Last 30 Days)</option>
+                          <option value="email_list">Email Lists</option>
                           <option value="custom">Custom Email List</option>
                         </select>
                       </div>
@@ -1935,6 +1948,36 @@ function AdminDashboard() {
                         </select>
                       </div>
                     </div>
+
+                    {emailForm.recipients === 'email_list' && (
+                      <div className="form-group">
+                        <label>Select Email Lists</label>
+                        <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '10px' }}>
+                          {emailLists.length === 0 ? (
+                            <p style={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>No email lists available. Create one from the Email Lists tab.</p>
+                          ) : (
+                            emailLists.map(list => (
+                              <label key={list._id} style={{ display: 'block', padding: '8px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={emailForm.emailLists.includes(list._id)}
+                                  onChange={(e) => {
+                                    const newLists = e.target.checked
+                                      ? [...emailForm.emailLists, list._id]
+                                      : emailForm.emailLists.filter(id => id !== list._id);
+                                    setEmailForm({ ...emailForm, emailLists: newLists });
+                                  }}
+                                  style={{ marginRight: '8px' }}
+                                />
+                                <strong>{list.name}</strong> ({list.subscriberCount} subscribers)
+                                {list.description && <div style={{ fontSize: '0.85em', color: 'rgba(255,255,255,0.6)', marginLeft: '24px' }}>{list.description}</div>}
+                              </label>
+                            ))
+                          )}
+                        </div>
+                        <small>Select one or more email lists to send to</small>
+                      </div>
+                    )}
 
                     {emailForm.recipients === 'custom' && (
                       <div className="form-group">

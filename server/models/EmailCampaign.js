@@ -21,12 +21,16 @@ const emailCampaignSchema = new mongoose.Schema({
   },
   recipients: {
     type: String,
-    enum: ['all', 'past_customers', 'recent', 'custom'],
+    enum: ['all', 'past_customers', 'recent', 'custom', 'email_list'],
     required: true
   },
   customEmails: [{
     type: String,
     lowercase: true
+  }],
+  emailLists: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'EmailList'
   }],
   includedPromoCode: {
     type: mongoose.Schema.Types.ObjectId,
