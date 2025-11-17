@@ -26,7 +26,8 @@
       "Bash(nslookup:*)",
       "Bash(node scripts/createAdminWithDNS.js:*)",
       "Bash(node scripts/seedMembershipTiers.js:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(npm run build)"
     ],
     "deny": [],
     "ask": []
