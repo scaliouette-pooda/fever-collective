@@ -1162,6 +1162,7 @@ function AdminDashboard() {
 
       <div className="admin-tabs">
         {/* Core Operations */}
+        <div style={{ gridColumn: '1 / -1', fontSize: '0.7rem', color: 'rgba(201, 168, 106, 0.6)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '8px' }}>Core Operations</div>
         <button
           className={activeTab === 'events' ? 'active' : ''}
           onClick={() => setActiveTab('events')}
@@ -1181,9 +1182,10 @@ function AdminDashboard() {
           Check-In
         </button>
 
-        <div style={{ width: '100%', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '8px 0' }}></div>
+        <div style={{ gridColumn: '1 / -1', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '12px 0 8px 0' }}></div>
 
         {/* Customer Engagement */}
+        <div style={{ gridColumn: '1 / -1', fontSize: '0.7rem', color: 'rgba(201, 168, 106, 0.6)', textTransform: 'uppercase', letterSpacing: '1px' }}>Customer Engagement</div>
         <button
           className={activeTab === 'memberships' ? 'active' : ''}
           onClick={() => setActiveTab('memberships')}
@@ -1209,9 +1211,10 @@ function AdminDashboard() {
           Waitlist
         </button>
 
-        <div style={{ width: '100%', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '8px 0' }}></div>
+        <div style={{ gridColumn: '1 / -1', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '12px 0 8px 0' }}></div>
 
         {/* Marketing & Promotions */}
+        <div style={{ gridColumn: '1 / -1', fontSize: '0.7rem', color: 'rgba(201, 168, 106, 0.6)', textTransform: 'uppercase', letterSpacing: '1px' }}>Marketing & Promotions</div>
         <button
           className={activeTab === 'promoCodes' ? 'active' : ''}
           onClick={() => setActiveTab('promoCodes')}
@@ -1237,9 +1240,10 @@ function AdminDashboard() {
           Email Automation
         </button>
 
-        <div style={{ width: '100%', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '8px 0' }}></div>
+        <div style={{ gridColumn: '1 / -1', height: '1px', background: 'rgba(201, 168, 106, 0.3)', margin: '12px 0 8px 0' }}></div>
 
         {/* Admin & Insights */}
+        <div style={{ gridColumn: '1 / -1', fontSize: '0.7rem', color: 'rgba(201, 168, 106, 0.6)', textTransform: 'uppercase', letterSpacing: '1px' }}>Admin & Insights</div>
         <button
           className={activeTab === 'analytics' ? 'active' : ''}
           onClick={() => setActiveTab('analytics')}
