@@ -16,10 +16,14 @@ function Events() {
 
   const fetchEvents = async () => {
     try {
+      console.log('Fetching events...');
       const response = await api.get('/api/events');
+      console.log('Events API response:', response.data);
+      console.log('Number of events:', response.data.length);
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
+      console.error('Error details:', error.response);
     } finally {
       setLoading(false);
     }

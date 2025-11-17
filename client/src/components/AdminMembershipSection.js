@@ -25,7 +25,6 @@ function AdminMembershipSection() {
 
   const [updateForm, setUpdateForm] = useState({
     status: '',
-    creditsRemaining: '',
     notes: ''
   });
 
@@ -108,7 +107,7 @@ function AdminMembershipSection() {
       setSuccess('Membership updated successfully!');
       setShowUpdateForm(false);
       setSelectedMembership(null);
-      setUpdateForm({ status: '', creditsRemaining: '', notes: '' });
+      setUpdateForm({ status: '', notes: '' });
       fetchData();
     } catch (err) {
       console.error('Error updating membership:', err);
@@ -139,7 +138,6 @@ function AdminMembershipSection() {
     setSelectedMembership(membership);
     setUpdateForm({
       status: membership.status,
-      creditsRemaining: membership.creditsRemaining || '',
       notes: membership.notes || ''
     });
     setShowUpdateForm(true);
@@ -455,8 +453,9 @@ function AdminMembershipSection() {
             </div>
             <form onSubmit={handleUpdateSubmit}>
               <div className="current-membership-info">
-                <p><strong>Member:</strong> {selectedMembership.user?.name}</p>
-                <p><strong>Tier:</strong> {selectedMembership.membershipTier?.displayName}</p>
+                <p><strong>Member:</strong> {selectedMembership.userId?.name || selectedMembership.user?.name || 'Unknown'}</p>
+                <p><strong>Tier:</strong> {selectedMembership.membershipTier?.displayName || selectedMembership.membershipTier || 'Unknown'}</p>
+                <p><strong>Credits:</strong> {selectedMembership.creditsRemaining} / {selectedMembership.creditsTotal}</p>
               </div>
 
               <div className="form-group">
@@ -471,21 +470,6 @@ function AdminMembershipSection() {
                   <option value="cancelled">Cancelled</option>
                 </select>
               </div>
-
-              {!selectedMembership.membershipTier?.isUnlimited && (
-                <div className="form-group">
-                  <label>Credits Remaining</label>
-                  <input
-                    type="number"
-                    value={updateForm.creditsRemaining}
-                    onChange={(e) => setUpdateForm({ ...updateForm, creditsRemaining: e.target.value })}
-                    min="0"
-                  />
-                  <p className="form-help">
-                    Current: {selectedMembership.creditsRemaining} / {selectedMembership.creditsTotal}
-                  </p>
-                </div>
-              )}
 
               <div className="form-group">
                 <label>Notes</label>
