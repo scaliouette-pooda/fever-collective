@@ -58,7 +58,7 @@ function Contact() {
 
           <div className="info-section">
             <h3>Hours</h3>
-            <p>Event times vary by location</p>
+            <p>Class times vary by location</p>
             <p>Check our schedule for details</p>
           </div>
         </div>

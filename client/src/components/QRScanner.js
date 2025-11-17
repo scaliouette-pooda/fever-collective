@@ -202,7 +202,7 @@ function QRScanner() {
             <div className="result-details">
               <p><strong>Member:</strong> {scanResult.member}</p>
               <p><strong>Membership #:</strong> {scanResult.membershipNumber}</p>
-              <p><strong>Event:</strong> {scanResult.event}</p>
+              <p><strong>Class:</strong> {scanResult.event}</p>
               {scanResult.creditsRemaining !== undefined && (
                 <p><strong>Credits Remaining:</strong> {scanResult.creditsRemaining}</p>
               )}

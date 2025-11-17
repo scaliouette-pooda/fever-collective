@@ -33,7 +33,7 @@ function BookingConfirmation() {
     return (
       <div className="container">
         <h2>Booking Not Found</h2>
-        <button onClick={() => navigate('/events')}>View Events</button>
+        <button onClick={() => navigate('/events')}>View Classes</button>
       </div>
     );
   }
@@ -85,7 +85,7 @@ function BookingConfirmation() {
 
           <div style={{ display: 'grid', gap: '1rem' }}>
             <div>
-              <strong>Event:</strong>
+              <strong>Class:</strong>
               <p style={{ marginTop: '0.3rem' }}>{booking.event?.title || 'N/A'}</p>
             </div>
 

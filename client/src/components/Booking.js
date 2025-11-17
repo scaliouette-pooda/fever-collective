@@ -183,7 +183,7 @@ function Booking() {
   };
 
   if (loading) return <div className="container loading">Loading...</div>;
-  if (!event) return <div className="container">Event not found</div>;
+  if (!event) return <div className="container">Class not found</div>;
 
   return (
     <div className="booking-page">
@@ -199,7 +199,7 @@ function Booking() {
           <RecentlyViewedCounter viewCount={Math.floor(Math.random() * 20) + 10} />
 
           <div className="event-summary">
-            <h2>Event Details</h2>
+            <h2>Class Details</h2>
             <div className="detail-item">
               <span className="detail-label">Date</span>
               <span className="detail-value">
@@ -247,9 +247,9 @@ function Booking() {
         <div className="booking-form-container">
           {event.availableSpots === 0 ? (
             <>
-              <h2>Event Sold Out</h2>
+              <h2>Class Sold Out</h2>
               <p style={{ textAlign: 'center', marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
-                This event is currently full. Join the waitlist to be notified if a spot opens up.
+                This class is currently full. Join the waitlist to be notified if a spot opens up.
               </p>
 
               {!showWaitlistForm ? (

@@ -176,8 +176,8 @@ function Events() {
       <LiveBookingNotification />
 
       <div className="events-header">
-        <h1>Classes & Events</h1>
-        <p className="events-subtitle">Browse our weekly class schedule or upcoming events</p>
+        <h1>Classes</h1>
+        <p className="events-subtitle">Browse our weekly class schedule</p>
 
         <div className="view-toggle">
           <button

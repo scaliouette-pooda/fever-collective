@@ -104,7 +104,7 @@ function About() {
         <h2>Join The Collective</h2>
         <p>Experience wellness that's out of this world</p>
         <Link to="/events">
-          <button>View Events</button>
+          <button>View Classes</button>
         </Link>
       </section>
     </div>

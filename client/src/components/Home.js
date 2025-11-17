@@ -28,7 +28,7 @@ function Home() {
           <p className="tagline-secondary">sculpt · strength · sweat · stretch</p>
           <div className="hero-actions">
             <Link to="/events">
-              <button>View Events</button>
+              <button>View Classes</button>
             </Link>
           </div>
         </div>

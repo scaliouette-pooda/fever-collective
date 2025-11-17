@@ -331,12 +331,12 @@ function AdminDashboard() {
         await api.put(`/api/events/${editingEvent._id}`, eventData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert('Event updated successfully!');
+        alert('Class updated successfully!');
       } else {
         await api.post('/api/events', eventData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert('Event created successfully!');
+        alert('Class created successfully!');
       }
 
       setShowEventForm(false);
@@ -378,11 +378,11 @@ function AdminDashboard() {
       await api.delete(`/api/events/${eventId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('Event deleted successfully!');
+      alert('Class deleted successfully!');
       fetchData();
     } catch (error) {
       console.error('Error deleting event:', error);
-      alert('Failed to delete event.');
+      alert('Failed to delete class.');
     }
   };
 
@@ -1313,7 +1313,7 @@ function AdminDashboard() {
         {activeTab === 'events' && (
           <div className="events-section">
             <div className="section-header">
-              <h2>Manage Events</h2>
+              <h2>Manage Classes</h2>
               <div style={{ display: 'flex', gap: '10px' }}>
                
                 <button onClick={() => {
@@ -1448,7 +1448,7 @@ function AdminDashboard() {
                     </div>
 
                     <div className="form-group">
-                      <label>Event Image</label>
+                      <label>Class Image</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -1722,7 +1722,7 @@ function AdminDashboard() {
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Event</th>
+                    <th>Class</th>
                     <th>Spots</th>
                     <th>Ticket Tier</th>
                     <th>Credit Used</th>
@@ -2523,7 +2523,7 @@ function AdminDashboard() {
               <h3 style={{ marginBottom: '1rem', color: '#c9a86a' }}>Core Metrics</h3>
               <div className="stats-grid">
                 <div className="stat-card">
-                  <h3>Total Events</h3>
+                  <h3>Total Classes</h3>
                   <p className="stat-value">{events.length}</p>
                   <small style={{ color: 'rgba(232, 232, 232, 0.6)' }}>
                     {events.filter(e => new Date(e.date) >= new Date()).length} upcoming
@@ -2564,7 +2564,7 @@ function AdminDashboard() {
               <h3 style={{ marginBottom: '1rem', color: '#c9a86a' }}>Revenue Breakdown</h3>
               <div className="stats-grid">
                 <div className="stat-card">
-                  <h3>Event Bookings</h3>
+                  <h3>Class Bookings</h3>
                   <p className="stat-value">
                     ${bookings
                       .filter(b => b.paymentStatus === 'completed' && !b.usedCredits)
@@ -3217,7 +3217,7 @@ function AdminDashboard() {
                     <thead style={{ background: 'rgba(0, 122, 255, 0.1)', borderBottom: '1px solid rgba(0, 122, 255, 0.3)' }}>
                       <tr>
                         <th style={{ padding: '12px', textAlign: 'left' }}>Customer</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Event</th>
+                        <th style={{ padding: '12px', textAlign: 'left' }}>Class</th>
                         <th style={{ padding: '12px', textAlign: 'center' }}>Payout</th>
                         <th style={{ padding: '12px', textAlign: 'center' }}>Status</th>
                         <th style={{ padding: '12px', textAlign: 'right' }}>Date</th>
@@ -4059,7 +4059,7 @@ jane@example.com,Jane Smith
                 <table>
                   <thead>
                     <tr>
-                      <th>Event</th>
+                      <th>Class</th>
                       <th>Name</th>
                       <th>Rating</th>
                       <th>Comment</th>
