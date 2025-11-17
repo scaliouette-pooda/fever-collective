@@ -86,6 +86,28 @@ function AdminDashboard() {
   });
 
   const [emailLists, setEmailLists] = useState([]);
+  const [emailSubscribers, setEmailSubscribers] = useState([]);
+  const [showListForm, setShowListForm] = useState(false);
+  const [editingList, setEditingList] = useState(null);
+  const [showSubscriberImport, setShowSubscriberImport] = useState(false);
+  const [selectedListForImport, setSelectedListForImport] = useState(null);
+
+  const [listForm, setListForm] = useState({
+    name: '',
+    description: '',
+    type: 'static',
+    dynamicCriteria: {
+      membershipTiers: [],
+      bookingStatus: '',
+      inactiveDays: '',
+      minBookings: '',
+      maxBookings: '',
+      hasActiveMembership: false,
+      expiringCredits: false,
+      expiringMembership: false,
+      birthdayMonth: ''
+    }
+  });
 
   useEffect(() => {
     // Check if user is admin
@@ -128,6 +150,14 @@ function AdminDashboard() {
         setEmailCampaigns(campaignsRes.data);
         setPromoCodes(promoCodesRes.data);
         setEmailLists(emailListsRes.data);
+      } else if (activeTab === 'emailLists') {
+        // Fetch email lists and subscribers
+        const [listsRes, subscribersRes] = await Promise.all([
+          api.get('/api/email-lists', config),
+          api.get('/api/email-subscribers?limit=100', config)
+        ]);
+        setEmailLists(listsRes.data);
+        setEmailSubscribers(subscribersRes.data.subscribers || subscribersRes.data);
       } else if (activeTab === 'reviews') {
         const res = await api.get('/api/reviews/admin/all', config);
         setReviews(res.data);
@@ -741,6 +771,185 @@ function AdminDashboard() {
     }
   };
 
+  // Email List Handlers
+  const handleListFormChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (name.startsWith('dynamicCriteria.')) {
+      const field = name.split('.')[1];
+      setListForm({
+        ...listForm,
+        dynamicCriteria: {
+          ...listForm.dynamicCriteria,
+          [field]: type === 'checkbox' ? checked : value
+        }
+      });
+    } else {
+      setListForm({
+        ...listForm,
+        [name]: value
+      });
+    }
+  };
+
+  const handleCreateEmailList = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+
+      const listData = {
+        ...listForm,
+        // Only send dynamicCriteria if it's a dynamic list
+        dynamicCriteria: listForm.type === 'dynamic' ? listForm.dynamicCriteria : undefined
+      };
+
+      if (editingList) {
+        await api.put(`/api/email-lists/${editingList._id}`, listData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Email list updated successfully!');
+      } else {
+        await api.post('/api/email-lists', listData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Email list created successfully!');
+      }
+
+      setShowListForm(false);
+      setEditingList(null);
+      resetListForm();
+      fetchData();
+    } catch (error) {
+      console.error('Error saving email list:', error);
+      alert(error.response?.data?.error || 'Failed to save email list');
+    }
+  };
+
+  const resetListForm = () => {
+    setListForm({
+      name: '',
+      description: '',
+      type: 'static',
+      dynamicCriteria: {
+        membershipTiers: [],
+        bookingStatus: '',
+        inactiveDays: '',
+        minBookings: '',
+        maxBookings: '',
+        hasActiveMembership: false,
+        expiringCredits: false,
+        expiringMembership: false,
+        birthdayMonth: ''
+      }
+    });
+  };
+
+  const handleEditList = (list) => {
+    setEditingList(list);
+    setListForm({
+      name: list.name,
+      description: list.description || '',
+      type: list.type,
+      dynamicCriteria: list.dynamicCriteria || {
+        membershipTiers: [],
+        bookingStatus: '',
+        inactiveDays: '',
+        minBookings: '',
+        maxBookings: '',
+        hasActiveMembership: false,
+        expiringCredits: false,
+        expiringMembership: false,
+        birthdayMonth: ''
+      }
+    });
+    setShowListForm(true);
+  };
+
+  const handleDeleteList = async (listId) => {
+    if (!window.confirm('Are you sure you want to delete this email list?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/api/email-lists/${listId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Email list deleted successfully!');
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting list:', error);
+      alert('Failed to delete email list');
+    }
+  };
+
+  const handleExportList = async (listId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(`/api/email-lists/${listId}/export`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Convert to CSV
+      const csvContent = [
+        ['Email', 'Name', 'Subscribed', 'Emails Sent', 'Emails Opened', 'Created At'].join(','),
+        ...response.data.subscribers.map(sub => [
+          sub.email,
+          sub.name || '',
+          sub.isSubscribed,
+          sub.totalEmailsSent,
+          sub.totalEmailsOpened,
+          new Date(sub.createdAt).toLocaleDateString()
+        ].join(','))
+      ].join('\n');
+
+      // Download file
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${response.data.listName}-subscribers.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      alert(`Exported ${response.data.count} subscribers!`);
+    } catch (error) {
+      console.error('Error exporting list:', error);
+      alert('Failed to export list');
+    }
+  };
+
+  const handleImportSubscribers = async (listId, file) => {
+    try {
+      const token = localStorage.getItem('token');
+      const text = await file.text();
+      const lines = text.split('\n').filter(line => line.trim());
+
+      // Skip header row, parse CSV
+      const subscribers = lines.slice(1).map(line => {
+        const [email, name] = line.split(',').map(s => s.trim());
+        return { email, name: name || '' };
+      }).filter(sub => sub.email && sub.email.includes('@'));
+
+      if (subscribers.length === 0) {
+        alert('No valid email addresses found in file');
+        return;
+      }
+
+      const response = await api.post(`/api/email-lists/${listId}/import`, {
+        subscribers
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert(`Import complete! Imported: ${response.data.results.imported}, Updated: ${response.data.results.updated}, Failed: ${response.data.results.failed}`);
+      setShowSubscriberImport(false);
+      setSelectedListForImport(null);
+      fetchData();
+    } catch (error) {
+      console.error('Error importing subscribers:', error);
+      alert(error.response?.data?.error || 'Failed to import subscribers');
+    }
+  };
+
   // Review Handlers
   const handleApproveReview = async (reviewId) => {
     try {
@@ -953,6 +1162,12 @@ function AdminDashboard() {
           onClick={() => setActiveTab('emailMarketing')}
         >
           Email Marketing
+        </button>
+        <button
+          className={activeTab === 'emailLists' ? 'active' : ''}
+          onClick={() => setActiveTab('emailLists')}
+        >
+          Email Lists
         </button>
         <button
           className={activeTab === 'emailAutomation' ? 'active' : ''}
@@ -2557,6 +2772,359 @@ function AdminDashboard() {
           </div>
         )}
 
+        {/* Email Lists Tab */}
+        {activeTab === 'emailLists' && (
+          <div className="email-lists-section">
+            <div className="section-header">
+              <h2>Email Lists</h2>
+              <button onClick={() => {
+                setShowListForm(true);
+                setEditingList(null);
+                resetListForm();
+              }}>
+                Create New List
+              </button>
+            </div>
+
+            <div className="section-description">
+              <h3>About Email Lists</h3>
+              <p>Create and manage subscriber lists for targeted email campaigns. Use static lists for manual management or dynamic lists that auto-populate based on criteria.</p>
+
+              <div className="list-types-info">
+                <div className="list-type">
+                  <strong>Static Lists:</strong> Manually add/remove subscribers. Perfect for specific segments you curate manually.
+                </div>
+                <div className="list-type">
+                  <strong>Dynamic Lists:</strong> Auto-populate based on membership tiers, booking history, or other criteria. Always up-to-date!
+                </div>
+              </div>
+            </div>
+
+            {showListForm && (
+              <div className="modal-overlay" onClick={() => {
+                setShowListForm(false);
+                setEditingList(null);
+                resetListForm();
+              }}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <h2>{editingList ? 'Edit Email List' : 'Create New Email List'}</h2>
+
+                  <form onSubmit={handleCreateEmailList}>
+                    <div className="form-group">
+                      <label>List Name *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={listForm.name}
+                        onChange={handleListFormChange}
+                        placeholder="e.g., VIP Members, Newsletter Subscribers"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="description"
+                        value={listForm.description}
+                        onChange={handleListFormChange}
+                        rows="2"
+                        placeholder="Describe this list..."
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>List Type *</label>
+                      <select
+                        name="type"
+                        value={listForm.type}
+                        onChange={handleListFormChange}
+                        required
+                      >
+                        <option value="static">Static (Manual)</option>
+                        <option value="dynamic">Dynamic (Auto-populate)</option>
+                      </select>
+                      <small>
+                        Static: Manually add/remove subscribers | Dynamic: Auto-populate based on criteria below
+                      </small>
+                    </div>
+
+                    {listForm.type === 'dynamic' && (
+                      <div className="dynamic-criteria-section">
+                        <h3>Dynamic Criteria</h3>
+                        <p style={{ fontSize: '0.9em', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
+                          Select criteria to automatically populate this list. Multiple criteria will be combined (AND logic).
+                        </p>
+
+                        <div className="form-group">
+                          <label>Membership Tiers</label>
+                          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={listForm.dynamicCriteria.membershipTiers.includes('fever-starter')}
+                                onChange={(e) => {
+                                  const tiers = e.target.checked
+                                    ? [...listForm.dynamicCriteria.membershipTiers, 'fever-starter']
+                                    : listForm.dynamicCriteria.membershipTiers.filter(t => t !== 'fever-starter');
+                                  setListForm({
+                                    ...listForm,
+                                    dynamicCriteria: { ...listForm.dynamicCriteria, membershipTiers: tiers }
+                                  });
+                                }}
+                              /> Fever Starter
+                            </label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={listForm.dynamicCriteria.membershipTiers.includes('outbreak')}
+                                onChange={(e) => {
+                                  const tiers = e.target.checked
+                                    ? [...listForm.dynamicCriteria.membershipTiers, 'outbreak']
+                                    : listForm.dynamicCriteria.membershipTiers.filter(t => t !== 'outbreak');
+                                  setListForm({
+                                    ...listForm,
+                                    dynamicCriteria: { ...listForm.dynamicCriteria, membershipTiers: tiers }
+                                  });
+                                }}
+                              /> Outbreak
+                            </label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={listForm.dynamicCriteria.membershipTiers.includes('epidemic')}
+                                onChange={(e) => {
+                                  const tiers = e.target.checked
+                                    ? [...listForm.dynamicCriteria.membershipTiers, 'epidemic']
+                                    : listForm.dynamicCriteria.membershipTiers.filter(t => t !== 'epidemic');
+                                  setListForm({
+                                    ...listForm,
+                                    dynamicCriteria: { ...listForm.dynamicCriteria, membershipTiers: tiers }
+                                  });
+                                }}
+                              /> Epidemic
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Booking Status</label>
+                          <select
+                            name="dynamicCriteria.bookingStatus"
+                            value={listForm.dynamicCriteria.bookingStatus}
+                            onChange={handleListFormChange}
+                          >
+                            <option value="">Any</option>
+                            <option value="never_booked">Never Booked</option>
+                            <option value="has_booked">Has Booked</option>
+                            <option value="recent_booking">Recent Booking (Last 30 Days)</option>
+                            <option value="inactive">Inactive Users</option>
+                          </select>
+                        </div>
+
+                        {listForm.dynamicCriteria.bookingStatus === 'inactive' && (
+                          <div className="form-group">
+                            <label>Inactive Days</label>
+                            <input
+                              type="number"
+                              name="dynamicCriteria.inactiveDays"
+                              value={listForm.dynamicCriteria.inactiveDays}
+                              onChange={handleListFormChange}
+                              placeholder="e.g., 30"
+                              min="1"
+                            />
+                            <small>Users who haven't booked in this many days</small>
+                          </div>
+                        )}
+
+                        <div className="form-group">
+                          <label>Birthday Month</label>
+                          <select
+                            name="dynamicCriteria.birthdayMonth"
+                            value={listForm.dynamicCriteria.birthdayMonth}
+                            onChange={handleListFormChange}
+                          >
+                            <option value="">Any Month</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                          </select>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="dynamicCriteria.expiringCredits"
+                              checked={listForm.dynamicCriteria.expiringCredits}
+                              onChange={handleListFormChange}
+                            /> Credits Expiring Soon
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="dynamicCriteria.expiringMembership"
+                              checked={listForm.dynamicCriteria.expiringMembership}
+                              onChange={handleListFormChange}
+                            /> Membership Expiring Soon
+                          </label>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="form-actions">
+                      <button type="button" onClick={() => {
+                        setShowListForm(false);
+                        setEditingList(null);
+                        resetListForm();
+                      }}>
+                        Cancel
+                      </button>
+                      <button type="submit">
+                        {editingList ? 'Update List' : 'Create List'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {showSubscriberImport && (
+              <div className="modal-overlay" onClick={() => {
+                setShowSubscriberImport(false);
+                setSelectedListForImport(null);
+              }}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <h2>Import Subscribers</h2>
+                  <p>Upload a CSV file with email addresses. First column should be email, second column (optional) should be name.</p>
+
+                  <div className="form-group">
+                    <label>CSV File Format:</label>
+                    <pre style={{ background: 'rgba(0,0,0,0.3)', padding: '10px', borderRadius: '4px', fontSize: '0.85em' }}>
+{`email,name
+john@example.com,John Doe
+jane@example.com,Jane Smith
+...`}
+                    </pre>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Select CSV File</label>
+                    <input
+                      type="file"
+                      accept=".csv"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          handleImportSubscribers(selectedListForImport, file);
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <div className="form-actions">
+                    <button onClick={() => {
+                      setShowSubscriberImport(false);
+                      setSelectedListForImport(null);
+                    }}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="email-lists-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>List Name</th>
+                    <th>Type</th>
+                    <th>Subscribers</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {emailLists.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.5)' }}>
+                        No email lists yet. Create your first list to get started!
+                      </td>
+                    </tr>
+                  ) : (
+                    emailLists.map(list => (
+                      <tr key={list._id}>
+                        <td>
+                          <strong>{list.name}</strong>
+                        </td>
+                        <td>
+                          <span className={`badge badge-${list.type}`}>
+                            {list.type === 'static' ? 'Static' : 'Dynamic'}
+                          </span>
+                        </td>
+                        <td>{list.subscriberCount || 0}</td>
+                        <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {list.description || '-'}
+                        </td>
+                        <td>
+                          <span className={`status-badge ${list.isActive ? 'status-active' : 'status-inactive'}`}>
+                            {list.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td className="actions">
+                          <button
+                            onClick={() => handleEditList(list)}
+                            className="action-btn edit-btn"
+                            title="Edit"
+                          >
+                            Edit
+                          </button>
+                          {list.type === 'static' && (
+                            <button
+                              onClick={() => {
+                                setSelectedListForImport(list._id);
+                                setShowSubscriberImport(true);
+                              }}
+                              className="action-btn import-btn"
+                              title="Import Subscribers"
+                            >
+                              Import
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleExportList(list._id)}
+                            className="action-btn export-btn"
+                            title="Export"
+                          >
+                            Export
+                          </button>
+                          <button
+                            onClick={() => handleDeleteList(list._id)}
+                            className="action-btn delete-btn"
+                            title="Delete"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Email Automation Dashboard Tab */}
         {activeTab === 'emailAutomation' && (
