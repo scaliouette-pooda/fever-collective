@@ -92,9 +92,9 @@ Since you've experienced Fever twice, we want to make it easy for you to join as
 ✨ **Keep your favorite class times** with priority booking
 
 **Our Membership Options:**
-• Fever Starter: 4 classes/month - $99
-• Outbreak: 8 classes/month - $169
-• Epidemic: Unlimited classes - $199
+• Fever Starter: 4 classes/month - \\$99
+• Outbreak: 8 classes/month - \\$169
+• Epidemic: Unlimited classes - \\$199
 
 [View Full Membership Details]
 
@@ -126,73 +126,53 @@ The Fever Team
       {
         stepNumber: 1,
         subject: '🔥 {{userName}}, You\'re a Fever Regular! Special Member Pricing Inside',
-        message: `{{userName}},
-
-We see you! 👀
-
-You've taken {{bookingCount}} classes at Fever, and we absolutely love having you in our community. You're basically a regular already!
-
-**Here's What We Notice About Our Best Members:**
-They started just like you - coming in through ClassPass, falling in love with the heated mat Pilates experience, and eventually making Fever their home studio.
-
-**The Math is Simple:**
-• Your {{bookingCount}} ClassPass visits = ${{classPassTotal}}+ in ClassPass credits
-• Epidemic Membership (Unlimited) = $199/month
-
-If you take just 7 classes per month with membership, you're already saving money - plus you get:
-✅ Priority booking (never miss your favorite instructor!)
-✅ Member-only workshops
-✅ Exclusive community events
-✅ Bring-a-friend passes
-✅ Discounts on retail & workshops
-
-**EXCLUSIVE OFFER FOR YOU:**
-Since you're already part of the family, we're offering you:
-
-🎁 **First Month: 20% OFF + FREE Fever Water Bottle ($25 value)**
-🎁 **Switch anytime** - No long-term contract
-🎁 **Try it for 30 days** and if it's not right, we'll help you find what works
-
-[Claim Your Member Discount - Expires in 7 Days]
-
-**From Our Community Manager:**
-"{{userName}}, we've loved watching you progress in class! You clearly know what you want in a workout. Let's chat about making your Fever experience even better as a member. Coffee on us?" - [Schedule 15-min Chat]
-
-You've got {{daysInWindow}} days left in your conversion window for this special pricing. After that, it's back to regular rates.
-
-Questions? Just reply to this email!
-
-Keep bringing that fire! 🔥
-
-[Your Name]
-Studio Manager, Fever
-{{studioEmail}}
-{{studioPhone}}
-
-P.S. Spots in our most popular classes (looking at you, 6pm Monday!) fill up fast for members. Don't miss out!`,
+        message: '{{userName}},\n\n' +
+          'We see you! 👀\n\n' +
+          'You\'ve taken {{bookingCount}} classes at Fever, and we absolutely love having you in our community. You\'re basically a regular already!\n\n' +
+          '**Here\'s What We Notice About Our Best Members:**\n' +
+          'They started just like you - coming in through ClassPass, falling in love with the heated mat Pilates experience, and eventually making Fever their home studio.\n\n' +
+          '**The Math is Simple:**\n' +
+          '• Your {{bookingCount}} ClassPass visits = ${{classPassTotal}}+ in ClassPass credits\n' +
+          '• Epidemic Membership (Unlimited) = $199/month\n\n' +
+          'If you take just 7 classes per month with membership, you\'re already saving money - plus you get:\n' +
+          '✅ Priority booking (never miss your favorite instructor!)\n' +
+          '✅ Member-only workshops\n' +
+          '✅ Exclusive community events\n' +
+          '✅ Bring-a-friend passes\n' +
+          '✅ Discounts on retail & workshops\n\n' +
+          '**EXCLUSIVE OFFER FOR YOU:**\n' +
+          'Since you\'re already part of the family, we\'re offering you:\n\n' +
+          '🎁 **First Month: 20% OFF + FREE Fever Water Bottle ($25 value)**\n' +
+          '🎁 **Switch anytime** - No long-term contract\n' +
+          '🎁 **Try it for 30 days** and if it\'s not right, we\'ll help you find what works\n\n' +
+          '[Claim Your Member Discount - Expires in 7 Days]\n\n' +
+          '**From Our Community Manager:**\n' +
+          '"{{userName}}, we\'ve loved watching you progress in class! You clearly know what you want in a workout. Let\'s chat about making your Fever experience even better as a member. Coffee on us?" - [Schedule 15-min Chat]\n\n' +
+          'You\'ve got {{daysInWindow}} days left in your conversion window for this special pricing. After that, it\'s back to regular rates.\n\n' +
+          'Questions? Just reply to this email!\n\n' +
+          'Keep bringing that fire! 🔥\n\n' +
+          '[Your Name]\n' +
+          'Studio Manager, Fever\n' +
+          '{{studioEmail}}\n' +
+          '{{studioPhone}}\n\n' +
+          'P.S. Spots in our most popular classes (looking at you, 6pm Monday!) fill up fast for members. Don\'t miss out!',
         delayDays: 0,
         delayHours: 12 // Send 12 hours after 3rd visit
       },
       {
         stepNumber: 2,
         subject: 'Reminder: Your Fever Member Discount Expires Soon',
-        message: `Hi {{userName}},
-
-Just a friendly reminder that your exclusive 20% off membership offer expires in 3 days!
-
-**Your Offer:**
-• 20% off first month
-• FREE Fever water bottle ($25 value)
-• No long-term commitment
-
-**Quick Stats:**
-You've taken {{bookingCount}} classes at Fever. Our members at your activity level save an average of $150/month compared to ClassPass.
-
-[Claim Your Discount Before It Expires]
-
-Still deciding? Reply with any questions!
-
-The Fever Team`,
+        message: 'Hi {{userName}},\n\n' +
+          'Just a friendly reminder that your exclusive 20% off membership offer expires in 3 days!\n\n' +
+          '**Your Offer:**\n' +
+          '• 20% off first month\n' +
+          '• FREE Fever water bottle ($25 value)\n' +
+          '• No long-term commitment\n\n' +
+          '**Quick Stats:**\n' +
+          'You\'ve taken {{bookingCount}} classes at Fever. Our members at your activity level save an average of $150/month compared to ClassPass.\n\n' +
+          '[Claim Your Discount Before It Expires]\n\n' +
+          'Still deciding? Reply with any questions!\n\n' +
+          'The Fever Team',
         delayDays: 4,
         delayHours: 0 // Send 4 days after first email (3 days before expiry)
       }

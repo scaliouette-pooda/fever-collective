@@ -41,7 +41,10 @@ function AutomatedCampaigns() {
     { value: 'milestone_achieved', label: 'Milestone Achieved', description: 'Sent when member reaches a milestone' },
     { value: 'membership_expiring', label: 'Membership Expiring', description: 'Sent before membership expires' },
     { value: 'post_class', label: 'Post-Class Follow-up', description: 'Sent after attending a class' },
-    { value: 'abandoned_booking', label: 'Abandoned Booking', description: 'Sent when booking is started but not completed' }
+    { value: 'abandoned_booking', label: 'Abandoned Booking', description: 'Sent when booking is started but not completed' },
+    { value: 'classpass_first_visit', label: 'ClassPass - First Visit', description: 'After first ClassPass booking' },
+    { value: 'classpass_second_visit', label: 'ClassPass - Second Visit', description: 'After second ClassPass booking' },
+    { value: 'classpass_hot_lead', label: 'ClassPass - Hot Lead', description: 'ClassPass user with 3+ visits' }
   ];
 
   const membershipTiers = [
@@ -662,7 +665,24 @@ function AutomatedCampaigns() {
                 {campaigns.map(campaign => (
                   <tr key={campaign._id}>
                     <td>
-                      <strong>{campaign.name}</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <strong>{campaign.name}</strong>
+                        {campaign.triggerType && campaign.triggerType.startsWith('classpass_') && (
+                          <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            padding: '2px 8px',
+                            background: 'rgba(0, 122, 255, 0.2)',
+                            border: '1px solid rgba(0, 122, 255, 0.5)',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            color: '#007aff',
+                            fontWeight: '600'
+                          }}>
+                            🔵 ClassPass
+                          </span>
+                        )}
+                      </div>
                       {campaign.description && (
                         <div className="campaign-description">{campaign.description}</div>
                       )}
