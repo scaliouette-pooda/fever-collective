@@ -67,6 +67,19 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  // Booking Source Tracking
+  bookingSource: {
+    type: String,
+    enum: ['direct', 'classpass', 'membership', 'referral'],
+    default: 'direct'
+  },
+  classPassBookingId: {
+    type: String,
+    sparse: true  // Only index when present
+  },
+  classPassPayout: {
+    type: Number  // Track actual payout received from ClassPass
+  },
   checkedIn: {
     type: Boolean,
     default: false

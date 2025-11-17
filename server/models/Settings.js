@@ -163,6 +163,30 @@ const settingsSchema = new mongoose.Schema({
     }
   },
 
+  // ClassPass Integration
+  classPassIntegration: {
+    enabled: {
+      type: Boolean,
+      default: false
+    },
+    autoTagUsers: {
+      type: Boolean,
+      default: true
+    },
+    conversionGoalDays: {
+      type: Number,
+      default: 30
+    },
+    defaultPayoutRate: {
+      type: Number,
+      default: 22 // Average payout for analytics
+    },
+    trackConversions: {
+      type: Boolean,
+      default: true
+    }
+  },
+
   updatedAt: {
     type: Date,
     default: Date.now

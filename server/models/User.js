@@ -62,6 +62,26 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  // Customer Acquisition Tracking
+  acquisitionSource: {
+    type: String,
+    enum: ['direct', 'classpass', 'referral', 'social', 'other'],
+    default: 'direct'
+  },
+  firstClassPassBooking: {
+    type: Date  // Track when they first used ClassPass
+  },
+  classPassBookingCount: {
+    type: Number,
+    default: 0
+  },
+  convertedToMember: {
+    type: Boolean,
+    default: false
+  },
+  conversionDate: {
+    type: Date  // When they became a paying member/regular
+  },
   birthday: {
     month: {
       type: Number,

@@ -11,6 +11,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sendBookingConfirmation, sendPaymentConfirmation } = require('../services/emailService');
 const { triggerPostClassCampaign, triggerMilestoneAchieved } = require('../services/automatedEmailService');
 const EmailSubscriber = require('../models/EmailSubscriber');
+const User = require('../models/User');
 
 router.post('/',
   sanitizeInput,
@@ -25,19 +26,50 @@ router.post('/',
   validateRequestBody(),
   async (req, res) => {
     try {
-      const { eventId, name, email, phone, spots, paymentMethod, promoCodeId, promoCode: promoCodeString, subscribeToEmails } = req.body;
+      const { eventId, name, email, phone, spots, paymentMethod, promoCodeId, promoCode: promoCodeString, subscribeToEmails, bookingSource, classPassBookingId, classPassPayout } = req.body;
 
       // Handle email subscription if user opted in
       if (subscribeToEmails) {
         try {
+          const tags = ['customer'];
+          if (bookingSource === 'classpass') {
+            tags.push('classpass');
+          }
+
           await EmailSubscriber.findOrCreate(email, {
             name,
-            source: 'booking',
-            tags: ['customer']
+            source: bookingSource === 'classpass' ? 'classpass' : 'booking',
+            tags
           });
         } catch (subscribeError) {
           console.error('Error creating email subscriber:', subscribeError);
           // Don't fail the booking if subscription fails
+        }
+      }
+
+      // Track ClassPass users if this is a ClassPass booking
+      if (bookingSource === 'classpass' && userId) {
+        try {
+          const user = await User.findById(userId);
+          if (user) {
+            // Set acquisition source if this is their first booking
+            if (!user.acquisitionSource || user.acquisitionSource === 'direct') {
+              user.acquisitionSource = 'classpass';
+            }
+
+            // Track first ClassPass booking
+            if (!user.firstClassPassBooking) {
+              user.firstClassPassBooking = new Date();
+            }
+
+            // Increment ClassPass booking count
+            user.classPassBookingCount = (user.classPassBookingCount || 0) + 1;
+
+            await user.save();
+          }
+        } catch (userError) {
+          console.error('Error tracking ClassPass user:', userError);
+          // Don't fail the booking if user tracking fails
         }
       }
 
@@ -108,7 +140,10 @@ router.post('/',
           paymentIntentId: `membership_${membership._id}_${Date.now()}`,
           paymentStatus: 'completed',
           paymentMethod: 'membership',
-          status: 'confirmed'
+          status: 'confirmed',
+          bookingSource: bookingSource || 'membership',
+          classPassBookingId,
+          classPassPayout
         });
 
         await booking.save();
@@ -178,7 +213,10 @@ router.post('/',
           promoCodeUsed: promoCodeString || null,
           paymentIntentId: 'venmo_' + Date.now(),
           paymentStatus: 'pending',
-          status: 'pending'
+          status: 'pending',
+          bookingSource: bookingSource || 'direct',
+          classPassBookingId,
+          classPassPayout
         });
 
         await booking.save();
@@ -210,7 +248,10 @@ router.post('/',
           promoCodeUsed: promoCodeString || null,
           paymentIntentId: 'paypal_' + Date.now(),
           paymentStatus: 'pending',
-          status: 'pending'
+          status: 'pending',
+          bookingSource: bookingSource || 'direct',
+          classPassBookingId,
+          classPassPayout
         });
 
         await booking.save();
@@ -249,7 +290,10 @@ router.post('/',
           phone,
           spots,
           totalAmount,
-          paymentIntentId: paymentIntent.id
+          paymentIntentId: paymentIntent.id,
+          bookingSource: bookingSource || 'direct',
+          classPassBookingId,
+          classPassPayout
         });
 
         await booking.save();

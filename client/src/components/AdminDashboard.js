@@ -18,7 +18,9 @@ function AdminDashboard() {
     return new Date(year, month - 1, day); // Create date in local timezone
   };
   const [bookings, setBookings] = useState([]);
+  const [bookingSourceFilter, setBookingSourceFilter] = useState('all');
   const [users, setUsers] = useState([]);
+  const [classPassAnalytics, setClassPassAnalytics] = useState(null);
   const [settings, setSettings] = useState(null);
   const [promoCodes, setPromoCodes] = useState([]);
   const [emailCampaigns, setEmailCampaigns] = useState([]);
@@ -192,6 +194,9 @@ function AdminDashboard() {
         // Load recent bookings for check-in
         const res = await api.get('/api/bookings', config);
         setBookings(res.data);
+      } else if (activeTab === 'classpassAnalytics') {
+        const res = await api.get('/api/classpass-analytics/overview', config);
+        setClassPassAnalytics(res.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -1275,6 +1280,27 @@ function AdminDashboard() {
         >
           Analytics
         </button>
+        {settings?.classPassIntegration?.enabled && (
+          <button
+            className={activeTab === 'classpassAnalytics' ? 'active' : ''}
+            onClick={() => setActiveTab('classpassAnalytics')}
+            style={{
+              position: 'relative',
+              borderLeft: '2px solid rgba(0, 122, 255, 0.3)'
+            }}
+          >
+            ClassPass
+            <span style={{
+              position: 'absolute',
+              top: '4px',
+              right: '4px',
+              width: '6px',
+              height: '6px',
+              backgroundColor: '#007aff',
+              borderRadius: '50%'
+            }}></span>
+          </button>
+        )}
         <button
           className={activeTab === 'settings' ? 'active' : ''}
           onClick={() => setActiveTab('settings')}
@@ -1664,7 +1690,32 @@ function AdminDashboard() {
 
         {activeTab === 'bookings' && (
           <div className="bookings-section">
-            <h2>Recent Bookings</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ margin: 0 }}>Recent Bookings</h2>
+              {settings?.classPassIntegration?.enabled && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <label style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.8)' }}>Filter by Source:</label>
+                  <select
+                    value={bookingSourceFilter}
+                    onChange={(e) => setBookingSourceFilter(e.target.value)}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '4px',
+                      border: '1px solid rgba(201, 168, 106, 0.3)',
+                      background: '#1a1a1a',
+                      color: '#e8e8e8',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="all">All Sources</option>
+                    <option value="direct">Direct Bookings</option>
+                    <option value="classpass">ClassPass</option>
+                    <option value="membership">Membership</option>
+                    <option value="referral">Referral</option>
+                  </select>
+                </div>
+              )}
+            </div>
             <div className="bookings-table">
               <table>
                 <thead>
@@ -1675,6 +1726,7 @@ function AdminDashboard() {
                     <th>Spots</th>
                     <th>Ticket Tier</th>
                     <th>Credit Used</th>
+                    {settings?.classPassIntegration?.enabled && <th>Source</th>}
                     <th>Amount</th>
                     <th>Payment</th>
                     <th>Booking</th>
@@ -1683,7 +1735,12 @@ function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {bookings.map(booking => (
+                  {bookings
+                    .filter(booking => {
+                      if (bookingSourceFilter === 'all') return true;
+                      return (booking.bookingSource || 'direct') === bookingSourceFilter;
+                    })
+                    .map(booking => (
                     <tr key={booking._id}>
                       <td>{booking.name}</td>
                       <td>{booking.email}</td>
@@ -1721,6 +1778,27 @@ function AdminDashboard() {
                           <span style={{ color: 'rgba(232, 232, 232, 0.5)' }}>—</span>
                         )}
                       </td>
+                      {settings?.classPassIntegration?.enabled && (
+                        <td>
+                          <span style={{
+                            background: booking.bookingSource === 'classpass' ? 'rgba(0, 122, 255, 0.2)' :
+                                       booking.bookingSource === 'membership' ? 'rgba(52, 199, 89, 0.2)' :
+                                       booking.bookingSource === 'referral' ? 'rgba(201, 168, 106, 0.2)' :
+                                       'rgba(255, 255, 255, 0.1)',
+                            color: booking.bookingSource === 'classpass' ? '#007aff' :
+                                  booking.bookingSource === 'membership' ? '#34c759' :
+                                  booking.bookingSource === 'referral' ? '#c9a86a' :
+                                  'rgba(232, 232, 232, 0.7)',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem',
+                            fontWeight: '600',
+                            textTransform: 'capitalize'
+                          }}>
+                            {booking.bookingSource || 'direct'}
+                          </span>
+                        </td>
+                      )}
                       <td>${booking.totalAmount}</td>
                       <td>
                         <span className={`status-badge ${booking.paymentStatus}`}>
@@ -2809,6 +2887,89 @@ function AdminDashboard() {
                 </div>
               </div>
 
+              {/* ClassPass Integration Section */}
+              <div className="settings-card">
+                <h3>ClassPass Integration</h3>
+                <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Track and manage ClassPass bookings, customer acquisition, and conversion analytics. Enable this feature to activate ClassPass-specific tracking and analytics throughout the admin dashboard.
+                </p>
+
+                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', background: 'rgba(0, 122, 255, 0.1)', borderRadius: '6px', border: '1px solid rgba(0, 122, 255, 0.3)' }}>
+                    <input
+                      type="checkbox"
+                      checked={settings.classPassIntegration?.enabled || false}
+                      onChange={(e) => handleSettingsChange('classPassIntegration', 'enabled', e.target.checked)}
+                      style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                    />
+                    <div>
+                      <strong style={{ color: '#007aff' }}>Enable ClassPass Integration</strong>
+                      <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                        Activate ClassPass tracking, analytics, and automated email campaigns
+                      </div>
+                    </div>
+                  </label>
+                </div>
+
+                {settings.classPassIntegration?.enabled && (
+                  <>
+                    <div className="form-group">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="checkbox"
+                          checked={settings.classPassIntegration?.autoTagUsers || false}
+                          onChange={(e) => handleSettingsChange('classPassIntegration', 'autoTagUsers', e.target.checked)}
+                        />
+                        Auto-tag ClassPass users in email system
+                      </label>
+                      <small style={{ marginLeft: '28px', display: 'block', marginTop: '4px' }}>
+                        Automatically tag users with "classpass" when they book through ClassPass for targeted campaigns
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="checkbox"
+                          checked={settings.classPassIntegration?.trackConversions || false}
+                          onChange={(e) => handleSettingsChange('classPassIntegration', 'trackConversions', e.target.checked)}
+                        />
+                        Track ClassPass to member conversions
+                      </label>
+                      <small style={{ marginLeft: '28px', display: 'block', marginTop: '4px' }}>
+                        Monitor which ClassPass users become paying members or regular customers
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Conversion Goal (Days)</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="180"
+                        value={settings.classPassIntegration?.conversionGoalDays || 30}
+                        onChange={(e) => handleSettingsChange('classPassIntegration', 'conversionGoalDays', parseInt(e.target.value))}
+                        placeholder="30"
+                      />
+                      <small>Number of days to track conversion from first ClassPass booking to membership</small>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Default Payout Rate ($)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={settings.classPassIntegration?.defaultPayoutRate || 22}
+                        onChange={(e) => handleSettingsChange('classPassIntegration', 'defaultPayoutRate', parseFloat(e.target.value))}
+                        placeholder="22.00"
+                      />
+                      <small>Average payout per ClassPass booking for revenue analytics (if specific payout not recorded)</small>
+                    </div>
+                  </>
+                )}
+              </div>
+
               {/* Site Information Section */}
               <div className="settings-card">
                 <h3>Site Information</h3>
@@ -2891,6 +3052,228 @@ function AdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {/* ClassPass Analytics Tab */}
+        {activeTab === 'classpassAnalytics' && classPassAnalytics && (
+          <div className="classpass-analytics-section">
+            <h2 style={{ marginBottom: '0.5rem' }}>ClassPass Analytics</h2>
+            <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '2rem' }}>
+              Track ClassPass customer acquisition, conversions, and revenue impact
+            </p>
+
+            {/* Key Metrics */}
+            <div className="stats-grid" style={{ marginBottom: '2rem' }}>
+              <div className="stat-card">
+                <div className="stat-value" style={{ color: '#007aff' }}>
+                  {classPassAnalytics.overview.totalBookings}
+                </div>
+                <div className="stat-label">Total Bookings</div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                  {classPassAnalytics.overview.completedBookings} completed
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-value" style={{ color: '#34c759' }}>
+                  ${classPassAnalytics.overview.totalRevenue.toFixed(2)}
+                </div>
+                <div className="stat-label">Total Revenue</div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                  from ClassPass
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-value" style={{ color: '#c9a86a' }}>
+                  {classPassAnalytics.overview.totalUsers}
+                </div>
+                <div className="stat-label">ClassPass Users</div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                  unique customers
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-value" style={{ color: '#ff9500' }}>
+                  {classPassAnalytics.overview.conversionRate}%
+                </div>
+                <div className="stat-label">Conversion Rate</div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                  {classPassAnalytics.overview.convertedUsers} converted
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-value" style={{ color: '#ff3b30' }}>
+                  {classPassAnalytics.overview.avgBookingsPerUser}
+                </div>
+                <div className="stat-label">Avg Bookings/User</div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                  per customer
+                </div>
+              </div>
+            </div>
+
+            {/* Hot Leads Section */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem', color: '#ff9500' }}>
+                🔥 Hot Leads ({classPassAnalytics.hotLeads.length})
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1rem' }}>
+                ClassPass users with 2+ visits who haven't converted yet. Prime candidates for membership offers!
+              </p>
+
+              {classPassAnalytics.hotLeads.length > 0 ? (
+                <div style={{ background: 'rgba(26, 26, 26, 0.5)', borderRadius: '8px', overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead style={{ background: 'rgba(255, 149, 0, 0.1)', borderBottom: '1px solid rgba(255, 149, 0, 0.3)' }}>
+                      <tr>
+                        <th style={{ padding: '12px', textAlign: 'left', color: '#ff9500' }}>Name</th>
+                        <th style={{ padding: '12px', textAlign: 'left', color: '#ff9500' }}>Email</th>
+                        <th style={{ padding: '12px', textAlign: 'center', color: '#ff9500' }}>Bookings</th>
+                        <th style={{ padding: '12px', textAlign: 'center', color: '#ff9500' }}>Days Since First</th>
+                        <th style={{ padding: '12px', textAlign: 'center', color: '#ff9500' }}>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {classPassAnalytics.hotLeads.map((lead, index) => (
+                        <tr key={lead.id} style={{ borderBottom: index < classPassAnalytics.hotLeads.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none' }}>
+                          <td style={{ padding: '12px' }}>{lead.name}</td>
+                          <td style={{ padding: '12px', fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.8)' }}>{lead.email}</td>
+                          <td style={{ padding: '12px', textAlign: 'center' }}>
+                            <span style={{
+                              background: 'rgba(0, 122, 255, 0.2)',
+                              color: '#007aff',
+                              padding: '4px 12px',
+                              borderRadius: '12px',
+                              fontWeight: '600',
+                              fontSize: '0.9rem'
+                            }}>
+                              {lead.bookingCount}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px', textAlign: 'center', color: 'rgba(232, 232, 232, 0.7)' }}>
+                            {lead.daysSinceFirst} days
+                          </td>
+                          <td style={{ padding: '12px', textAlign: 'center' }}>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const token = localStorage.getItem('token');
+                                  await api.post(`/api/classpass-analytics/convert-user/${lead.id}`, {}, {
+                                    headers: { Authorization: `Bearer ${token}` }
+                                  });
+                                  alert(`${lead.name} marked as converted!`);
+                                  // Refresh data
+                                  const res = await api.get('/api/classpass-analytics/overview', {
+                                    headers: { Authorization: `Bearer ${token}` }
+                                  });
+                                  setClassPassAnalytics(res.data);
+                                } catch (err) {
+                                  console.error('Error marking as converted:', err);
+                                  alert('Failed to mark as converted');
+                                }
+                              }}
+                              style={{
+                                padding: '6px 12px',
+                                fontSize: '0.85rem',
+                                backgroundColor: '#34c759',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontWeight: '600'
+                              }}
+                            >
+                              Mark Converted
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '2rem',
+                  background: 'rgba(26, 26, 26, 0.5)',
+                  borderRadius: '8px',
+                  color: 'rgba(232, 232, 232, 0.6)'
+                }}>
+                  No hot leads yet. Check back as ClassPass users make repeat bookings!
+                </div>
+              )}
+            </div>
+
+            {/* Recent Activity */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem' }}>Recent ClassPass Bookings</h3>
+              {classPassAnalytics.recentActivity.length > 0 ? (
+                <div style={{ background: 'rgba(26, 26, 26, 0.5)', borderRadius: '8px', overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead style={{ background: 'rgba(0, 122, 255, 0.1)', borderBottom: '1px solid rgba(0, 122, 255, 0.3)' }}>
+                      <tr>
+                        <th style={{ padding: '12px', textAlign: 'left' }}>Customer</th>
+                        <th style={{ padding: '12px', textAlign: 'left' }}>Event</th>
+                        <th style={{ padding: '12px', textAlign: 'center' }}>Payout</th>
+                        <th style={{ padding: '12px', textAlign: 'center' }}>Status</th>
+                        <th style={{ padding: '12px', textAlign: 'right' }}>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {classPassAnalytics.recentActivity.map((booking, index) => (
+                        <tr key={booking.id} style={{ borderBottom: index < classPassAnalytics.recentActivity.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none' }}>
+                          <td style={{ padding: '12px' }}>
+                            <div>{booking.name}</div>
+                            <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>{booking.email}</div>
+                          </td>
+                          <td style={{ padding: '12px' }}>{booking.eventTitle}</td>
+                          <td style={{ padding: '12px', textAlign: 'center', color: '#34c759', fontWeight: '600' }}>
+                            ${booking.payout.toFixed(2)}
+                          </td>
+                          <td style={{ padding: '12px', textAlign: 'center' }}>
+                            <span className={`status-badge ${booking.status}`}>{booking.status}</span>
+                          </td>
+                          <td style={{ padding: '12px', textAlign: 'right', fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                            {new Date(booking.date).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '2rem',
+                  background: 'rgba(26, 26, 26, 0.5)',
+                  borderRadius: '8px',
+                  color: 'rgba(232, 232, 232, 0.6)'
+                }}>
+                  No ClassPass bookings yet
+                </div>
+              )}
+            </div>
+
+            {/* Conversion Goal Info */}
+            <div style={{
+              padding: '1.5rem',
+              background: 'rgba(0, 122, 255, 0.1)',
+              border: '1px solid rgba(0, 122, 255, 0.3)',
+              borderRadius: '8px'
+            }}>
+              <h4 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#007aff' }}>
+                Conversion Tracking
+              </h4>
+              <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.6' }}>
+                Tracking conversions within <strong>{classPassAnalytics.overview.conversionGoalDays} days</strong> of first ClassPass booking.
+                Mark users as "converted" when they purchase a membership or become regular paying customers.
+                This helps measure the ROI of your ClassPass partnership.
+              </p>
+            </div>
           </div>
         )}
 
