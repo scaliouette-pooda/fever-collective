@@ -36,6 +36,37 @@ function Events() {
     return new Date(year, month - 1, day); // Create date in local timezone
   };
 
+  // Helper function to parse time string (e.g., "7:30 AM")
+  const parseEventTime = (timeString) => {
+    const timeParts = timeString.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!timeParts) return { hours: 0, minutes: 0 };
+
+    let hours = parseInt(timeParts[1]);
+    const minutes = parseInt(timeParts[2]);
+    const period = timeParts[3].toUpperCase();
+
+    // Convert to 24-hour format
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
+  };
+
+  // Helper function to check if event has passed
+  const isEventPast = (eventDate, eventTime) => {
+    const now = new Date();
+    const eventDateObj = parseEventDate(eventDate);
+    const { hours, minutes } = parseEventTime(eventTime);
+    eventDateObj.setHours(hours, minutes, 0, 0);
+    return eventDateObj.getTime() < now.getTime();
+  };
+
+  // Filter upcoming events for list view
+  const upcomingEvents = events.filter(event => !isEventPast(event.date, event.time));
+
   // Generate time slots every 30 minutes from 6:30 AM to 5:30 PM
   const generateTimeSlots = () => {
     const slots = [];
@@ -256,7 +287,7 @@ function Events() {
           {/* List View */}
           {viewMode === 'list' && (
             <div className="events-list">
-              {events.map(event => (
+              {upcomingEvents.map(event => (
                 <div key={event._id} className="event-item">
                   <div className="event-item-image">
                     {event.imageUrl ? (
