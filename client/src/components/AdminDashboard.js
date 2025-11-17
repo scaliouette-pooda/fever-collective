@@ -93,6 +93,10 @@ function AdminDashboard() {
   const [selectedListForImport, setSelectedListForImport] = useState(null);
   const [expandedListId, setExpandedListId] = useState(null);
   const [listSubscribers, setListSubscribers] = useState({});
+  const [showSubscriberForm, setShowSubscriberForm] = useState(false);
+  const [editingSubscriber, setEditingSubscriber] = useState(null);
+  const [subscriberSearch, setSubscriberSearch] = useState('');
+  const [subscriberFilter, setSubscriberFilter] = useState('all');
 
   const [listForm, setListForm] = useState({
     name: '',
@@ -1232,6 +1236,12 @@ function AdminDashboard() {
           onClick={() => setActiveTab('emailLists')}
         >
           Email Lists
+        </button>
+        <button
+          className={activeTab === 'emailSubscribers' ? 'active' : ''}
+          onClick={() => setActiveTab('emailSubscribers')}
+        >
+          Email Subscribers
         </button>
         <button
           className={activeTab === 'emailAutomation' ? 'active' : ''}
