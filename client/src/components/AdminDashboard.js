@@ -164,6 +164,14 @@ function AdminDashboard() {
         ]);
         setEmailLists(listsRes.data);
         setEmailSubscribers(subscribersRes.data.subscribers || subscribersRes.data);
+      } else if (activeTab === 'emailSubscribers') {
+        // Fetch all subscribers and lists
+        const [subscribersRes, listsRes] = await Promise.all([
+          api.get('/api/email-subscribers?limit=1000', config),
+          api.get('/api/email-lists', config)
+        ]);
+        setEmailSubscribers(subscribersRes.data.subscribers || subscribersRes.data);
+        setEmailLists(listsRes.data);
       } else if (activeTab === 'reviews') {
         const res = await api.get('/api/reviews/admin/all', config);
         setReviews(res.data);
@@ -3313,6 +3321,260 @@ jane@example.com,Jane Smith
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* Email Subscribers Tab */}
+        {activeTab === 'emailSubscribers' && (
+          <div className="email-subscribers-section">
+            <div className="section-header">
+              <h2>Email Subscribers</h2>
+              <button onClick={() => setShowSubscriberForm(true)}>
+                Add New Subscriber
+              </button>
+            </div>
+
+            <div className="section-description">
+              <h3>Subscriber Management</h3>
+              <p>Manage all email subscribers across your system. Add, edit, search, and organize subscribers into lists.</p>
+            </div>
+
+            {/* Search and Filter */}
+            <div className="subscriber-controls" style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1', minWidth: '250px' }}>
+                <input
+                  type="text"
+                  placeholder="Search by email or name..."
+                  value={subscriberSearch}
+                  onChange={(e) => setSubscriberSearch(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 15px',
+                    border: '2px solid rgba(255,255,255,0.2)',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.05)',
+                    color: '#e8e8e8',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div style={{ minWidth: '200px' }}>
+                <select
+                  value={subscriberFilter}
+                  onChange={(e) => setSubscriberFilter(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 15px',
+                    border: '2px solid rgba(255,255,255,0.2)',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.05)',
+                    color: '#e8e8e8',
+                    fontSize: '14px'
+                  }}
+                >
+                  <option value="all">All Subscribers</option>
+                  <option value="subscribed">Subscribed</option>
+                  <option value="unsubscribed">Unsubscribed</option>
+                  <option value="blocked">Blocked</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Subscribers Table */}
+            <div className="email-lists-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Lists</th>
+                    <th>Emails Sent</th>
+                    <th>Emails Opened</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {emailSubscribers
+                    .filter(sub => {
+                      // Filter by status
+                      if (subscriberFilter === 'subscribed' && !sub.isSubscribed) return false;
+                      if (subscriberFilter === 'unsubscribed' && sub.isSubscribed) return false;
+                      if (subscriberFilter === 'blocked' && !sub.isBlocked) return false;
+
+                      // Filter by search
+                      if (subscriberSearch) {
+                        const search = subscriberSearch.toLowerCase();
+                        return sub.email.toLowerCase().includes(search) ||
+                               (sub.name && sub.name.toLowerCase().includes(search));
+                      }
+                      return true;
+                    })
+                    .map(subscriber => (
+                      <tr key={subscriber._id}>
+                        <td>{subscriber.email}</td>
+                        <td>{subscriber.name || '-'}</td>
+                        <td>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '4px 10px',
+                            borderRadius: '12px',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.3px',
+                            background: subscriber.isBlocked ? 'rgba(244, 67, 54, 0.2)' : subscriber.isSubscribed ? 'rgba(76, 175, 80, 0.2)' : 'rgba(158, 158, 158, 0.2)',
+                            color: subscriber.isBlocked ? '#f44336' : subscriber.isSubscribed ? '#4caf50' : '#9e9e9e'
+                          }}>
+                            {subscriber.isBlocked ? 'Blocked' : subscriber.isSubscribed ? 'Active' : 'Unsubscribed'}
+                          </span>
+                        </td>
+                        <td>
+                          {emailLists
+                            .filter(list =>
+                              list.type === 'static' && list.subscribers && list.subscribers.includes(subscriber._id)
+                            )
+                            .map(list => list.name)
+                            .join(', ') || '-'}
+                        </td>
+                        <td>{subscriber.totalEmailsSent || 0}</td>
+                        <td>{subscriber.totalEmailsOpened || 0}</td>
+                        <td>{new Date(subscriber.createdAt).toLocaleDateString()}</td>
+                        <td className="actions">
+                          <button
+                            onClick={() => {
+                              setEditingSubscriber(subscriber);
+                              setShowSubscriberForm(true);
+                            }}
+                            className="action-btn edit-btn"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (!window.confirm(`Delete subscriber ${subscriber.email}?`)) return;
+                              try {
+                                const token = localStorage.getItem('token');
+                                await api.delete(`/api/email-subscribers/${subscriber._id}`, {
+                                  headers: { Authorization: `Bearer ${token}` }
+                                });
+                                alert('Subscriber deleted successfully');
+                                fetchData();
+                              } catch (error) {
+                                console.error('Error deleting subscriber:', error);
+                                alert(error.response?.data?.error || 'Failed to delete subscriber');
+                              }
+                            }}
+                            className="action-btn delete-btn"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  {emailSubscribers.length === 0 && (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.5)' }}>
+                        No subscribers yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Add/Edit Subscriber Modal */}
+            {showSubscriberForm && (
+              <div className="modal-overlay" onClick={() => {
+                setShowSubscriberForm(false);
+                setEditingSubscriber(null);
+              }}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <h2>{editingSubscriber ? 'Edit Subscriber' : 'Add New Subscriber'}</h2>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const data = {
+                      email: formData.get('email'),
+                      name: formData.get('name'),
+                      isSubscribed: formData.get('isSubscribed') === 'true',
+                      isBlocked: formData.get('isBlocked') === 'true'
+                    };
+
+                    try {
+                      const token = localStorage.getItem('token');
+                      if (editingSubscriber) {
+                        await api.put(`/api/email-subscribers/${editingSubscriber._id}`, data, {
+                          headers: { Authorization: `Bearer ${token}` }
+                        });
+                        alert('Subscriber updated successfully');
+                      } else {
+                        await api.post('/api/email-subscribers', data, {
+                          headers: { Authorization: `Bearer ${token}` }
+                        });
+                        alert('Subscriber added successfully');
+                      }
+                      setShowSubscriberForm(false);
+                      setEditingSubscriber(null);
+                      fetchData();
+                    } catch (error) {
+                      console.error('Error saving subscriber:', error);
+                      alert(error.response?.data?.error || 'Failed to save subscriber');
+                    }
+                  }}>
+                    <div className="form-group">
+                      <label>Email *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        defaultValue={editingSubscriber?.email}
+                        required
+                        disabled={!!editingSubscriber}
+                        style={{ opacity: editingSubscriber ? 0.6 : 1 }}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        defaultValue={editingSubscriber?.name}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Status</label>
+                      <select name="isSubscribed" defaultValue={editingSubscriber?.isSubscribed !== false ? 'true' : 'false'}>
+                        <option value="true">Subscribed</option>
+                        <option value="false">Unsubscribed</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Blocked</label>
+                      <select name="isBlocked" defaultValue={editingSubscriber?.isBlocked ? 'true' : 'false'}>
+                        <option value="false">No</option>
+                        <option value="true">Yes (will not receive any emails)</option>
+                      </select>
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="button" onClick={() => {
+                        setShowSubscriberForm(false);
+                        setEditingSubscriber(null);
+                      }}>
+                        Cancel
+                      </button>
+                      <button type="submit">
+                        {editingSubscriber ? 'Update Subscriber' : 'Add Subscriber'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

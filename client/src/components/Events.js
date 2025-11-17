@@ -209,7 +209,7 @@ function Events() {
                 {/* Header row with dates */}
                 <div className="schedule-header time-header">Time</div>
                 {weekDates.map(date => (
-                  <div key={date.toISOString()} className="schedule-header">
+                  <div key={formatDateKey(date)} className="schedule-header">
                     <div className="day-name">
                       {date.toLocaleDateString('en-US', { weekday: 'short' })}
                     </div>
@@ -224,7 +224,7 @@ function Events() {
                   <React.Fragment key={time}>
                     <div className="time-cell">{time}</div>
                     {weekDates.map(date => {
-                      const dateKey = date.toISOString().split('T')[0];
+                      const dateKey = formatDateKey(date);
                       return (
                         <div key={`${dateKey}-${time}`} className="schedule-cell">
                           {schedule[dateKey] && schedule[dateKey][time] && schedule[dateKey][time].length > 0 ? (
