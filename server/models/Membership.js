@@ -183,24 +183,33 @@ const userMembershipSchema = new mongoose.Schema({
 
 // Generate unique membership number
 userMembershipSchema.statics.generateMembershipNumber = async function() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const datePrefix = `FC-${year}${month}${day}`;
+  // Generate random alphanumeric membership number
+  const generateRandomCode = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluding similar looking characters
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return `FC-${code}`;
+  };
 
-  // Find the highest number for today
-  const lastMembership = await this.findOne({
-    membershipNumber: new RegExp(`^${datePrefix}-`)
-  }).sort({ membershipNumber: -1 });
+  // Ensure uniqueness - retry if duplicate exists
+  let membershipNumber;
+  let attempts = 0;
+  const maxAttempts = 10;
 
-  let sequenceNumber = 1;
-  if (lastMembership) {
-    const lastNumber = lastMembership.membershipNumber.split('-').pop();
-    sequenceNumber = parseInt(lastNumber, 10) + 1;
+  while (attempts < maxAttempts) {
+    membershipNumber = generateRandomCode();
+    const existing = await this.findOne({ membershipNumber });
+    if (!existing) {
+      return membershipNumber;
+    }
+    attempts++;
   }
 
-  return `${datePrefix}-${String(sequenceNumber).padStart(3, '0')}`;
+  // Fallback to timestamp-based if somehow all random attempts failed
+  const timestamp = Date.now().toString(36).toUpperCase();
+  return `FC-${timestamp}`;
 };
 
 // Update timestamp on save

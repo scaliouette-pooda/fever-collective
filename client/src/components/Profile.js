@@ -393,7 +393,7 @@ function Profile() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
-                💎 Epidemic Exclusive
+                Epidemic Exclusive
               </span>
             </div>
 

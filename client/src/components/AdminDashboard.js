@@ -245,8 +245,13 @@ function AdminDashboard() {
       // Convert time to 12-hour format for consistency with schedule
       const convertedTime = convertTo12HourFormat(eventForm.time);
 
+      // Fix timezone issue: ensure date is stored at noon local time to prevent day shifts
+      const eventDate = new Date(eventForm.date);
+      eventDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone shift issues
+
       const eventData = {
         ...eventForm,
+        date: eventDate.toISOString(), // Convert to ISO string for consistent storage
         time: convertedTime, // Use converted 12-hour format
         imageUrl: imageUrl || ''
       };
@@ -883,19 +888,19 @@ function AdminDashboard() {
           className={activeTab === 'events' ? 'active' : ''}
           onClick={() => setActiveTab('events')}
         >
-          📅 Events
+          Events
         </button>
         <button
           className={activeTab === 'bookings' ? 'active' : ''}
           onClick={() => setActiveTab('bookings')}
         >
-          📋 Bookings
+          Bookings
         </button>
         <button
           className={activeTab === 'checkin' ? 'active' : ''}
           onClick={() => setActiveTab('checkin')}
         >
-          ✅ Check-In
+          Check-In
         </button>
 
         {/* Customer Engagement */}
@@ -903,25 +908,25 @@ function AdminDashboard() {
           className={activeTab === 'memberships' ? 'active' : ''}
           onClick={() => setActiveTab('memberships')}
         >
-          💎 Memberships
+          Memberships
         </button>
         <button
           className={activeTab === 'reviews' ? 'active' : ''}
           onClick={() => setActiveTab('reviews')}
         >
-          ⭐ Reviews
+          Reviews
         </button>
         <button
           className={activeTab === 'referrals' ? 'active' : ''}
           onClick={() => setActiveTab('referrals')}
         >
-          🎯 Referrals
+          Referrals
         </button>
         <button
           className={activeTab === 'waitlist' ? 'active' : ''}
           onClick={() => setActiveTab('waitlist')}
         >
-          ⏳ Waitlist
+          Waitlist
         </button>
 
         {/* Marketing & Promotions */}
@@ -929,19 +934,19 @@ function AdminDashboard() {
           className={activeTab === 'promoCodes' ? 'active' : ''}
           onClick={() => setActiveTab('promoCodes')}
         >
-          🎫 Promo Codes
+          Promo Codes
         </button>
         <button
           className={activeTab === 'emailMarketing' ? 'active' : ''}
           onClick={() => setActiveTab('emailMarketing')}
         >
-          📧 Email Marketing
+          Email Marketing
         </button>
         <button
           className={activeTab === 'emailAutomation' ? 'active' : ''}
           onClick={() => setActiveTab('emailAutomation')}
         >
-          🤖 Email Automation
+          Email Automation
         </button>
 
         {/* Admin & Insights */}
@@ -949,13 +954,13 @@ function AdminDashboard() {
           className={activeTab === 'analytics' ? 'active' : ''}
           onClick={() => setActiveTab('analytics')}
         >
-          📊 Analytics
+          Analytics
         </button>
         <button
           className={activeTab === 'settings' ? 'active' : ''}
           onClick={() => setActiveTab('settings')}
         >
-          ⚙️ Settings
+          Settings
         </button>
       </div>
 

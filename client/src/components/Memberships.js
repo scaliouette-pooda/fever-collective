@@ -131,9 +131,9 @@ function Memberships() {
       {currentMembership && (
         <div className="current-membership-compact">
           <span className="membership-tier-name">
-            {currentMembership.membershipTier === 'fever-starter' ? '🌟 The Fever Starter' :
-             currentMembership.membershipTier === 'outbreak' ? '🔥 The Outbreak' :
-             '💎 The Epidemic'}
+            {currentMembership.membershipTier === 'fever-starter' ? 'The Fever Starter' :
+             currentMembership.membershipTier === 'outbreak' ? 'The Outbreak' :
+             'The Epidemic'}
           </span>
           <span className="membership-divider">•</span>
           <span className="membership-credits">

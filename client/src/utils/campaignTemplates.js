@@ -354,13 +354,13 @@ export const getTemplate = (templateKey) => {
 export const getTemplateOptions = () => {
   return [
     { value: '', label: 'Custom Campaign (Start from scratch)' },
-    { value: 'new-registration', label: '👋 Welcome Series (New Member)' },
-    { value: 'post-event-followup', label: '💌 Post-Event Follow-Up' },
-    { value: 'win-back', label: '🎯 Win-Back Campaign' },
-    { value: 'birthday-special', label: '🎂 Birthday Special' },
-    { value: 'abandoned-booking', label: '⏰ Abandoned Booking Reminder' },
-    { value: 'class-reminder', label: '🔔 Class Reminder (24h Before)' },
-    { value: 'membership-expiring', label: '⚠️ Membership Expiring Soon' },
-    { value: 'credits-expiring', label: '💳 Credits Expiring Soon' }
+    { value: 'new-registration', label: 'Welcome Series (New Member)' },
+    { value: 'post-event-followup', label: 'Post-Event Follow-Up' },
+    { value: 'win-back', label: 'Win-Back Campaign' },
+    { value: 'birthday-special', label: 'Birthday Special' },
+    { value: 'abandoned-booking', label: 'Abandoned Booking Reminder' },
+    { value: 'class-reminder', label: 'Class Reminder (24h Before)' },
+    { value: 'membership-expiring', label: 'Membership Expiring Soon' },
+    { value: 'credits-expiring', label: 'Credits Expiring Soon' }
   ];
 };

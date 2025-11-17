@@ -427,7 +427,7 @@ function AutomatedCampaigns() {
               marginBottom: '25px'
             }}>
               <label style={{ fontSize: '1.1rem', color: '#c9a86a', marginBottom: '10px' }}>
-                ✨ Start with a Template
+                Start with a Template
               </label>
               <select
                 value={selectedTemplate}
