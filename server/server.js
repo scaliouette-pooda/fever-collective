@@ -58,7 +58,13 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => logger.info('MongoDB connected'))
+.then(() => {
+  logger.info('MongoDB connected');
+
+  // Initialize email scheduler after database connection
+  const { initializeEmailScheduler } = require('./services/emailScheduler');
+  initializeEmailScheduler();
+})
 .catch(err => logger.error('MongoDB connection error:', err));
 
 const authRoutes = require('./routes/auth');
@@ -74,6 +80,7 @@ const referralRoutes = require('./routes/referrals');
 const waiverRoutes = require('./routes/waivers');
 const membershipRoutes = require('./routes/memberships');
 const userRoutes = require('./routes/users');
+const automatedCampaignRoutes = require('./routes/automatedCampaigns');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -88,6 +95,7 @@ app.use('/api/referrals', referralRoutes);
 app.use('/api/waivers', waiverRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/automated-campaigns', automatedCampaignRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Studio API' });

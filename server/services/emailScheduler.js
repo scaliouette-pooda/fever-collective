@@ -4,6 +4,12 @@ const {
   sendWinBackEmail,
   sendBirthdayEmail
 } = require('./emailAutomation');
+const {
+  sendScheduledEmails,
+  triggerClassReminders,
+  triggerInactiveUserCampaigns,
+  triggerCreditExpiringCampaigns
+} = require('./automatedEmailService');
 const Booking = require('../models/Booking');
 const User = require('../models/User');
 
@@ -118,13 +124,69 @@ const scheduleBirthdayEmails = () => {
   });
 };
 
+// Send scheduled automated campaign emails every hour
+const scheduleAutomatedEmails = () => {
+  cron.schedule('0 * * * *', async () => {
+    console.log('Running: Send scheduled automated emails (hourly)');
+    try {
+      await sendScheduledEmails();
+    } catch (error) {
+      console.error('Error in sendScheduledEmails cron:', error);
+    }
+  });
+};
+
+// Check for class reminders every 30 minutes
+const scheduleClassReminders = () => {
+  cron.schedule('*/30 * * * *', async () => {
+    console.log('Running: Check class reminders (every 30 minutes)');
+    try {
+      await triggerClassReminders();
+    } catch (error) {
+      console.error('Error in triggerClassReminders cron:', error);
+    }
+  });
+};
+
+// Check for inactive users once daily at 9:30 AM
+const scheduleInactiveUserChecks = () => {
+  cron.schedule('30 9 * * *', async () => {
+    console.log('Running: Check inactive users (daily at 9:30 AM)');
+    try {
+      await triggerInactiveUserCampaigns();
+    } catch (error) {
+      console.error('Error in triggerInactiveUserCampaigns cron:', error);
+    }
+  });
+};
+
+// Check for expiring credits once daily at 10:30 AM
+const scheduleCreditExpiryChecks = () => {
+  cron.schedule('30 10 * * *', async () => {
+    console.log('Running: Check expiring credits (daily at 10:30 AM)');
+    try {
+      await triggerCreditExpiringCampaigns();
+    } catch (error) {
+      console.error('Error in triggerCreditExpiringCampaigns cron:', error);
+    }
+  });
+};
+
 // Initialize all scheduled jobs
 const initializeEmailScheduler = () => {
   console.log('Initializing email scheduler...');
   schedulePostEventFollowUps();
   scheduleWinBackCampaign();
   scheduleBirthdayEmails();
+  scheduleAutomatedEmails();
+  scheduleClassReminders();
+  scheduleInactiveUserChecks();
+  scheduleCreditExpiryChecks();
   console.log('Email scheduler initialized successfully');
+  console.log('- Automated campaign emails: Every hour');
+  console.log('- Class reminders: Every 30 minutes');
+  console.log('- Inactive users: Daily at 9:30 AM');
+  console.log('- Expiring credits: Daily at 10:30 AM');
 };
 
 module.exports = { initializeEmailScheduler };

@@ -4,6 +4,7 @@ import api from '../config/api';
 import './AdminDashboard.css';
 import AdminMembershipSection from './AdminMembershipSection';
 import QRScanner from './QRScanner';
+import AutomatedCampaigns from './AutomatedCampaigns';
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -2502,48 +2503,59 @@ function AdminDashboard() {
 
         {/* Email Automation Dashboard Tab */}
         {activeTab === 'emailAutomation' && (
-          <div className="email-automation-section">
-            <h2>Email Automation Dashboard</h2>
+          <AutomatedCampaigns />
+        )}
+
+        {/* Memberships Tab */}
+        {activeTab === 'memberships' && (
+          <AdminMembershipSection />
+        )}
+
+        {/* Reviews Tab */}
+        {activeTab === 'reviews' && (
+          <div>
+            <h2>Manage Reviews</h2>
             <p style={{ marginBottom: '2rem', color: 'rgba(232, 232, 232, 0.7)' }}>
-              Monitor and manage automated email campaigns. All campaigns run automatically based on schedules.
+              Approve, feature, or delete customer reviews. Featured reviews appear on the homepage.
             </p>
 
-            {/* Campaign Cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '1.5rem',
-              marginBottom: '2rem'
-            }}>
-              {/* Post-Event Follow-Up */}
-              <div style={{
-                padding: '1.5rem',
-                background: 'rgba(52, 199, 89, 0.1)',
-                border: '1px solid rgba(52, 199, 89, 0.3)',
-                borderRadius: '8px'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                  <h3 style={{ margin: 0, color: '#34c759' }}>Post-Event Follow-Up</h3>
-                  <span style={{
-                    background: 'rgba(52, 199, 89, 0.3)',
-                    color: '#34c759',
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.85rem',
-                    fontWeight: '600'
-                  }}>
-                    ACTIVE
-                  </span>
-                </div>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.95rem', lineHeight: '1.6' }}>
-                  Sent 24 hours after event completion. Thanks attendees and offers 20% discount code (COMEBACK20) valid for 48 hours.
-                </p>
-                <div style={{
-                  marginTop: '1rem',
-                  paddingTop: '1rem',
-                  borderTop: '1px solid rgba(255,255,255,0.1)'
-                }}>
-                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
+            {reviews.length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
+                No reviews yet
+              </p>
+            ) : (
+              <div className="bookings-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Name</th>
+                      <th>Rating</th>
+                      <th>Comment</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reviews.map(review => (
+                      <tr key={review._id}>
+                        <td>{review.event?.title || 'N/A'}</td>
+                        <td>{review.name}</td>
+                        <td>
+                          <span style={{ color: '#c9a86a', fontSize: '1.2rem' }}>
+                            {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                          </span>
+                        </td>
+                        <td style={{ maxWidth: '300px' }}>{review.comment}</td>
+                        <td>
+                          {review.featured && <span className="status-badge completed">Featured</span>}
+                          {review.approved ? (
+                            <span className="status-badge completed">Approved</span>
+                          ) : (
+                            <span className="status-badge pending">Pending</span>
+                          )}
+                        </td>
+                        <td>
                     <strong>Schedule:</strong> Runs every hour
                   </div>
                   <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>

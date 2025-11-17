@@ -9,6 +9,7 @@ const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sendBookingConfirmation, sendPaymentConfirmation } = require('../services/emailService');
+const { triggerPostClassCampaign, triggerMilestoneAchieved } = require('../services/automatedEmailService');
 
 router.post('/',
   sanitizeInput,
@@ -705,6 +706,23 @@ router.post('/check-in', authenticateUser, requireAdmin, async (req, res) => {
       if (event.availableSpots > 0) {
         event.availableSpots -= 1;
         await event.save();
+      }
+    }
+
+    // Trigger automated post-class campaigns (async, don't wait)
+    const user = await require('../models/User').findById(userId);
+    if (user) {
+      triggerPostClassCampaign(userId, user.email, {
+        userName: user.name,
+        eventTitle: event.title,
+        eventDate: event.date,
+        eventTime: event.time
+      }).catch(err => console.error('Failed to trigger post-class campaign:', err));
+
+      // Trigger milestone campaign if milestone achieved
+      if (reward) {
+        triggerMilestoneAchieved(userId, user.email, reward.milestone, reward.reward)
+          .catch(err => console.error('Failed to trigger milestone campaign:', err));
       }
     }
 

@@ -7,6 +7,7 @@ const User = require('../models/User');
 const { authenticateUser } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const { sendWelcomeEmail, sendPasswordResetEmail } = require('../services/emailService');
+const { triggerNewRegistration } = require('../services/automatedEmailService');
 
 router.post('/register',
   sanitizeInput,
@@ -37,6 +38,11 @@ router.post('/register',
 
       // Send welcome email (async, don't wait for it)
       sendWelcomeEmail(user).catch(err => console.error('Welcome email failed:', err));
+
+      // Trigger automated registration campaigns (async, don't wait for it)
+      triggerNewRegistration(user._id, user.email, user.name).catch(err =>
+        console.error('Failed to trigger registration campaigns:', err)
+      );
 
       const token = jwt.sign(
         { userId: user._id, email: user.email, role: user.role },
