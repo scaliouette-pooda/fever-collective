@@ -101,6 +101,10 @@ router.post('/admin/tiers', authenticateUser, requireAdmin, async (req, res) => 
 // Admin: Assign membership to user
 router.post('/admin/assign', authenticateUser, requireAdmin, async (req, res) => {
   try {
+    console.log('=== MEMBERSHIP ASSIGNMENT REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('User:', req.user);
+
     const {
       userId,
       membershipTier,
@@ -113,14 +117,29 @@ router.post('/admin/assign', authenticateUser, requireAdmin, async (req, res) =>
       notes
     } = req.body;
 
+    console.log('Extracted values:', {
+      userId,
+      membershipTier,
+      pricingTier,
+      monthlyPrice,
+      paymentMethod,
+      creditsTotal
+    });
+
     // Check if user already has active membership
     const existing = await UserMembership.findOne({
       userId,
       status: 'active'
     });
 
+    console.log('Existing membership?', existing ? 'YES' : 'NO');
+
     if (existing) {
-      return res.status(400).json({ error: 'User already has an active membership' });
+      console.log('❌ User already has active membership:', existing);
+      return res.status(400).json({
+        error: 'User already has an active membership',
+        message: 'User already has an active membership. Please cancel the existing membership first.'
+      });
     }
 
     // Check founder slots if applicable
@@ -174,8 +193,18 @@ router.post('/admin/assign', authenticateUser, requireAdmin, async (req, res) =>
       membership
     });
   } catch (error) {
-    console.error('Error assigning membership:', error);
-    res.status(500).json({ error: 'Failed to assign membership' });
+    console.error('=== MEMBERSHIP ASSIGNMENT ERROR ===');
+    console.error('Error:', error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    if (error.errors) {
+      console.error('Validation errors:', error.errors);
+    }
+    res.status(500).json({
+      error: 'Failed to assign membership',
+      message: error.message,
+      details: error.errors
+    });
   }
 });
 

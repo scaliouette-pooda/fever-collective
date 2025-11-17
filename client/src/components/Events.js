@@ -95,29 +95,62 @@ function Events() {
     console.log('Available time slots:', times);
     console.log('Week start:', weekStart.toISOString());
     console.log('Week end:', weekEnd.toISOString());
+    console.log('Total events loaded:', events.length);
 
     events.forEach(event => {
       // Parse date without timezone conversion
       const dateStr = event.date.split('T')[0]; // Get YYYY-MM-DD part only
       const eventDate = parseEventDate(event.date);
 
-      console.log('Event:', event.title, 'Original date:', event.date, 'Parsed date:', eventDate.toISOString(), 'Time:', event.time);
+      console.log('\n--- Event Debug ---');
+      console.log('Title:', event.title);
+      console.log('Original date:', event.date);
+      console.log('Parsed date:', eventDate.toISOString());
+      console.log('Event time value:', `"${event.time}"`);
+      console.log('Event time length:', event.time.length);
+      console.log('Date in range?', eventDate >= weekStart && eventDate <= weekEnd);
 
       if (eventDate >= weekStart && eventDate <= weekEnd) {
         const dateKey = dateStr; // Use the original date string as key
+        const timeMatch = times.includes(event.time);
 
-        console.log('✓ Event in range. DateKey:', dateKey, 'TimeSlot:', event.time, 'Match found:', times.includes(event.time));
+        console.log('✓ Event IS in date range');
+        console.log('DateKey:', dateKey);
+        console.log('Time slot match?', timeMatch);
+
+        if (!timeMatch) {
+          console.log('❌ TIME MISMATCH! Event time does not match any slot');
+          console.log('Event time:', `"${event.time}"`);
+          console.log('Looking for exact match in:', times.slice(0, 10), '...');
+          // Show similar times
+          const similar = times.filter(t => t.toLowerCase().includes(event.time.toLowerCase().replace(/\s+/g, '')));
+          if (similar.length > 0) {
+            console.log('Similar times found:', similar);
+          }
+        }
 
         if (schedule[dateKey]) {
           if (!schedule[dateKey][event.time]) {
             schedule[dateKey][event.time] = [];
           }
           schedule[dateKey][event.time].push(event);
+          console.log('✓ Event added to schedule');
+        } else {
+          console.log('❌ DateKey not found in schedule object');
         }
       } else {
-        console.log('✗ Event out of range');
+        console.log('✗ Event out of date range');
+        console.log('Event date:', eventDate.toLocaleDateString());
+        console.log('Week range:', weekStart.toLocaleDateString(), 'to', weekEnd.toLocaleDateString());
       }
     });
+
+    console.log('\n=== SCHEDULE SUMMARY ===');
+    console.log('Events placed in schedule:', Object.keys(schedule).reduce((count, dateKey) => {
+      return count + Object.keys(schedule[dateKey]).reduce((dayCount, time) => {
+        return dayCount + schedule[dateKey][time].length;
+      }, 0);
+    }, 0));
 
     return { schedule, times, weekDates };
   };

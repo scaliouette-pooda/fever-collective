@@ -74,7 +74,7 @@ function MembershipCheckout() {
     setError('');
 
     try {
-      const response = await api.post('/api/memberships/admin/assign', {
+      const requestData = {
         userId: user.id,
         membershipTier: selectedTier.name,
         pricingTier: selectedTier.pricingTier,
@@ -84,7 +84,14 @@ function MembershipCheckout() {
         hasFirstMonthDiscount: isUpgrade && upgradeDiscount > 0,
         firstMonthDiscountPercent: isUpgrade ? upgradeDiscount * 100 : 0,
         notes: formData.notes
-      });
+      };
+
+      console.log('=== MEMBERSHIP CHECKOUT DEBUG ===');
+      console.log('Request data:', requestData);
+      console.log('Selected tier:', selectedTier);
+      console.log('User:', user);
+
+      const response = await api.post('/api/memberships/admin/assign', requestData);
 
       // Success - redirect to profile with success message
       navigate('/profile', {
@@ -94,8 +101,13 @@ function MembershipCheckout() {
         }
       });
     } catch (error) {
-      console.error('Error creating membership:', error);
-      setError(error.response?.data?.message || 'Failed to create membership. Please contact us.');
+      console.error('=== MEMBERSHIP ERROR ===');
+      console.error('Full error:', error);
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
+      console.error('Error message:', error.response?.data?.message);
+      console.error('Error details:', error.response?.data?.errors);
+      setError(error.response?.data?.message || error.response?.data?.error || 'Failed to create membership. Please contact us.');
     } finally {
       setLoading(false);
     }

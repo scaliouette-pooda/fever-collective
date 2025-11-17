@@ -208,6 +208,28 @@ function AdminDashboard() {
     }
   };
 
+  // Convert 24-hour time (HH:MM) to 12-hour AM/PM format (H:MM AM/PM)
+  const convertTo12HourFormat = (time24) => {
+    if (!time24) return '';
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours, 10);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    return `${hour12}:${minutes} ${period}`;
+  };
+
+  // Convert 12-hour AM/PM format (H:MM AM/PM) to 24-hour format (HH:MM) for time input
+  const convertTo24HourFormat = (time12) => {
+    if (!time12) return '';
+    const match = time12.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!match) return time12; // Return as-is if not in expected format
+    let [, hours, minutes, period] = match;
+    let hour = parseInt(hours, 10);
+    if (period.toUpperCase() === 'PM' && hour !== 12) hour += 12;
+    if (period.toUpperCase() === 'AM' && hour === 12) hour = 0;
+    return `${hour.toString().padStart(2, '0')}:${minutes}`;
+  };
+
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     try {
@@ -218,10 +240,19 @@ function AdminDashboard() {
         imageUrl = await uploadImage();
       }
 
+      // Convert time to 12-hour format for consistency with schedule
+      const convertedTime = convertTo12HourFormat(eventForm.time);
+
       const eventData = {
         ...eventForm,
+        time: convertedTime, // Use converted 12-hour format
         imageUrl: imageUrl || ''
       };
+
+      console.log('Creating event with time:', {
+        original: eventForm.time,
+        converted: convertedTime
+      });
 
       if (editingEvent) {
         await api.put(`/api/events/${editingEvent._id}`, eventData, {
@@ -253,7 +284,7 @@ function AdminDashboard() {
       title: event.title,
       description: event.description,
       date: event.date.split('T')[0],
-      time: event.time,
+      time: convertTo24HourFormat(event.time), // Convert to 24-hour format for time input
       location: event.location,
       address: event.address,
       price: event.price,
