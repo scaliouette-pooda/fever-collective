@@ -214,6 +214,42 @@ function Profile() {
           <p>Manage your account information</p>
         </div>
 
+        {/* QR Code Section - Top Priority for Check-In */}
+        {membershipData && (
+          <div style={{ marginBottom: '40px', paddingBottom: '40px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <h3 style={{ margin: '0 0 15px 0', fontSize: '1.2rem', color: '#c9a86a', textAlign: 'center' }}>
+              Your Check-In QR Code
+            </h3>
+            <div style={{
+              background: 'rgba(201, 168, 106, 0.1)',
+              border: '1px solid rgba(201, 168, 106, 0.3)',
+              padding: '20px',
+              textAlign: 'center',
+              borderRadius: '12px'
+            }}>
+              <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '20px' }}>
+                Show this QR code when checking in to classes
+              </p>
+              <div style={{
+                background: 'white',
+                padding: '15px',
+                borderRadius: '8px',
+                display: 'inline-block'
+              }}>
+                <canvas ref={qrCodeRef} />
+              </div>
+              <div style={{ marginTop: '15px', fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                <p style={{ margin: '5px 0' }}>
+                  <strong style={{ color: '#c9a86a' }}>Membership #:</strong> {membershipData.membershipNumber || 'N/A'}
+                </p>
+                <p style={{ margin: '5px 0', fontSize: '0.75rem' }}>
+                  For assistance, contact staff
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Profile Information Form */}
         <form onSubmit={handleProfileSubmit} className="auth-form">
           <h3 style={{ marginBottom: '20px' }}>Personal Information</h3>
@@ -660,39 +696,6 @@ function Profile() {
               >
                 Book a Class
               </button>
-            </div>
-
-            {/* QR Code Section */}
-            <div style={{ marginTop: '40px', paddingTop: '40px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <h4 style={{ margin: '0 0 15px 0', fontSize: '1rem', color: '#c9a86a', textAlign: 'center' }}>
-                Your Check-In QR Code
-              </h4>
-              <div style={{
-                background: 'rgba(201, 168, 106, 0.1)',
-                border: '1px solid rgba(201, 168, 106, 0.3)',
-                padding: '20px',
-                textAlign: 'center'
-              }}>
-                <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '20px' }}>
-                  Show this QR code when checking in to classes
-                </p>
-                <div style={{
-                  background: 'white',
-                  padding: '15px',
-                  borderRadius: '8px',
-                  display: 'inline-block'
-                }}>
-                  <canvas ref={qrCodeRef} />
-                </div>
-                <div style={{ marginTop: '15px', fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
-                  <p style={{ margin: '5px 0' }}>
-                    <strong style={{ color: '#c9a86a' }}>Membership #:</strong> {membershipData.membershipNumber || 'N/A'}
-                  </p>
-                  <p style={{ margin: '5px 0', fontSize: '0.75rem' }}>
-                    For assistance, contact staff
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         )}
