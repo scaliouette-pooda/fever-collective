@@ -1105,6 +1105,7 @@ function AdminDashboard() {
                     </div>
 
                     {/* Ticket Tiers Section */}
+                    {/* TIERED PRICING FEATURE - COMMENTED OUT (Not fully implemented)
                     <div className="form-group" style={{
                       borderTop: '2px solid rgba(201, 168, 106, 0.3)',
                       paddingTop: '1.5rem',
@@ -1269,6 +1270,7 @@ function AdminDashboard() {
                         </div>
                       )}
                     </div>
+                    END OF TIERED PRICING COMMENT */}
 
                     <div className="form-actions">
                       <button type="button" onClick={() => {
@@ -2556,41 +2558,102 @@ function AdminDashboard() {
                           )}
                         </td>
                         <td>
-                    <strong>Schedule:</strong> Runs every hour
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginBottom: '0.5rem' }}>
-                    <strong>Trigger:</strong> 24 hours after event ends
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
-                    <strong>Includes:</strong> Upcoming events, review request
-                  </div>
-                </div>
+                          {!review.approved && (
+                            <button onClick={() => handleApproveReview(review._id)}>
+                              Approve
+                            </button>
+                          )}
+                          {review.approved && (
+                            <button onClick={() => handleToggleFeaturedReview(review._id)}>
+                              {review.featured ? 'Unfeature' : 'Feature'}
+                            </button>
+                          )}
+                          <button onClick={() => handleDeleteReview(review._id)}>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Referrals Tab */}
+        {activeTab === 'referrals' && (
+          <div>
+            <h2>Referral Leaderboard</h2>
+
+            <div className="section-description">
+              <h3>How the Referral Program Works</h3>
+              <p>
+                Track and reward your most engaged community members who are spreading the word about your events.
+              </p>
+
+              <div className="promo-features">
+                <h4>Key Metrics</h4>
+                <ul>
+                  <li><strong>Rank:</strong> Top 3 referrers are highlighted in gold</li>
+                  <li><strong>Referral Code:</strong> Unique code each user shares (auto-generated when they visit their profile)</li>
+                  <li><strong>Total Referrals:</strong> Number of new users who signed up using their code</li>
+                  <li><strong>Credits Earned:</strong> Dollar amount of credits earned from successful referrals</li>
+                </ul>
               </div>
 
-              {/* Win-Back Campaign */}
-              <div style={{
-                padding: '1.5rem',
-                background: 'rgba(255, 149, 0, 0.1)',
-                border: '1px solid rgba(255, 149, 0, 0.3)',
-                borderRadius: '8px'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                  <h3 style={{ margin: 0, color: '#ff9500' }}>Win-Back Campaign</h3>
-                  <span style={{
-                    background: 'rgba(255, 149, 0, 0.3)',
-                    color: '#ff9500',
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.85rem',
-                    fontWeight: '600'
-                  }}>
-                    ACTIVE
-                  </span>
-                </div>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.95rem', lineHeight: '1.6' }}>
-                  Targets inactive users (30-60 days). Offers 30% discount (WELCOME30) valid for 7 days to re-engage customers.
-                </p>
-                <div style={{
+              <div className="promo-tips">
+                <h4>Program Details</h4>
+                <ul>
+                  <li>New users get <strong>10% off</strong> their first booking when using a referral code</li>
+                  <li>Referrers earn <strong>credits</strong> that can be applied to future bookings</li>
+                  <li>Users can find their referral link in their <strong>Profile page</strong></li>
+                  <li>Encourage top referrers with special rewards or recognition</li>
+                </ul>
+                <h4 style={{ marginTop: '1rem' }}>Referral Tiers & Rewards</h4>
+                <ul>
+                  <li>🌟 <strong>Starter</strong> (0-3 referrals): Earn <strong>$10</strong> per successful referral</li>
+                  <li>🎖️ <strong>Ambassador</strong> (4-9 referrals): Earn <strong>$15</strong> per successful referral</li>
+                  <li>⭐ <strong>Elite</strong> (10+ referrals): Earn <strong>$20</strong> per successful referral</li>
+                </ul>
+              </div>
+            </div>
+
+            {referralLeaderboard.length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '3rem', color: 'rgba(232, 232, 232, 0.5)' }}>
+                No referrals yet
+              </p>
+            ) : (
+              <div className="bookings-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Referral Tier</th>
+                      <th>Referral Code</th>
+                      <th>Total Referrals</th>
+                      <th>Credits Earned</th>
+                      <th>Reward Per Referral</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referralLeaderboard.map((user, index) => {
+                      const tier = user.referralTier || 'starter';
+                      const rewardAmount = tier === 'elite' ? 20 : tier === 'ambassador' ? 15 : 10;
+                      return (
+                        <tr key={user._id}>
+                          <td>
+                            <strong style={{ fontSize: '1.3rem', color: index < 3 ? '#c9a86a' : 'inherit' }}>
+                              #{index + 1}
+                            </strong>
+                          </td>
+                          <td>{user.name}</td>
+                          <td style={{ color: 'rgba(232, 232, 232, 0.7)', fontSize: '0.9rem' }}>{user.email}</td>
+                          <td>
+                            <span style={{
+                              background: tier === 'elite' ?
                   marginTop: '1rem',
                   paddingTop: '1rem',
                   borderTop: '1px solid rgba(255,255,255,0.1)'
