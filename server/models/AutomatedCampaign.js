@@ -88,6 +88,14 @@ const automatedCampaignSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
+    totalOpened: {
+      type: Number,
+      default: 0
+    },
+    totalClicked: {
+      type: Number,
+      default: 0
+    },
     lastTriggeredAt: Date
   },
   createdBy: {
@@ -139,6 +147,34 @@ const automatedEmailLogSchema = new mongoose.Schema({
     default: 'scheduled'
   },
   error: String,
+  // Email engagement tracking
+  trackingId: {
+    type: String,
+    unique: true,
+    sparse: true // Allow null values
+  },
+  opened: {
+    type: Boolean,
+    default: false
+  },
+  openedAt: Date,
+  openCount: {
+    type: Number,
+    default: 0
+  },
+  clicked: {
+    type: Boolean,
+    default: false
+  },
+  clickedAt: Date,
+  clickCount: {
+    type: Number,
+    default: 0
+  },
+  clickedLinks: [{
+    url: String,
+    clickedAt: Date
+  }],
   createdAt: {
     type: Date,
     default: Date.now
@@ -149,6 +185,8 @@ const automatedEmailLogSchema = new mongoose.Schema({
 automatedEmailLogSchema.index({ campaign: 1, recipient: 1, sequenceStep: 1 });
 automatedEmailLogSchema.index({ scheduledFor: 1, status: 1 });
 automatedEmailLogSchema.index({ status: 1, sentAt: 1 });
+automatedEmailLogSchema.index({ trackingId: 1 });
+automatedEmailLogSchema.index({ campaign: 1, opened: 1, clicked: 1 });
 
 // Update timestamp before saving
 automatedCampaignSchema.pre('save', function(next) {

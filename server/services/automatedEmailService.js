@@ -4,6 +4,7 @@ const UserMembership = require('../models/Membership');
 const Booking = require('../models/Booking');
 const Event = require('../models/Event');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 // Email transporter configuration
 const transporter = nodemailer.createTransport({
@@ -15,6 +16,44 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS
   }
 });
+
+/**
+ * Generate unique tracking ID
+ */
+function generateTrackingId() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+/**
+ * Inject tracking pixel and convert links to tracked links
+ */
+function injectEmailTracking(htmlContent, trackingId) {
+  const baseUrl = process.env.BASE_URL || 'http://localhost:5001';
+
+  // Add tracking pixel before closing body tag
+  const trackingPixel = `<img src="${baseUrl}/api/email-tracking/open/${trackingId}" width="1" height="1" alt="" style="display:block" />`;
+  let trackedContent = htmlContent.replace('</body>', `${trackingPixel}</body>`);
+
+  // If no body tag, append at end
+  if (!trackedContent.includes(trackingPixel)) {
+    trackedContent += trackingPixel;
+  }
+
+  // Convert all links to tracked links (excluding unsubscribe links)
+  trackedContent = trackedContent.replace(
+    /<a\s+href="([^"]+)"([^>]*)>/gi,
+    (match, url, attrs) => {
+      // Don't track unsubscribe or already tracked links
+      if (url.includes('unsubscribe') || url.includes('/email-tracking/')) {
+        return match;
+      }
+      const trackedUrl = `${baseUrl}/api/email-tracking/click/${trackingId}?url=${encodeURIComponent(url)}`;
+      return `<a href="${trackedUrl}"${attrs}>`;
+    }
+  );
+
+  return trackedContent;
+}
 
 /**
  * Trigger automated campaign for new user registration
@@ -350,12 +389,20 @@ async function sendScheduledEmails() {
           message = message.replace(new RegExp(placeholder, 'g'), value);
         }
 
+        // Generate tracking ID if not exists
+        if (!emailLog.trackingId) {
+          emailLog.trackingId = generateTrackingId();
+        }
+
+        // Inject email tracking (pixel + link tracking)
+        const trackedMessage = injectEmailTracking(message, emailLog.trackingId);
+
         // Send email
         await transporter.sendMail({
           from: process.env.SMTP_FROM || process.env.SMTP_USER,
           to: emailLog.recipientEmail,
           subject: subject,
-          html: message
+          html: trackedMessage
         });
 
         // Update log

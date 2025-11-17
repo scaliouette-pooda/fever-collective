@@ -12,6 +12,7 @@ function AutomatedCampaigns() {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [campaignStats, setCampaignStats] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [settings, setSettings] = useState(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -54,9 +55,37 @@ function AutomatedCampaigns() {
     { value: 'all', label: 'All Tiers' }
   ];
 
+  // Filter trigger types based on ClassPass integration setting
+  const availableTriggerTypes = triggerTypes.filter(trigger => {
+    // If it's a ClassPass trigger, only show if integration is enabled
+    if (trigger.value.startsWith('classpass_')) {
+      return settings?.classPassIntegration?.enabled === true;
+    }
+    return true;
+  });
+
+  // Filter campaigns list to hide ClassPass campaigns when integration is disabled
+  const visibleCampaigns = campaigns.filter(campaign => {
+    // If it's a ClassPass campaign, only show if integration is enabled
+    if (campaign.triggerType && campaign.triggerType.startsWith('classpass_')) {
+      return settings?.classPassIntegration?.enabled === true;
+    }
+    return true;
+  });
+
   useEffect(() => {
     fetchCampaigns();
+    fetchSettings();
   }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await api.get('/settings');
+      setSettings(response.data);
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+    }
+  };
 
   const fetchCampaigns = async () => {
     try {
@@ -517,7 +546,7 @@ function AutomatedCampaigns() {
                 onChange={handleInputChange}
                 required
               >
-                {triggerTypes.map(type => (
+                {availableTriggerTypes.map(type => (
                   <option key={type.value} value={type.value}>
                     {type.label} - {type.description}
                   </option>
@@ -662,7 +691,7 @@ function AutomatedCampaigns() {
                 </tr>
               </thead>
               <tbody>
-                {campaigns.map(campaign => (
+                {visibleCampaigns.map(campaign => (
                   <tr key={campaign._id}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
