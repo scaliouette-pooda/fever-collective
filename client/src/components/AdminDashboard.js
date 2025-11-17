@@ -2125,7 +2125,7 @@ function AdminDashboard() {
                           : 'Never'}
                       </td>
                       <td>
-                        <span className={`status-badge ${promo.isValid() ? 'completed' : 'failed'}`}>
+                        <span className={`status-badge ${promo.isActive && (!promo.expiryDate || new Date(promo.expiryDate) > new Date()) && (!promo.usageLimit || promo.usageCount < promo.usageLimit) ? 'completed' : 'failed'}`}>
                           {promo.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
@@ -3335,8 +3335,39 @@ jane@example.com,Jane Smith
             </div>
 
             <div className="section-description">
-              <h3>Subscriber Management</h3>
-              <p>Manage all email subscribers across your system. Add, edit, search, and organize subscribers into lists.</p>
+              <h3>📧 Email Subscriber Management</h3>
+              <p style={{ marginBottom: '12px', lineHeight: '1.6' }}>
+                Centralized management of all email subscribers in your system. Subscribers are automatically created when customers opt-in during booking or when manually added by admins.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px', marginTop: '15px', padding: '15px', background: 'rgba(201, 168, 106, 0.1)', borderRadius: '8px' }}>
+                <div>
+                  <strong style={{ color: '#c9a86a' }}>📝 Manual Management:</strong>
+                  <ul style={{ marginTop: '8px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                    <li>Add subscribers individually</li>
+                    <li>Edit subscriber details</li>
+                    <li>View subscription status</li>
+                    <li>Track email engagement</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong style={{ color: '#c9a86a' }}>🎯 Automatic Collection:</strong>
+                  <ul style={{ marginTop: '8px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                    <li>Booking form opt-in checkbox</li>
+                    <li>Auto-created from bookings</li>
+                    <li>Organized into lists</li>
+                    <li>Dynamic segmentation</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong style={{ color: '#c9a86a' }}>🔍 Search & Filter:</strong>
+                  <ul style={{ marginTop: '8px', paddingLeft: '20px', lineHeight: '1.8' }}>
+                    <li>Search by email or name</li>
+                    <li>Filter by status</li>
+                    <li>View list memberships</li>
+                    <li>Track engagement metrics</li>
+                  </ul>
+                </div>
+              </div>
             </div>
 
             {/* Search and Filter */}

@@ -14,7 +14,8 @@ function Booking() {
     email: '',
     phone: '',
     spots: 1,
-    paymentMethod: 'venmo'
+    paymentMethod: 'venmo',
+    subscribeToEmails: true
   });
   const [promoCode, setPromoCode] = useState('');
   const [promoData, setPromoData] = useState(null);
@@ -353,6 +354,39 @@ function Booking() {
                 placeholder="(123) 456-7890"
                 required
               />
+            </div>
+
+            {/* Email Subscription Opt-in */}
+            <div className="form-group checkbox-group" style={{ marginTop: '20px', marginBottom: '20px' }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                lineHeight: '1.5'
+              }}>
+                <input
+                  type="checkbox"
+                  name="subscribeToEmails"
+                  checked={formData.subscribeToEmails}
+                  onChange={(e) => setFormData({ ...formData, subscribeToEmails: e.target.checked })}
+                  style={{
+                    marginTop: '4px',
+                    cursor: 'pointer',
+                    width: '18px',
+                    height: '18px',
+                    accentColor: '#c9a86a'
+                  }}
+                />
+                <span>
+                  <strong>Join our mailing list</strong>
+                  <br />
+                  <span style={{ fontSize: '0.85rem', opacity: '0.85' }}>
+                    Get exclusive updates, early access to new classes, special offers, and community news. You can unsubscribe anytime.
+                  </span>
+                </span>
+              </label>
             </div>
 
             <div className="form-group">

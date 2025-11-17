@@ -10,6 +10,7 @@ const { validateRequestBody, sanitizeInput } = require('../middleware/validation
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sendBookingConfirmation, sendPaymentConfirmation } = require('../services/emailService');
 const { triggerPostClassCampaign, triggerMilestoneAchieved } = require('../services/automatedEmailService');
+const EmailSubscriber = require('../models/EmailSubscriber');
 
 router.post('/',
   sanitizeInput,
@@ -24,7 +25,21 @@ router.post('/',
   validateRequestBody(),
   async (req, res) => {
     try {
-      const { eventId, name, email, phone, spots, paymentMethod, promoCodeId, promoCode: promoCodeString } = req.body;
+      const { eventId, name, email, phone, spots, paymentMethod, promoCodeId, promoCode: promoCodeString, subscribeToEmails } = req.body;
+
+      // Handle email subscription if user opted in
+      if (subscribeToEmails) {
+        try {
+          await EmailSubscriber.findOrCreate(email, {
+            name,
+            source: 'booking',
+            tags: ['customer']
+          });
+        } catch (subscribeError) {
+          console.error('Error creating email subscriber:', subscribeError);
+          // Don't fail the booking if subscription fails
+        }
+      }
 
       const event = await Event.findById(eventId);
       if (!event) {
