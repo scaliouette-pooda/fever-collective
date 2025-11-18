@@ -60,6 +60,21 @@ router.post('/',
         const startDate = new Date(req.body.date);
         const endDate = new Date(req.body.recurrenceEndDate);
 
+        // Helper function to get day name from date
+        const getDayName = (date) => {
+          const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+          return days[date.getDay()];
+        };
+
+        // Helper function to check if date matches selected days
+        const shouldCreateEvent = (date, pattern, selectedDays) => {
+          if (pattern !== 'daily' || !selectedDays || selectedDays.length === 0) {
+            return true; // Create event for all days if not daily pattern or no specific days selected
+          }
+          const dayName = getDayName(date);
+          return selectedDays.includes(dayName);
+        };
+
         // Create the first event
         const firstEvent = new Event(eventData);
         await firstEvent.save();
@@ -84,8 +99,8 @@ router.post('/',
               break;
           }
 
-          // Create event for this date if within range
-          if (currentDate <= endDate) {
+          // Create event for this date if within range and matches selected days
+          if (currentDate <= endDate && shouldCreateEvent(currentDate, req.body.recurrencePattern, req.body.recurrenceDays)) {
             const recurringEventData = {
               ...eventData,
               date: currentDate.toISOString(),

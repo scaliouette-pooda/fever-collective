@@ -71,6 +71,7 @@ function AdminDashboard() {
     ticketTiers: [],
     isRecurring: false,
     recurrencePattern: 'none',
+    recurrenceDays: [],
     recurrenceEndDate: ''
   });
 
@@ -315,6 +316,15 @@ function AdminDashboard() {
     return slots;
   };
 
+  // Handle day selection for recurring events
+  const handleDayToggle = (day) => {
+    const currentDays = eventForm.recurrenceDays || [];
+    const newDays = currentDays.includes(day)
+      ? currentDays.filter(d => d !== day)
+      : [...currentDays, day];
+    setEventForm({ ...eventForm, recurrenceDays: newDays });
+  };
+
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     try {
@@ -392,6 +402,7 @@ function AdminDashboard() {
       ticketTiers: event.ticketTiers || [],
       isRecurring: event.isRecurring || false,
       recurrencePattern: event.recurrencePattern || 'none',
+      recurrenceDays: event.recurrenceDays || [],
       recurrenceEndDate: event.recurrenceEndDate ? event.recurrenceEndDate.split('T')[0] : ''
     });
     setImagePreview(event.imageUrl || null);
@@ -447,6 +458,7 @@ function AdminDashboard() {
       ticketTiers: [],
       isRecurring: false,
       recurrencePattern: 'none',
+      recurrenceDays: [],
       recurrenceEndDate: ''
     });
     setImageFile(null);
@@ -1458,31 +1470,76 @@ function AdminDashboard() {
                       </label>
 
                       {eventForm.isRecurring && (
-                        <div className="form-row" style={{ marginTop: '1rem' }}>
-                          <div className="form-group">
-                            <label>Repeat</label>
-                            <select
-                              name="recurrencePattern"
-                              value={eventForm.recurrencePattern}
-                              onChange={handleEventFormChange}
-                              required
-                            >
-                              <option value="daily">Daily</option>
-                              <option value="weekly">Weekly</option>
-                              <option value="monthly">Monthly</option>
-                            </select>
+                        <>
+                          <div className="form-row" style={{ marginTop: '1rem' }}>
+                            <div className="form-group">
+                              <label>Repeat</label>
+                              <select
+                                name="recurrencePattern"
+                                value={eventForm.recurrencePattern}
+                                onChange={handleEventFormChange}
+                                required
+                              >
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                              </select>
+                            </div>
+                            <div className="form-group">
+                              <label>Repeat Until (Optional)</label>
+                              <input
+                                type="date"
+                                name="recurrenceEndDate"
+                                value={eventForm.recurrenceEndDate}
+                                onChange={handleEventFormChange}
+                                min={eventForm.date}
+                              />
+                            </div>
                           </div>
-                          <div className="form-group">
-                            <label>Repeat Until (Optional)</label>
-                            <input
-                              type="date"
-                              name="recurrenceEndDate"
-                              value={eventForm.recurrenceEndDate}
-                              onChange={handleEventFormChange}
-                              min={eventForm.date}
-                            />
-                          </div>
-                        </div>
+
+                          {eventForm.recurrencePattern === 'daily' && (
+                            <div className="form-group" style={{ marginTop: '1rem' }}>
+                              <label>Select Days (Optional - leave blank for every day)</label>
+                              <div style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '10px',
+                                marginTop: '10px'
+                              }}>
+                                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
+                                  <label
+                                    key={day}
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '6px',
+                                      padding: '8px 12px',
+                                      background: (eventForm.recurrenceDays || []).includes(day)
+                                        ? 'rgba(201, 168, 106, 0.2)'
+                                        : 'rgba(255, 255, 255, 0.05)',
+                                      border: `1px solid ${(eventForm.recurrenceDays || []).includes(day)
+                                        ? '#c9a86a'
+                                        : 'rgba(255, 255, 255, 0.2)'}`,
+                                      borderRadius: '4px',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.3s ease'
+                                    }}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={(eventForm.recurrenceDays || []).includes(day)}
+                                      onChange={() => handleDayToggle(day)}
+                                      style={{ cursor: 'pointer' }}
+                                    />
+                                    <span style={{ fontSize: '0.9rem', textTransform: 'capitalize' }}>
+                                      {day.substring(0, 3)}
+                                    </span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
 

@@ -101,6 +101,11 @@ const eventSchema = new mongoose.Schema({
     enum: ['none', 'daily', 'weekly', 'monthly'],
     default: 'none'
   },
+  recurrenceDays: {
+    type: [String],
+    enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+    default: []
+  },
   recurrenceEndDate: {
     type: Date
   },
