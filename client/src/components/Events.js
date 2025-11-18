@@ -325,19 +325,23 @@ function Events() {
                       return (
                         <div key={`${dateKey}-${time}`} className="schedule-cell">
                           {schedule[dateKey] && schedule[dateKey][time] && schedule[dateKey][time].length > 0 ? (
-                            schedule[dateKey][time].map(event => (
-                              <Link
-                                key={event._id}
-                                to={`/booking/${event._id}`}
-                                className="class-card"
-                              >
-                                <div className="class-title">{event.title}</div>
-                                <div className="class-instructor">{event.instructor}</div>
-                                <div className="class-spots">
-                                  {event.availableSpots} spots
-                                </div>
-                              </Link>
-                            ))
+                            schedule[dateKey][time].map(event => {
+                              // Use parentEventId for recurring instances, otherwise use event._id
+                              const bookingId = event.isRecurringInstance ? event.parentEventId : event._id;
+                              return (
+                                <Link
+                                  key={event._id}
+                                  to={`/booking/${bookingId}`}
+                                  className="class-card"
+                                >
+                                  <div className="class-title">{event.title}</div>
+                                  <div className="class-instructor">{event.instructor}</div>
+                                  <div className="class-spots">
+                                    {event.availableSpots} spots
+                                  </div>
+                                </Link>
+                              );
+                            })
                           ) : (
                             <div className="empty-cell">—</div>
                           )}
@@ -353,7 +357,10 @@ function Events() {
           {/* List View */}
           {viewMode === 'list' && (
             <div className="events-list">
-              {upcomingEvents.map(event => (
+              {upcomingEvents.map(event => {
+                // Use parentEventId for recurring instances, otherwise use event._id
+                const bookingId = event.isRecurringInstance ? event.parentEventId : event._id;
+                return (
                 <div key={event._id} className="event-item">
                   <div className="event-item-image">
                     {event.imageUrl ? (
@@ -400,12 +407,13 @@ function Events() {
                       </div>
                     </div>
                     <p className="event-item-description">{event.description}</p>
-                    <Link to={`/booking/${event._id}`}>
+                    <Link to={`/booking/${bookingId}`}>
                       <button>Book Event</button>
                     </Link>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>
