@@ -54,10 +54,60 @@ router.post('/',
         availableSpots: req.body.capacity
       };
 
-      const event = new Event(eventData);
-      await event.save();
+      // Check if this is a recurring event
+      if (req.body.isRecurring && req.body.recurrencePattern !== 'none' && req.body.recurrenceEndDate) {
+        const createdEvents = [];
+        const startDate = new Date(req.body.date);
+        const endDate = new Date(req.body.recurrenceEndDate);
 
-      res.status(201).json(event);
+        // Create the first event
+        const firstEvent = new Event(eventData);
+        await firstEvent.save();
+        createdEvents.push(firstEvent);
+
+        // Generate recurring events
+        let currentDate = new Date(startDate);
+
+        while (currentDate < endDate) {
+          // Calculate next date based on pattern
+          switch (req.body.recurrencePattern) {
+            case 'daily':
+              currentDate.setDate(currentDate.getDate() + 1);
+              break;
+            case 'weekly':
+              currentDate.setDate(currentDate.getDate() + 7);
+              break;
+            case 'monthly':
+              currentDate.setMonth(currentDate.getMonth() + 1);
+              break;
+            default:
+              break;
+          }
+
+          // Create event for this date if within range
+          if (currentDate <= endDate) {
+            const recurringEventData = {
+              ...eventData,
+              date: currentDate.toISOString(),
+              parentEventId: firstEvent._id
+            };
+            const recurringEvent = new Event(recurringEventData);
+            await recurringEvent.save();
+            createdEvents.push(recurringEvent);
+          }
+        }
+
+        res.status(201).json({
+          message: `Created ${createdEvents.length} recurring events`,
+          events: createdEvents,
+          count: createdEvents.length
+        });
+      } else {
+        // Single event creation
+        const event = new Event(eventData);
+        await event.save();
+        res.status(201).json(event);
+      }
     } catch (error) {
       console.error('Error creating event:', error);
       res.status(500).json({ error: 'Failed to create event' });

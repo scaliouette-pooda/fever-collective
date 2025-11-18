@@ -91,6 +91,23 @@ const eventSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  // Recurrence settings
+  isRecurring: {
+    type: Boolean,
+    default: false
+  },
+  recurrencePattern: {
+    type: String,
+    enum: ['none', 'daily', 'weekly', 'monthly'],
+    default: 'none'
+  },
+  recurrenceEndDate: {
+    type: Date
+  },
+  parentEventId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Event'
+  },
   createdAt: {
     type: Date,
     default: Date.now

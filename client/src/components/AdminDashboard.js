@@ -68,7 +68,10 @@ function AdminDashboard() {
     level: 'all levels',
     imageUrl: '',
     useTieredPricing: false,
-    ticketTiers: []
+    ticketTiers: [],
+    isRecurring: false,
+    recurrencePattern: 'none',
+    recurrenceEndDate: ''
   });
 
   const [promoForm, setPromoForm] = useState({
@@ -299,6 +302,19 @@ function AdminDashboard() {
     return `${hour.toString().padStart(2, '0')}:${minutes}`;
   };
 
+  // Generate time slots for :00 and :30 of each hour
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute of ['00', '30']) {
+        const time24 = `${hour.toString().padStart(2, '0')}:${minute}`;
+        const time12 = convertTo12HourFormat(time24);
+        slots.push({ value: time24, label: time12 });
+      }
+    }
+    return slots;
+  };
+
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     try {
@@ -334,10 +350,16 @@ function AdminDashboard() {
         });
         alert('Class updated successfully!');
       } else {
-        await api.post('/api/events', eventData, {
+        const response = await api.post('/api/events', eventData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert('Class created successfully!');
+
+        // Check if recurring events were created
+        if (response.data.count && response.data.count > 1) {
+          alert(`Successfully created ${response.data.count} recurring classes!`);
+        } else {
+          alert('Class created successfully!');
+        }
       }
 
       setShowEventForm(false);
@@ -365,7 +387,12 @@ function AdminDashboard() {
       capacity: event.capacity,
       instructor: event.instructor,
       level: event.level,
-      imageUrl: event.imageUrl || ''
+      imageUrl: event.imageUrl || '',
+      useTieredPricing: event.useTieredPricing || false,
+      ticketTiers: event.ticketTiers || [],
+      isRecurring: event.isRecurring || false,
+      recurrencePattern: event.recurrencePattern || 'none',
+      recurrenceEndDate: event.recurrenceEndDate ? event.recurrenceEndDate.split('T')[0] : ''
     });
     setImagePreview(event.imageUrl || null);
     setShowEventForm(true);
@@ -415,7 +442,12 @@ function AdminDashboard() {
       capacity: '',
       instructor: '',
       level: 'all levels',
-      imageUrl: ''
+      imageUrl: '',
+      useTieredPricing: false,
+      ticketTiers: [],
+      isRecurring: false,
+      recurrencePattern: 'none',
+      recurrenceEndDate: ''
     });
     setImageFile(null);
     setImagePreview(null);
@@ -1385,14 +1417,74 @@ function AdminDashboard() {
                       </div>
                       <div className="form-group">
                         <label>Time</label>
-                        <input
-                          type="time"
+                        <select
                           name="time"
                           value={eventForm.time}
                           onChange={handleEventFormChange}
                           required
-                        />
+                        >
+                          <option value="">Select time</option>
+                          {generateTimeSlots().map((slot) => (
+                            <option key={slot.value} value={slot.value}>
+                              {slot.label}
+                            </option>
+                          ))}
+                        </select>
                       </div>
+                    </div>
+
+                    {/* Recurrence Section */}
+                    <div className="form-group" style={{
+                      borderTop: '2px solid rgba(201, 168, 106, 0.3)',
+                      paddingTop: '1.5rem',
+                      marginTop: '1.5rem'
+                    }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+                        <input
+                          type="checkbox"
+                          checked={eventForm.isRecurring || false}
+                          onChange={(e) => {
+                            setEventForm({
+                              ...eventForm,
+                              isRecurring: e.target.checked,
+                              recurrencePattern: e.target.checked ? 'weekly' : 'none'
+                            });
+                          }}
+                          style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                        />
+                        <span style={{ fontSize: '1rem', fontWeight: '600', color: '#c9a86a' }}>
+                          Recurring Class
+                        </span>
+                      </label>
+
+                      {eventForm.isRecurring && (
+                        <div className="form-row" style={{ marginTop: '1rem' }}>
+                          <div className="form-group">
+                            <label>Repeat</label>
+                            <select
+                              name="recurrencePattern"
+                              value={eventForm.recurrencePattern}
+                              onChange={handleEventFormChange}
+                              required
+                            >
+                              <option value="daily">Daily</option>
+                              <option value="weekly">Weekly</option>
+                              <option value="monthly">Monthly</option>
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label>Repeat Until</label>
+                            <input
+                              type="date"
+                              name="recurrenceEndDate"
+                              value={eventForm.recurrenceEndDate}
+                              onChange={handleEventFormChange}
+                              min={eventForm.date}
+                              required
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="form-row">
