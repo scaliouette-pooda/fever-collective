@@ -1473,14 +1473,13 @@ function AdminDashboard() {
                             </select>
                           </div>
                           <div className="form-group">
-                            <label>Repeat Until</label>
+                            <label>Repeat Until (Optional)</label>
                             <input
                               type="date"
                               name="recurrenceEndDate"
                               value={eventForm.recurrenceEndDate}
                               onChange={handleEventFormChange}
                               min={eventForm.date}
-                              required
                             />
                           </div>
                         </div>

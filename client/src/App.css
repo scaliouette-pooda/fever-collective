@@ -102,6 +102,30 @@ input::placeholder {
   color: rgba(232, 232, 232, 0.5);
 }
 
+/* Select dropdown options - ensure good contrast */
+select option {
+  background-color: #2a2a2a;
+  color: #e8e8e8;
+  padding: 0.5rem;
+}
+
+/* Date and time inputs - ensure text is visible */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  color: #e8e8e8;
+  color-scheme: dark;
+}
+
+/* Date/time input calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
 .form-group {
   margin-bottom: 2rem;
 }
