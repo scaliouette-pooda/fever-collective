@@ -44,6 +44,7 @@ function AdminDashboard() {
   const [showPromoForm, setShowPromoForm] = useState(false);
   const [editingPromo, setEditingPromo] = useState(null);
   const [showEmailForm, setShowEmailForm] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState(null);
   const [recipientPreview, setRecipientPreview] = useState(null);
   const [activeHelpSection, setActiveHelpSection] = useState('getting-started');
   const [smsStats, setSmsStats] = useState(null);
@@ -890,18 +891,42 @@ function AdminDashboard() {
         customEmails: emailForm.customEmails.split(',').map(e => e.trim()).filter(e => e)
       };
 
-      await api.post('/api/email-campaigns', campaignData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      if (editingCampaign) {
+        // Update existing campaign
+        await api.put(`/api/email-campaigns/${editingCampaign._id}`, campaignData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Campaign updated successfully!');
+      } else {
+        // Create new campaign
+        await api.post('/api/email-campaigns', campaignData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Campaign created successfully!');
+      }
 
-      alert('Campaign created successfully!');
       setShowEmailForm(false);
+      setEditingCampaign(null);
       resetEmailForm();
       fetchData();
     } catch (error) {
-      console.error('Error creating campaign:', error);
-      alert(error.response?.data?.error || 'Failed to create campaign');
+      console.error('Error saving campaign:', error);
+      alert(error.response?.data?.error || 'Failed to save campaign');
     }
+  };
+
+  const handleEditCampaign = (campaign) => {
+    setEditingCampaign(campaign);
+    setEmailForm({
+      name: campaign.name,
+      subject: campaign.subject,
+      message: campaign.message,
+      recipients: campaign.recipients,
+      emailListId: campaign.emailListId || '',
+      customEmails: campaign.customEmails?.join(', ') || '',
+      includedPromoCode: campaign.includedPromoCode || ''
+    });
+    setShowEmailForm(true);
   };
 
   const handleSendCampaign = async (campaignId) => {
@@ -2531,7 +2556,7 @@ function AdminDashboard() {
             {showEmailForm && (
               <div className="event-form-modal">
                 <div className="event-form-container">
-                  <h3>Create Email Campaign</h3>
+                  <h3>{editingCampaign ? 'Edit Email Campaign' : 'Create Email Campaign'}</h3>
                   <form onSubmit={handleCreateCampaign}>
                     <div className="form-group">
                       <label>Campaign Name *</label>
@@ -2680,6 +2705,7 @@ function AdminDashboard() {
                     <div className="form-actions">
                       <button type="button" onClick={() => {
                         setShowEmailForm(false);
+                        setEditingCampaign(null);
                         resetEmailForm();
                       }}>
                         Cancel
@@ -2745,12 +2771,20 @@ function AdminDashboard() {
                       </td>
                       <td>
                         {campaign.status === 'draft' && (
-                          <button
-                            onClick={() => handleSendCampaign(campaign._id)}
-                            style={{ backgroundColor: '#4CAF50' }}
-                          >
-                            Send Now
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleEditCampaign(campaign)}
+                              style={{ backgroundColor: '#c9a86a', marginRight: '0.5rem' }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleSendCampaign(campaign._id)}
+                              style={{ backgroundColor: '#4CAF50' }}
+                            >
+                              Send Now
+                            </button>
+                          </>
                         )}
                         {campaign.status !== 'sending' && (
                           <button onClick={() => handleDeleteCampaign(campaign._id)}>

@@ -160,6 +160,69 @@ router.post('/',
   }
 );
 
+// Update email campaign (admin only) - Only draft campaigns can be edited
+router.put('/:id',
+  authenticateUser,
+  requireAdmin,
+  [
+    body('name').trim().notEmpty().withMessage('Campaign name is required'),
+    body('subject').trim().notEmpty().withMessage('Subject is required'),
+    body('message').trim().notEmpty().withMessage('Message is required'),
+    body('recipients').isIn(['all', 'past_customers', 'recent', 'custom', 'email_list']).withMessage('Invalid recipients')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const campaign = await EmailCampaign.findById(req.params.id);
+
+      if (!campaign) {
+        return res.status(404).json({ error: 'Campaign not found' });
+      }
+
+      // Only allow editing draft campaigns
+      if (campaign.status !== 'draft') {
+        return res.status(400).json({ error: 'Only draft campaigns can be edited' });
+      }
+
+      const {
+        name,
+        subject,
+        message,
+        recipients,
+        customEmails,
+        emailLists,
+        includedPromoCode,
+        scheduledFor
+      } = req.body;
+
+      // Update campaign fields
+      campaign.name = name;
+      campaign.subject = subject;
+      campaign.message = message;
+      campaign.recipients = recipients;
+      campaign.customEmails = customEmails || [];
+      campaign.emailLists = emailLists || [];
+      campaign.includedPromoCode = includedPromoCode || null;
+      campaign.scheduledFor = scheduledFor || null;
+      campaign.updatedAt = new Date();
+
+      await campaign.save();
+
+      res.json({
+        message: 'Campaign updated successfully',
+        campaign
+      });
+    } catch (error) {
+      console.error('Error updating campaign:', error);
+      res.status(500).json({ error: 'Failed to update campaign' });
+    }
+  }
+);
+
 // Test send email (admin only) - Send to specific test email addresses
 router.post('/test-send', authenticateUser, requireAdmin, async (req, res) => {
   try {
