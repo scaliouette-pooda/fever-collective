@@ -14,26 +14,99 @@ function Events() {
     // eslint-disable-next-line
   }, []);
 
+  // Helper function to parse date without timezone conversion
+  const parseEventDate = (dateString) => {
+    const dateStr = dateString.split('T')[0]; // Get YYYY-MM-DD part only
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // Create date in local timezone
+  };
+
+  // Helper to format date as YYYY-MM-DD without timezone conversion
+  const formatDateKey = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper function to expand recurring events into individual instances
+  const expandRecurringEvents = (eventsList) => {
+    const expandedEvents = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    eventsList.forEach(event => {
+      // Add the original event
+      expandedEvents.push(event);
+
+      // If it's a recurring event, generate instances
+      if (event.isRecurring && event.recurrencePattern === 'weekly' && event.recurrenceDays?.length > 0) {
+        const originalDate = parseEventDate(event.date);
+        const endDate = event.recurrenceEndDate ? parseEventDate(event.recurrenceEndDate) : new Date(originalDate.getFullYear() + 1, originalDate.getMonth(), originalDate.getDate());
+
+        // Map day names to day numbers (0 = Sunday, 1 = Monday, etc.)
+        const dayMap = {
+          'sunday': 0,
+          'monday': 1,
+          'tuesday': 2,
+          'wednesday': 3,
+          'thursday': 4,
+          'friday': 5,
+          'saturday': 6
+        };
+
+        const recurDayNumbers = event.recurrenceDays.map(day => dayMap[day.toLowerCase()]);
+
+        // Start from the day after the original event
+        let currentDate = new Date(originalDate);
+        currentDate.setDate(currentDate.getDate() + 1);
+
+        // Generate instances for up to 1 year or until recurrenceEndDate
+        while (currentDate <= endDate) {
+          const dayOfWeek = currentDate.getDay();
+
+          // If this day is in the recurrence days, create an instance
+          if (recurDayNumbers.includes(dayOfWeek)) {
+            const instanceDate = new Date(currentDate);
+            const dateKey = formatDateKey(instanceDate);
+
+            // Create a virtual event instance
+            expandedEvents.push({
+              ...event,
+              _id: `${event._id}_${dateKey}`, // Unique ID for each instance
+              date: `${dateKey}T00:00:00.000Z`, // Format as ISO string
+              isRecurringInstance: true, // Flag to identify this is a generated instance
+              parentEventId: event._id // Reference to original event
+            });
+          }
+
+          // Move to next day
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      }
+    });
+
+    return expandedEvents;
+  };
+
   const fetchEvents = async () => {
     try {
       console.log('Fetching events...');
       const response = await api.get('/api/events');
       console.log('Events API response:', response.data);
       console.log('Number of events:', response.data.length);
-      setEvents(response.data);
+
+      // Expand recurring events into individual instances
+      const expandedEvents = expandRecurringEvents(response.data);
+      console.log('After expanding recurring events:', expandedEvents.length);
+
+      setEvents(expandedEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
       console.error('Error details:', error.response);
     } finally {
       setLoading(false);
     }
-  };
-
-  // Helper function to parse date without timezone conversion
-  const parseEventDate = (dateString) => {
-    const dateStr = dateString.split('T')[0]; // Get YYYY-MM-DD part only
-    const [year, month, day] = dateStr.split('-').map(Number);
-    return new Date(year, month - 1, day); // Create date in local timezone
   };
 
   // Helper function to parse time string (e.g., "7:30 AM")
@@ -92,14 +165,6 @@ function Events() {
     }
 
     return slots;
-  };
-
-  // Helper to format date as YYYY-MM-DD without timezone conversion
-  const formatDateKey = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   };
 
   // Get current week's dates (7 days starting from today)
