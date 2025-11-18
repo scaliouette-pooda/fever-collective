@@ -926,7 +926,7 @@ function AdminDashboard() {
       subject: campaign.subject,
       message: campaign.message,
       recipients: campaign.recipients,
-      emailListId: campaign.emailListId || '',
+      emailLists: campaign.emailLists || [],
       customEmails: campaign.customEmails?.join(', ') || '',
       includedPromoCode: campaign.includedPromoCode || ''
     });

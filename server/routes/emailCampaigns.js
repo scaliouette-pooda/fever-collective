@@ -340,8 +340,13 @@ router.post('/:id/send', authenticateUser, requireAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Campaign not found' });
     }
 
-    if (campaign.status === 'sent') {
-      return res.status(400).json({ error: 'Campaign already sent' });
+    if (campaign.status === 'sending') {
+      return res.status(400).json({ error: 'Campaign is currently being sent' });
+    }
+
+    // Allow resending if campaign was sent or failed
+    if (campaign.status === 'sent' || campaign.status === 'failed') {
+      console.log(`Resending campaign: ${campaign.name}`);
     }
 
     // Check email configuration
