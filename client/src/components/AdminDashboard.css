@@ -109,6 +109,20 @@
 }
 
 /* Ensure form elements have proper contrast in dark mode */
+.event-form-container label {
+  color: #e8e8e8;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.event-form-container small {
+  color: rgba(232, 232, 232, 0.7);
+  font-size: 0.85rem;
+  display: block;
+  margin-top: 0.5rem;
+}
+
 .event-form-container input,
 .event-form-container select,
 .event-form-container textarea {

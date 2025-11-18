@@ -38,8 +38,42 @@ function Booking() {
 
   useEffect(() => {
     fetchEvent();
+    fetchUserProfile();
     // eslint-disable-next-line
   }, [eventId]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        return; // User not logged in, skip auto-fill
+      }
+
+      const response = await api.get('/api/auth/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const profile = response.data;
+
+      // Auto-populate form with user data
+      setFormData(prevData => ({
+        ...prevData,
+        name: profile.name || prevData.name,
+        email: profile.email || prevData.email,
+        phone: profile.phone || prevData.phone
+      }));
+
+      // Also populate waitlist form in case they need it
+      setWaitlistData({
+        name: profile.name || '',
+        email: profile.email || '',
+        phone: profile.phone || ''
+      });
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      // Silent fail - user can still fill form manually
+    }
+  };
 
   const fetchEvent = async () => {
     try {
