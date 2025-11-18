@@ -111,6 +111,13 @@ function AdminDashboard() {
   const [editingList, setEditingList] = useState(null);
   const [showSubscriberImport, setShowSubscriberImport] = useState(false);
   const [selectedListForImport, setSelectedListForImport] = useState(null);
+  const [showAddSubscriberForm, setShowAddSubscriberForm] = useState(false);
+  const [selectedListForAdd, setSelectedListForAdd] = useState(null);
+  const [subscriberForm, setSubscriberForm] = useState({
+    email: '',
+    name: '',
+    phone: ''
+  });
   const [expandedListId, setExpandedListId] = useState(null);
   const [listSubscribers, setListSubscribers] = useState({});
   const [showSubscriberForm, setShowSubscriberForm] = useState(false);
@@ -1088,6 +1095,42 @@ function AdminDashboard() {
       }
     });
     setShowListForm(true);
+  };
+
+  const handleAddSubscriber = async (e) => {
+    e.preventDefault();
+
+    if (!subscriberForm.email) {
+      alert('Email is required');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+
+      // Add subscriber to the list
+      await api.post(`/api/email-lists/${selectedListForAdd}/subscribers`, {
+        email: subscriberForm.email,
+        name: subscriberForm.name,
+        phone: subscriberForm.phone
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('Subscriber added successfully!');
+      setShowAddSubscriberForm(false);
+      setSubscriberForm({ email: '', name: '', phone: '' });
+      setSelectedListForAdd(null);
+      fetchData();
+
+      // Refresh subscribers if the list is expanded
+      if (expandedListId === selectedListForAdd) {
+        handleToggleViewSubscribers(selectedListForAdd);
+      }
+    } catch (error) {
+      console.error('Error adding subscriber:', error);
+      alert(error.response?.data?.error || 'Failed to add subscriber');
+    }
   };
 
   const handleDeleteList = async (listId) => {
@@ -4084,6 +4127,65 @@ jane@example.com,Jane Smith
               </div>
             )}
 
+            {showAddSubscriberForm && (
+              <div className="modal-overlay" onClick={() => {
+                setShowAddSubscriberForm(false);
+                setSelectedListForAdd(null);
+                setSubscriberForm({ email: '', name: '', phone: '' });
+              }}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <h2>Add Subscriber</h2>
+                  <p>Manually add a single subscriber to this email list.</p>
+
+                  <form onSubmit={handleAddSubscriber}>
+                    <div className="form-group">
+                      <label>Email *</label>
+                      <input
+                        type="email"
+                        value={subscriberForm.email}
+                        onChange={(e) => setSubscriberForm({ ...subscriberForm, email: e.target.value })}
+                        placeholder="subscriber@example.com"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Name (Optional)</label>
+                      <input
+                        type="text"
+                        value={subscriberForm.name}
+                        onChange={(e) => setSubscriberForm({ ...subscriberForm, name: e.target.value })}
+                        placeholder="John Doe"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Phone (Optional)</label>
+                      <input
+                        type="tel"
+                        value={subscriberForm.phone}
+                        onChange={(e) => setSubscriberForm({ ...subscriberForm, phone: e.target.value })}
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="button" onClick={() => {
+                        setShowAddSubscriberForm(false);
+                        setSelectedListForAdd(null);
+                        setSubscriberForm({ email: '', name: '', phone: '' });
+                      }}>
+                        Cancel
+                      </button>
+                      <button type="submit" style={{ backgroundColor: '#4CAF50' }}>
+                        Add Subscriber
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
             <div className="email-lists-table">
               <table>
                 <thead>
@@ -4141,16 +4243,29 @@ jane@example.com,Jane Smith
                               Edit
                             </button>
                             {list.type === 'static' && (
-                              <button
-                                onClick={() => {
-                                  setSelectedListForImport(list._id);
-                                  setShowSubscriberImport(true);
-                                }}
-                                className="action-btn import-btn"
-                                title="Import Subscribers"
-                              >
-                                Import
-                              </button>
+                              <>
+                                <button
+                                  onClick={() => {
+                                    setSelectedListForAdd(list._id);
+                                    setShowAddSubscriberForm(true);
+                                  }}
+                                  className="action-btn"
+                                  title="Add Subscriber"
+                                  style={{ backgroundColor: '#4CAF50' }}
+                                >
+                                  Add
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setSelectedListForImport(list._id);
+                                    setShowSubscriberImport(true);
+                                  }}
+                                  className="action-btn import-btn"
+                                  title="Import Subscribers"
+                                >
+                                  Import
+                                </button>
+                              </>
                             )}
                             <button
                               onClick={() => handleExportList(list._id)}

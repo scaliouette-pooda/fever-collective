@@ -172,10 +172,10 @@ router.post('/:id/subscribers',
         return res.status(400).json({ error: 'Can only add subscribers to static lists' });
       }
 
-      const { email, name } = req.body;
+      const { email, name, phone } = req.body;
 
       // Find or create subscriber
-      const subscriber = await EmailSubscriber.findOrCreate(email, { name });
+      const subscriber = await EmailSubscriber.findOrCreate(email, { name, phone });
 
       // Add to list if not already there
       if (!list.subscribers.includes(subscriber._id)) {
