@@ -2769,7 +2769,7 @@ function AdminDashboard() {
                         Send Test Email
                       </button>
                       <button type="submit">
-                        Create Campaign
+                        {editingCampaign ? 'Update Campaign' : 'Create Campaign'}
                       </button>
                     </div>
                   </form>
