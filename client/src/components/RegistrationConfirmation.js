@@ -9,7 +9,7 @@ function RegistrationConfirmation() {
       <div className="auth-container confirmation-container">
         <div className="auth-header">
           <div className="success-icon">✓</div>
-          <h1>Welcome to Fever Collective!</h1>
+          <h1>Welcome to Fever Studio!</h1>
           <p>Your account has been successfully created</p>
         </div>
 
