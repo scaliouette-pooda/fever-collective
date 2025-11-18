@@ -13,6 +13,7 @@ function AutomatedCampaigns() {
   const [campaignStats, setCampaignStats] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [settings, setSettings] = useState(null);
+  const [emailLists, setEmailLists] = useState([]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -29,7 +30,9 @@ function AutomatedCampaigns() {
     ],
     targetAudience: {
       includeAll: true,
-      membershipTiers: []
+      membershipTiers: [],
+      emailLists: [],
+      targetType: 'all' // 'all', 'memberships', 'lists', 'custom'
     },
     isActive: false
   });
@@ -76,6 +79,7 @@ function AutomatedCampaigns() {
   useEffect(() => {
     fetchCampaigns();
     fetchSettings();
+    fetchEmailLists();
   }, []);
 
   const fetchSettings = async () => {
@@ -84,6 +88,18 @@ function AutomatedCampaigns() {
       setSettings(response.data);
     } catch (err) {
       console.error('Error fetching settings:', err);
+    }
+  };
+
+  const fetchEmailLists = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get('/api/email-lists', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setEmailLists(response.data);
+    } catch (err) {
+      console.error('Error fetching email lists:', err);
     }
   };
 
@@ -248,7 +264,12 @@ function AutomatedCampaigns() {
       triggerType: campaign.triggerType,
       triggerConfig: campaign.triggerConfig || {},
       emailSequence: campaign.emailSequence,
-      targetAudience: campaign.targetAudience || { includeAll: true, membershipTiers: [] },
+      targetAudience: campaign.targetAudience || {
+        includeAll: true,
+        membershipTiers: [],
+        emailLists: [],
+        targetType: 'all'
+      },
       isActive: campaign.isActive
     });
     setShowForm(true);
@@ -307,7 +328,9 @@ function AutomatedCampaigns() {
       ],
       targetAudience: {
         includeAll: true,
-        membershipTiers: []
+        membershipTiers: [],
+        emailLists: [],
+        targetType: 'all'
       },
       isActive: false
     });
@@ -666,22 +689,96 @@ function AutomatedCampaigns() {
 
             <div className="form-section">
               <h4>Target Audience</h4>
-              <div className="checkbox-group">
-                {membershipTiers.map(tier => (
-                  <label key={tier.value} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={
-                        tier.value === 'all'
-                          ? formData.targetAudience.includeAll
-                          : formData.targetAudience.membershipTiers.includes(tier.value)
+              <div className="form-group">
+                <label>Audience Type</label>
+                <select
+                  value={formData.targetAudience.targetType}
+                  onChange={(e) => {
+                    const targetType = e.target.value;
+                    setFormData(prev => ({
+                      ...prev,
+                      targetAudience: {
+                        ...prev.targetAudience,
+                        targetType,
+                        includeAll: targetType === 'all',
+                        membershipTiers: targetType === 'memberships' ? prev.targetAudience.membershipTiers : [],
+                        emailLists: targetType === 'lists' ? prev.targetAudience.emailLists : []
                       }
-                      onChange={() => handleTargetAudienceChange(tier.value)}
-                    />
-                    {tier.label}
-                  </label>
-                ))}
+                    }));
+                  }}
+                >
+                  <option value="all">All Users</option>
+                  <option value="memberships">Specific Membership Tiers</option>
+                  <option value="lists">Specific Email Lists</option>
+                </select>
               </div>
+
+              {formData.targetAudience.targetType === 'memberships' && (
+                <div className="checkbox-group" style={{ marginTop: '1rem' }}>
+                  <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
+                    Select Membership Tiers:
+                  </label>
+                  {membershipTiers.filter(tier => tier.value !== 'all').map(tier => (
+                    <label key={tier.value} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={formData.targetAudience.membershipTiers.includes(tier.value)}
+                        onChange={(e) => {
+                          const tiers = e.target.checked
+                            ? [...formData.targetAudience.membershipTiers, tier.value]
+                            : formData.targetAudience.membershipTiers.filter(t => t !== tier.value);
+                          setFormData(prev => ({
+                            ...prev,
+                            targetAudience: {
+                              ...prev.targetAudience,
+                              membershipTiers: tiers
+                            }
+                          }));
+                        }}
+                      />
+                      {tier.label}
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {formData.targetAudience.targetType === 'lists' && (
+                <div className="checkbox-group" style={{ marginTop: '1rem' }}>
+                  <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>
+                    Select Email Lists:
+                  </label>
+                  {emailLists.length === 0 ? (
+                    <p style={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                      No email lists available. Create email lists in the Email Marketing tab.
+                    </p>
+                  ) : (
+                    emailLists.map(list => (
+                      <label key={list._id} className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={formData.targetAudience.emailLists.includes(list._id)}
+                          onChange={(e) => {
+                            const lists = e.target.checked
+                              ? [...formData.targetAudience.emailLists, list._id]
+                              : formData.targetAudience.emailLists.filter(id => id !== list._id);
+                            setFormData(prev => ({
+                              ...prev,
+                              targetAudience: {
+                                ...prev.targetAudience,
+                                emailLists: lists
+                              }
+                            }));
+                          }}
+                        />
+                        {list.name}
+                        <span style={{ color: 'rgba(255,255,255,0.5)', marginLeft: '0.5rem', fontSize: '0.9rem' }}>
+                          ({list.subscriberCount} subscribers, {list.type})
+                        </span>
+                      </label>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -758,9 +855,13 @@ function AutomatedCampaigns() {
                     </td>
                     <td>{campaign.emailSequence.length} email{campaign.emailSequence.length > 1 ? 's' : ''}</td>
                     <td>
-                      {campaign.targetAudience.includeAll
-                        ? 'All Members'
-                        : campaign.targetAudience.membershipTiers.join(', ')}
+                      {campaign.targetAudience.targetType === 'all' || campaign.targetAudience.includeAll
+                        ? 'All Users'
+                        : campaign.targetAudience.targetType === 'lists'
+                        ? `${campaign.targetAudience.emailLists?.length || 0} Email Lists`
+                        : campaign.targetAudience.membershipTiers?.length > 0
+                        ? campaign.targetAudience.membershipTiers.join(', ')
+                        : 'Custom'}
                     </td>
                     <td>
                       <span className={`status-badge ${campaign.isActive ? 'active' : 'inactive'}`}>

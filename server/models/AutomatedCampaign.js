@@ -70,9 +70,18 @@ const automatedCampaignSchema = new mongoose.Schema({
   },
   emailSequence: [emailSequenceStepSchema],
   targetAudience: {
+    targetType: {
+      type: String,
+      enum: ['all', 'memberships', 'lists'],
+      default: 'all'
+    },
     membershipTiers: [{
       type: String,
       enum: ['fever-starter', 'fever-enthusiast', 'epidemic', 'all']
+    }],
+    emailLists: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'EmailList'
     }],
     includeAll: {
       type: Boolean,
@@ -216,14 +225,34 @@ automatedCampaignSchema.pre('save', function(next) {
 });
 
 // Method to check if user should receive this campaign
-automatedCampaignSchema.methods.shouldTriggerForUser = function(user, membershipTier) {
+automatedCampaignSchema.methods.shouldTriggerForUser = async function(user, membershipTier, userEmailListIds = []) {
   if (!this.isActive) return false;
 
-  if (this.targetAudience.includeAll) return true;
+  // All users
+  if (this.targetAudience.targetType === 'all' || this.targetAudience.includeAll) return true;
 
-  if (this.targetAudience.membershipTiers.includes('all')) return true;
+  // Membership tier targeting
+  if (this.targetAudience.targetType === 'memberships') {
+    if (this.targetAudience.membershipTiers.includes('all')) return true;
+    return this.targetAudience.membershipTiers.includes(membershipTier);
+  }
 
-  return this.targetAudience.membershipTiers.includes(membershipTier);
+  // Email list targeting
+  if (this.targetAudience.targetType === 'lists') {
+    if (!this.targetAudience.emailLists || this.targetAudience.emailLists.length === 0) return false;
+
+    // Check if user is in any of the targeted lists
+    const targetListIds = this.targetAudience.emailLists.map(id => id.toString());
+    return userEmailListIds.some(listId => targetListIds.includes(listId.toString()));
+  }
+
+  // Legacy support for old campaigns (no targetType specified)
+  if (!this.targetAudience.targetType) {
+    if (this.targetAudience.membershipTiers.includes('all')) return true;
+    return this.targetAudience.membershipTiers.includes(membershipTier);
+  }
+
+  return false;
 };
 
 // Method to schedule email sequence for a user
