@@ -338,9 +338,10 @@ function AdminDashboard() {
       // Convert time to 12-hour format for consistency with schedule
       const convertedTime = convertTo12HourFormat(eventForm.time);
 
-      // Fix timezone issue: ensure date is stored at noon local time to prevent day shifts
-      const eventDate = new Date(eventForm.date);
-      eventDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone shift issues
+      // Fix timezone issue: Parse date correctly to avoid day shifts
+      // When date picker returns "2025-11-19", we need to treat it as a local date
+      const [year, month, day] = eventForm.date.split('-').map(Number);
+      const eventDate = new Date(year, month - 1, day, 12, 0, 0, 0); // Create date in local timezone at noon
 
       const eventData = {
         ...eventForm,
