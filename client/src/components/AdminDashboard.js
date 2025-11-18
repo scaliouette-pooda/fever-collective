@@ -684,9 +684,47 @@ function AdminDashboard() {
       }, 3000);
     } catch (error) {
       console.error('Error sending test SMS:', error);
+
+      const errorData = error.response?.data || {};
+      const errorType = errorData.errorType;
+      let errorMessage = errorData.error || 'Failed to send test SMS';
+      let helpText = errorData.details || '';
+
+      // Provide specific, actionable error messages based on error type
+      switch (errorType) {
+        case 'GLOBALLY_DISABLED':
+          errorMessage = '⚠️ SMS is globally disabled';
+          helpText = 'Enable SMS in Settings above (toggle "Enable SMS Notifications") then try again';
+          break;
+        case 'NOT_CONFIGURED':
+          errorMessage = '❌ Twilio not configured';
+          helpText = 'Add TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN to Vercel environment variables';
+          break;
+        case 'PHONE_NOT_CONFIGURED':
+          errorMessage = '❌ Twilio phone number missing';
+          helpText = 'Add TWILIO_PHONE_NUMBER to Vercel environment variables';
+          break;
+        case 'INVALID_PHONE':
+          errorMessage = '❌ Invalid phone number format';
+          helpText = 'Use E.164 format: +1234567890 or (123) 456-7890';
+          break;
+        case 'DAILY_LIMIT_REACHED':
+          errorMessage = errorData.error; // Already includes count
+          helpText = 'Resets at midnight or increase limit in Settings';
+          break;
+        case 'TWILIO_API_ERROR':
+          errorMessage = '❌ Twilio API Error';
+          helpText = errorData.error || 'Check credentials, account balance, and phone number validity';
+          break;
+        default:
+          // Use the error and details from the response
+          break;
+      }
+
       setTestSmsResult({
         success: false,
-        message: error.response?.data?.error || 'Failed to send test SMS'
+        message: errorMessage,
+        details: helpText
       });
     }
   };
@@ -3414,12 +3452,28 @@ function AdminDashboard() {
                       {testSmsResult && !testSmsResult.loading && (
                         <div style={{
                           marginTop: '10px',
-                          padding: '10px',
+                          padding: '12px',
                           background: testSmsResult.success ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 69, 58, 0.1)',
                           borderRadius: '4px',
-                          color: testSmsResult.success ? '#34c759' : '#ff453a'
+                          border: `1px solid ${testSmsResult.success ? 'rgba(52, 199, 89, 0.3)' : 'rgba(255, 69, 58, 0.3)'}`
                         }}>
-                          {testSmsResult.message}
+                          <div style={{
+                            color: testSmsResult.success ? '#34c759' : '#ff453a',
+                            fontWeight: '600',
+                            marginBottom: testSmsResult.details ? '6px' : '0'
+                          }}>
+                            {testSmsResult.message}
+                          </div>
+                          {testSmsResult.details && (
+                            <div style={{
+                              color: 'rgba(232, 232, 232, 0.8)',
+                              fontSize: '0.9rem',
+                              marginTop: '4px',
+                              lineHeight: '1.4'
+                            }}>
+                              {testSmsResult.details}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

@@ -108,31 +108,61 @@ const formatPhoneNumber = (phone) => {
 };
 
 // Send a generic SMS
-const sendSMS = async (to, message) => {
-  // Check global SMS settings
+// Options:
+//   - bypassGlobalCheck: If true, skip the global enabled check (for admin testing)
+const sendSMS = async (to, message, options = {}) => {
+  const { bypassGlobalCheck = false } = options;
+
+  // Check global SMS settings (unless bypassed for testing)
   const smsSettings = await getSettings();
-  if (smsSettings && !smsSettings.smsConfig?.enabled) {
+  if (!bypassGlobalCheck && smsSettings && !smsSettings.smsConfig?.enabled) {
     console.log('SMS globally disabled in settings - skipping SMS send');
-    return { success: false, error: 'SMS globally disabled' };
+    return {
+      success: false,
+      error: 'SMS globally disabled',
+      errorType: 'GLOBALLY_DISABLED',
+      details: 'Enable SMS in Settings → SMS Configuration to send messages'
+    };
+  }
+
+  if (bypassGlobalCheck) {
+    console.log('⚠️ Sending SMS with global check bypassed (test mode)');
   }
 
   // Check daily limit
   if (smsSettings && smsSettings.smsStats?.todaySent >= smsSettings.smsConfig?.dailyLimit) {
-    console.error(`Daily SMS limit reached (${smsSettings.smsConfig.dailyLimit})`);
-    return { success: false, error: 'Daily SMS limit reached' };
+    const dailyLimit = smsSettings.smsConfig.dailyLimit;
+    const todaySent = smsSettings.smsStats.todaySent;
+    console.error(`Daily SMS limit reached (${todaySent}/${dailyLimit})`);
+    return {
+      success: false,
+      error: `Daily SMS limit reached (${todaySent}/${dailyLimit})`,
+      errorType: 'DAILY_LIMIT_REACHED',
+      details: `Reset at midnight or increase limit in Settings`
+    };
   }
 
   const client = getClient();
   if (!client) {
     console.log('SMS not configured - skipping SMS send');
     await updateSMSStats(false);
-    return { success: false, error: 'SMS not configured' };
+    return {
+      success: false,
+      error: 'Twilio not configured',
+      errorType: 'NOT_CONFIGURED',
+      details: 'Add TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN to environment variables'
+    };
   }
 
   if (!process.env.TWILIO_PHONE_NUMBER) {
     console.log('TWILIO_PHONE_NUMBER not set - skipping SMS send');
     await updateSMSStats(false);
-    return { success: false, error: 'Twilio phone number not configured' };
+    return {
+      success: false,
+      error: 'Twilio phone number not configured',
+      errorType: 'PHONE_NOT_CONFIGURED',
+      details: 'Add TWILIO_PHONE_NUMBER to environment variables'
+    };
   }
 
   try {
@@ -141,7 +171,12 @@ const sendSMS = async (to, message) => {
     if (!formattedPhone) {
       console.error('SMS not sent: Invalid phone number format');
       await updateSMSStats(false);
-      return { success: false, error: 'Invalid phone number format' };
+      return {
+        success: false,
+        error: 'Invalid phone number format',
+        errorType: 'INVALID_PHONE',
+        details: 'Use E.164 format: +1234567890 or (123) 456-7890'
+      };
     }
 
     const result = await client.messages.create({
@@ -160,7 +195,12 @@ const sendSMS = async (to, message) => {
   } catch (error) {
     console.error('Error sending SMS:', error.message);
     await updateSMSStats(false);
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error.message,
+      errorType: 'TWILIO_API_ERROR',
+      details: 'Check Twilio credentials, account balance, and phone number validity'
+    };
   }
 };
 

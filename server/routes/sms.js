@@ -38,26 +38,38 @@ router.get('/stats', authenticateUser, requireAdmin, async (req, res) => {
 });
 
 // Send test SMS
+// Bypasses global SMS disable check for admin testing
 router.post('/test', authenticateUser, requireAdmin, async (req, res) => {
   try {
     const { phoneNumber, message } = req.body;
 
     if (!phoneNumber) {
-      return res.status(400).json({ error: 'Phone number is required' });
+      return res.status(400).json({
+        error: 'Phone number is required',
+        errorType: 'MISSING_PHONE'
+      });
     }
 
     if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+      return res.status(400).json({
+        error: 'Message is required',
+        errorType: 'MISSING_MESSAGE'
+      });
     }
 
     // Validate phone number format
     const formattedPhone = formatPhoneNumber(phoneNumber);
     if (!formattedPhone) {
-      return res.status(400).json({ error: 'Invalid phone number format. Use format: +1234567890 or (123) 456-7890' });
+      return res.status(400).json({
+        error: 'Invalid phone number format',
+        errorType: 'INVALID_PHONE',
+        details: 'Use E.164 format: +1234567890 or (123) 456-7890'
+      });
     }
 
-    // Send the test SMS
-    const result = await sendSMS(formattedPhone, message);
+    // Send the test SMS with global check bypassed
+    // This allows admins to test Twilio configuration even if SMS is globally disabled
+    const result = await sendSMS(formattedPhone, message, { bypassGlobalCheck: true });
 
     if (result.success) {
       res.json({
@@ -69,12 +81,18 @@ router.post('/test', authenticateUser, requireAdmin, async (req, res) => {
     } else {
       res.status(500).json({
         success: false,
-        error: result.error || 'Failed to send test SMS'
+        error: result.error || 'Failed to send test SMS',
+        errorType: result.errorType || 'UNKNOWN_ERROR',
+        details: result.details || 'Check server logs for more information'
       });
     }
   } catch (error) {
     console.error('Error sending test SMS:', error);
-    res.status(500).json({ error: 'Failed to send test SMS' });
+    res.status(500).json({
+      error: 'Failed to send test SMS',
+      errorType: 'SERVER_ERROR',
+      details: error.message
+    });
   }
 });
 
