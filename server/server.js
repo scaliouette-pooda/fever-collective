@@ -68,6 +68,11 @@ mongoose.connect(process.env.MONGODB_URI, {
   // Initialize SMS service (Twilio)
   const { initializeTwilio } = require('./services/smsService');
   initializeTwilio();
+
+  // Initialize SMS scheduler for automated campaigns
+  const { initializeSMSScheduler, initializeDailyReset } = require('./services/smsScheduler');
+  initializeSMSScheduler();
+  initializeDailyReset();
 })
 .catch(err => logger.error('MongoDB connection error:', err));
 
@@ -89,6 +94,7 @@ const userRoutes = require('./routes/users');
 const automatedCampaignRoutes = require('./routes/automatedCampaigns');
 const classPassAnalyticsRoutes = require('./routes/classpassAnalytics');
 const emailTrackingRoutes = require('./routes/emailTracking');
+const smsRoutes = require('./routes/sms');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -108,6 +114,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/automated-campaigns', automatedCampaignRoutes);
 app.use('/api/classpass-analytics', classPassAnalyticsRoutes);
 app.use('/api/email-tracking', emailTrackingRoutes);
+app.use('/api/sms', smsRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Studio API' });

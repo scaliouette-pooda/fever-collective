@@ -615,6 +615,43 @@ function AutomatedCampaigns() {
                       />
                     </div>
                   </div>
+
+                  {/* SMS Toggle and Message */}
+                  <div className="form-group" style={{ marginTop: '1rem', padding: '12px', background: 'rgba(0, 122, 255, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 122, 255, 0.2)' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={email.sendSMS || false}
+                        onChange={(e) => handleEmailSequenceChange(index, 'sendSMS', e.target.checked)}
+                      />
+                      <span style={{ fontWeight: 'bold' }}>Also send as SMS</span>
+                    </label>
+
+                    {email.sendSMS && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <label>SMS Message (160 chars max)</label>
+                        <textarea
+                          value={email.smsMessage || ''}
+                          onChange={(e) => handleEmailSequenceChange(index, 'smsMessage', e.target.value)}
+                          rows="3"
+                          maxLength="160"
+                          placeholder="Short SMS version of your message. Use {{name}}, {{eventTitle}}, etc."
+                          style={{ marginTop: '0.5rem' }}
+                        />
+                        <small style={{ display: 'block', marginTop: '0.5rem', color: email.smsMessage?.length > 160 ? '#ff453a' : 'rgba(232, 232, 232, 0.6)' }}>
+                          {(email.smsMessage || '').length} / 160 characters
+                        </small>
+                        <div style={{ marginTop: '0.5rem', padding: '8px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', fontSize: '0.85rem' }}>
+                          <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Available variables:</div>
+                          <code style={{ fontSize: '0.8rem' }}>{'{{name}}'}</code>{' '}
+                          <code style={{ fontSize: '0.8rem' }}>{'{{firstName}}'}</code>{' '}
+                          <code style={{ fontSize: '0.8rem' }}>{'{{eventTitle}}'}</code>{' '}
+                          <code style={{ fontSize: '0.8rem' }}>{'{{eventDate}}'}</code>{' '}
+                          <code style={{ fontSize: '0.8rem' }}>{'{{eventTime}}'}</code>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
 

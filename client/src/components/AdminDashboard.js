@@ -46,6 +46,11 @@ function AdminDashboard() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [recipientPreview, setRecipientPreview] = useState(null);
   const [activeHelpSection, setActiveHelpSection] = useState('getting-started');
+  const [smsStats, setSmsStats] = useState(null);
+  const [twilioStatus, setTwilioStatus] = useState(null);
+  const [testSmsPhone, setTestSmsPhone] = useState('');
+  const [testSmsMessage, setTestSmsMessage] = useState('');
+  const [testSmsResult, setTestSmsResult] = useState(null);
 
   const [bookingForm, setBookingForm] = useState({
     name: '',
@@ -155,8 +160,14 @@ function AdminDashboard() {
         const res = await api.get('/api/bookings', config);
         setBookings(res.data);
       } else if (activeTab === 'settings') {
-        const res = await api.get('/api/settings', config);
-        setSettings(res.data);
+        const [settingsRes, smsStatsRes, twilioStatusRes] = await Promise.all([
+          api.get('/api/settings', config),
+          api.get('/api/sms/stats', config).catch(() => ({ data: null })),
+          api.get('/api/sms/config-status', config).catch(() => ({ data: null }))
+        ]);
+        setSettings(settingsRes.data);
+        setSmsStats(smsStatsRes.data);
+        setTwilioStatus(twilioStatusRes.data);
       } else if (activeTab === 'promoCodes') {
         const res = await api.get('/api/promo-codes', config);
         setPromoCodes(res.data);
@@ -636,6 +647,47 @@ function AdminDashboard() {
     } catch (error) {
       console.error('Error updating settings:', error);
       alert('Failed to update settings. Please try again.');
+    }
+  };
+
+  // SMS Test Handler
+  const handleSendTestSMS = async () => {
+    if (!testSmsPhone) {
+      alert('Please enter a phone number');
+      return;
+    }
+    if (!testSmsMessage) {
+      alert('Please enter a message');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+
+      setTestSmsResult({ loading: true });
+
+      const res = await api.post('/api/sms/test', {
+        phoneNumber: testSmsPhone,
+        message: testSmsMessage
+      }, config);
+
+      setTestSmsResult({
+        success: true,
+        message: res.data.message || 'Test SMS sent successfully!'
+      });
+
+      // Clear form after 3 seconds
+      setTimeout(() => {
+        setTestSmsResult(null);
+        setTestSmsMessage('');
+      }, 3000);
+    } catch (error) {
+      console.error('Error sending test SMS:', error);
+      setTestSmsResult({
+        success: false,
+        message: error.response?.data?.error || 'Failed to send test SMS'
+      });
     }
   };
 
@@ -3162,6 +3214,217 @@ function AdminDashboard() {
                     rows="3"
                   />
                 </div>
+              </div>
+
+              {/* SMS Configuration Section */}
+              <div className="settings-card">
+                <h3>SMS Configuration</h3>
+                <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Configure Twilio SMS notifications for booking confirmations, reminders, and promotional messages. Requires Twilio account credentials in server environment variables.
+                </p>
+
+                {/* Twilio Connection Status */}
+                <div style={{ marginBottom: '1.5rem', padding: '12px', background: twilioStatus?.configured ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 69, 58, 0.1)', borderRadius: '6px', border: `1px solid ${twilioStatus?.configured ? 'rgba(52, 199, 89, 0.3)' : 'rgba(255, 69, 58, 0.3)'}` }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px', color: twilioStatus?.configured ? '#34c759' : '#ff453a' }}>
+                    {twilioStatus?.configured ? '✅ Twilio Connected' : '❌ Twilio Not Configured'}
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)' }}>
+                    {twilioStatus?.configured
+                      ? `Phone Number: ${twilioStatus.phoneNumber}`
+                      : 'Configure TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER in server environment variables'}
+                  </div>
+                </div>
+
+                {/* Global Enable/Disable */}
+                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', background: 'rgba(0, 122, 255, 0.1)', borderRadius: '6px', border: '1px solid rgba(0, 122, 255, 0.3)' }}>
+                    <input
+                      type="checkbox"
+                      checked={settings.smsConfig?.enabled || false}
+                      onChange={(e) => handleSettingsChange('smsConfig', 'enabled', e.target.checked)}
+                      style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                    />
+                    <div>
+                      <strong style={{ color: '#007aff' }}>Enable SMS Notifications</strong>
+                      <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                        Master switch for all SMS functionality
+                      </div>
+                    </div>
+                  </label>
+                </div>
+
+                {settings.smsConfig?.enabled && (
+                  <>
+                    {/* Notification Types */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <h4 style={{ marginBottom: '1rem', fontSize: '1rem' }}>Notification Types</h4>
+                      <div style={{ display: 'grid', gap: '10px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={settings.smsConfig?.sendBookingConfirmations !== false}
+                            onChange={(e) => handleSettingsChange('smsConfig', 'sendBookingConfirmations', e.target.checked)}
+                          />
+                          Booking Confirmations
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={settings.smsConfig?.sendPaymentConfirmations !== false}
+                            onChange={(e) => handleSettingsChange('smsConfig', 'sendPaymentConfirmations', e.target.checked)}
+                          />
+                          Payment Confirmations
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={settings.smsConfig?.sendReminders !== false}
+                            onChange={(e) => handleSettingsChange('smsConfig', 'sendReminders', e.target.checked)}
+                          />
+                          Class Reminders (24 hours before)
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={settings.smsConfig?.sendWaitlistNotifications !== false}
+                            onChange={(e) => handleSettingsChange('smsConfig', 'sendWaitlistNotifications', e.target.checked)}
+                          />
+                          Waitlist Notifications
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={settings.smsConfig?.sendMembershipConfirmations !== false}
+                            onChange={(e) => handleSettingsChange('smsConfig', 'sendMembershipConfirmations', e.target.checked)}
+                          />
+                          Membership Confirmations
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={settings.smsConfig?.sendCreditsLowWarning !== false}
+                            onChange={(e) => handleSettingsChange('smsConfig', 'sendCreditsLowWarning', e.target.checked)}
+                          />
+                          Low Credits Warnings
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={settings.smsConfig?.allowPromotionalSMS || false}
+                            onChange={(e) => handleSettingsChange('smsConfig', 'allowPromotionalSMS', e.target.checked)}
+                          />
+                          Promotional SMS (Bulk campaigns)
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Daily Limit */}
+                    <div className="form-group">
+                      <label>Daily SMS Limit</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="10000"
+                        value={settings.smsConfig?.dailyLimit || 1000}
+                        onChange={(e) => handleSettingsChange('smsConfig', 'dailyLimit', parseInt(e.target.value))}
+                      />
+                      <small>Maximum number of SMS messages to send per day (cost control)</small>
+                    </div>
+
+                    {/* SMS Statistics */}
+                    {smsStats && (
+                      <div style={{ marginTop: '1.5rem', padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '6px' }}>
+                        <h4 style={{ marginBottom: '1rem', fontSize: '1rem' }}>SMS Statistics</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
+                          <div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#007aff' }}>
+                              {smsStats.todaySent || 0}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                              Sent Today
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#34c759' }}>
+                              {smsStats.totalSent || 0}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                              Total Sent
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ff453a' }}>
+                              {smsStats.totalFailed || 0}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                              Failed
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ffd60a' }}>
+                              ${(smsStats.totalCost || 0).toFixed(2)}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                              Total Cost
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#bf5af2' }}>
+                              {smsStats.successRate || 100}%
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.7)' }}>
+                              Success Rate
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Test SMS Section */}
+                    <div style={{ marginTop: '1.5rem', padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '6px' }}>
+                      <h4 style={{ marginBottom: '1rem', fontSize: '1rem' }}>Send Test SMS</h4>
+                      <div className="form-group">
+                        <label>Phone Number</label>
+                        <input
+                          type="tel"
+                          value={testSmsPhone}
+                          onChange={(e) => setTestSmsPhone(e.target.value)}
+                          placeholder="+1 (555) 123-4567"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Test Message</label>
+                        <textarea
+                          value={testSmsMessage}
+                          onChange={(e) => setTestSmsMessage(e.target.value)}
+                          placeholder="Test message from The Fever Studio"
+                          rows="3"
+                          maxLength="160"
+                        />
+                        <small>{testSmsMessage.length} / 160 characters</small>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleSendTestSMS}
+                        className="btn-secondary"
+                        disabled={testSmsResult?.loading}
+                      >
+                        {testSmsResult?.loading ? 'Sending...' : 'Send Test SMS'}
+                      </button>
+                      {testSmsResult && !testSmsResult.loading && (
+                        <div style={{
+                          marginTop: '10px',
+                          padding: '10px',
+                          background: testSmsResult.success ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 69, 58, 0.1)',
+                          borderRadius: '4px',
+                          color: testSmsResult.success ? '#34c759' : '#ff453a'
+                        }}>
+                          {testSmsResult.message}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Home Page Images Section */}

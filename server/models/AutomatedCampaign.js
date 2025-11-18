@@ -207,6 +207,7 @@ automatedEmailLogSchema.index({ scheduledFor: 1, status: 1 });
 automatedEmailLogSchema.index({ status: 1, sentAt: 1 });
 automatedEmailLogSchema.index({ trackingId: 1 });
 automatedEmailLogSchema.index({ campaign: 1, opened: 1, clicked: 1 });
+automatedEmailLogSchema.index({ scheduledFor: 1, smsStatus: 1 }); // For SMS scheduler
 
 // Update timestamp before saving
 automatedCampaignSchema.pre('save', function(next) {
