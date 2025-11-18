@@ -48,6 +48,12 @@ router.put('/', authenticateUser, requireAdmin, async (req, res) => {
     if (updates.siteInfo) {
       settings.siteInfo = { ...settings.siteInfo, ...updates.siteInfo };
     }
+    if (updates.smsConfig) {
+      settings.smsConfig = { ...settings.smsConfig, ...updates.smsConfig };
+    }
+    if (updates.homeImages) {
+      settings.homeImages = { ...settings.homeImages, ...updates.homeImages };
+    }
 
     settings.updatedBy = req.user.userId;
     await settings.save();
