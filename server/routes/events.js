@@ -136,33 +136,46 @@ router.put('/:id',
   sanitizeInput,
   async (req, res) => {
     try {
-      console.log('Updating event:', req.params.id);
-      console.log('Update data:', {
-        date: req.body.date,
-        time: req.body.time,
-        title: req.body.title
+      console.log('=== EVENT UPDATE REQUEST ===');
+      console.log('Event ID:', req.params.id);
+      console.log('Full request body:', JSON.stringify(req.body, null, 2));
+
+      // Find the existing event first
+      const existingEvent = await Event.findById(req.params.id);
+      if (!existingEvent) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+
+      console.log('Existing event before update:', {
+        title: existingEvent.title,
+        date: existingEvent.date,
+        time: existingEvent.time
       });
 
+      // Update the event
       const event = await Event.findByIdAndUpdate(
         req.params.id,
         req.body,
         { new: true, runValidators: true }
       );
 
-      if (!event) {
-        return res.status(404).json({ error: 'Event not found' });
-      }
-
-      console.log('Event updated successfully:', {
-        id: event._id,
+      console.log('Event after update:', {
+        title: event.title,
         date: event.date,
         time: event.time
       });
 
+      console.log('=== UPDATE SUCCESSFUL ===');
+
       res.json(event);
     } catch (error) {
-      console.error('Error updating event:', error);
-      res.status(500).json({ error: 'Failed to update event' });
+      console.error('=== ERROR UPDATING EVENT ===');
+      console.error('Error:', error);
+      console.error('Error stack:', error.stack);
+      res.status(500).json({
+        error: 'Failed to update event',
+        details: error.message
+      });
     }
   }
 );
