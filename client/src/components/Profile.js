@@ -15,6 +15,12 @@ function Profile() {
     birthday: {
       month: '',
       day: ''
+    },
+    smsPreferences: {
+      enabled: true,
+      bookingConfirmations: true,
+      reminders: true,
+      promotional: false
     }
   });
   const qrCodeRef = useRef(null);
@@ -93,6 +99,12 @@ function Profile() {
         birthday: {
           month: response.data.birthday?.month || '',
           day: response.data.birthday?.day || ''
+        },
+        smsPreferences: {
+          enabled: response.data.smsPreferences?.enabled !== false,
+          bookingConfirmations: response.data.smsPreferences?.bookingConfirmations !== false,
+          reminders: response.data.smsPreferences?.reminders !== false,
+          promotional: response.data.smsPreferences?.promotional || false
         }
       });
     } catch (error) {
@@ -345,6 +357,86 @@ function Profile() {
             <small style={{ display: 'block', marginTop: '5px', color: 'rgba(255,255,255,0.6)', fontSize: '0.9em' }}>
               Used for birthday campaigns and special offers (year not required)
             </small>
+          </div>
+
+          {/* SMS Preferences Section */}
+          <div style={{ marginTop: '30px', paddingTop: '30px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <h4 style={{ marginBottom: '15px', fontSize: '1.1rem', color: '#c9a86a' }}>SMS Notifications</h4>
+            <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '20px' }}>
+              Manage how you want to receive text message notifications. Reply STOP to any SMS to unsubscribe.
+            </p>
+
+            <div className="form-group">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', background: 'rgba(0, 122, 255, 0.1)', borderRadius: '6px', border: '1px solid rgba(0, 122, 255, 0.3)' }}>
+                <input
+                  type="checkbox"
+                  checked={profileData.smsPreferences?.enabled !== false}
+                  onChange={(e) => setProfileData({
+                    ...profileData,
+                    smsPreferences: {
+                      ...profileData.smsPreferences,
+                      enabled: e.target.checked
+                    }
+                  })}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <div>
+                  <strong style={{ color: '#007aff' }}>Receive SMS notifications</strong>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(232, 232, 232, 0.6)', marginTop: '4px' }}>
+                    Master switch for all text message notifications
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            {profileData.smsPreferences?.enabled !== false && (
+              <div style={{ marginTop: '15px', paddingLeft: '10px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={profileData.smsPreferences?.bookingConfirmations !== false}
+                    onChange={(e) => setProfileData({
+                      ...profileData,
+                      smsPreferences: {
+                        ...profileData.smsPreferences,
+                        bookingConfirmations: e.target.checked
+                      }
+                    })}
+                  />
+                  <span>Booking & payment confirmations</span>
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={profileData.smsPreferences?.reminders !== false}
+                    onChange={(e) => setProfileData({
+                      ...profileData,
+                      smsPreferences: {
+                        ...profileData.smsPreferences,
+                        reminders: e.target.checked
+                      }
+                    })}
+                  />
+                  <span>Class reminders (24 hours before)</span>
+                </label>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={profileData.smsPreferences?.promotional || false}
+                    onChange={(e) => setProfileData({
+                      ...profileData,
+                      smsPreferences: {
+                        ...profileData.smsPreferences,
+                        promotional: e.target.checked
+                      }
+                    })}
+                  />
+                  <span>Promotional messages & special offers</span>
+                </label>
+              </div>
+            )}
           </div>
 
           <button type="submit" className="auth-submit">

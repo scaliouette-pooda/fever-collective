@@ -95,6 +95,7 @@ const automatedCampaignRoutes = require('./routes/automatedCampaigns');
 const classPassAnalyticsRoutes = require('./routes/classpassAnalytics');
 const emailTrackingRoutes = require('./routes/emailTracking');
 const smsRoutes = require('./routes/sms');
+const smsWebhookRoutes = require('./routes/smsWebhook');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -115,6 +116,7 @@ app.use('/api/automated-campaigns', automatedCampaignRoutes);
 app.use('/api/classpass-analytics', classPassAnalyticsRoutes);
 app.use('/api/email-tracking', emailTrackingRoutes);
 app.use('/api/sms', smsRoutes);
+app.use('/api/sms/webhook', smsWebhookRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'The Fever Studio API' });

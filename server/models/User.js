@@ -94,6 +94,25 @@ const userSchema = new mongoose.Schema({
       max: 31
     }
   },
+  // SMS Preferences
+  smsPreferences: {
+    enabled: {
+      type: Boolean,
+      default: true  // Opt-in by default
+    },
+    bookingConfirmations: {
+      type: Boolean,
+      default: true
+    },
+    reminders: {
+      type: Boolean,
+      default: true
+    },
+    promotional: {
+      type: Boolean,
+      default: false  // Promotional messages require explicit opt-in
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now
