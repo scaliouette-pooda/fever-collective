@@ -54,6 +54,9 @@ router.put('/', authenticateUser, requireAdmin, async (req, res) => {
     if (updates.homeImages) {
       settings.homeImages = { ...settings.homeImages, ...updates.homeImages };
     }
+    if (updates.classPassIntegration) {
+      settings.classPassIntegration = { ...settings.classPassIntegration, ...updates.classPassIntegration };
+    }
 
     settings.updatedBy = req.user.userId;
     await settings.save();

@@ -634,6 +634,7 @@ function AdminDashboard() {
       const updatedSettings = {
         ...settings,
         homeImages: {
+          ...settings.homeImages,
           aboutImage: aboutImageUrl,
           missionImage: missionImageUrl
         }
