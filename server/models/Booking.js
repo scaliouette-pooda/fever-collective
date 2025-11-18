@@ -87,6 +87,10 @@ const bookingSchema = new mongoose.Schema({
   checkedInAt: {
     type: Date
   },
+  sendSMS: {
+    type: Boolean,
+    default: true  // Default to true since phone is already required
+  },
   paymentStatus: {
     type: String,
     enum: ['pending', 'completed', 'failed', 'refunded'],

@@ -22,6 +22,14 @@ const emailSequenceStepSchema = new mongoose.Schema({
     type: Number,
     default: 0, // Hours after trigger or previous step
     min: 0
+  },
+  // SMS fields
+  sendSMS: {
+    type: Boolean,
+    default: false  // Whether to also send as SMS
+  },
+  smsMessage: {
+    type: String  // Separate SMS message (shorter than email)
   }
 });
 
@@ -147,6 +155,18 @@ const automatedEmailLogSchema = new mongoose.Schema({
     default: 'scheduled'
   },
   error: String,
+  // SMS tracking
+  smsSent: {
+    type: Boolean,
+    default: false
+  },
+  smsSentAt: Date,
+  smsStatus: {
+    type: String,
+    enum: ['not_sent', 'sent', 'failed'],
+    default: 'not_sent'
+  },
+  smsError: String,
   // Email engagement tracking
   trackingId: {
     type: String,

@@ -64,6 +64,10 @@ mongoose.connect(process.env.MONGODB_URI, {
   // Initialize email scheduler after database connection
   const { initializeEmailScheduler } = require('./services/emailScheduler');
   initializeEmailScheduler();
+
+  // Initialize SMS service (Twilio)
+  const { initializeTwilio } = require('./services/smsService');
+  initializeTwilio();
 })
 .catch(err => logger.error('MongoDB connection error:', err));
 

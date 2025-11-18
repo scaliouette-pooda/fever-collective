@@ -9,6 +9,7 @@ const { authenticateUser, requireAdmin } = require('../middleware/auth');
 const { validateRequestBody, sanitizeInput } = require('../middleware/validation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sendBookingConfirmation, sendPaymentConfirmation } = require('../services/emailService');
+const { sendBookingConfirmationSMS } = require('../services/smsService');
 const { triggerPostClassCampaign, triggerMilestoneAchieved, triggerClassPassFirstVisit, triggerClassPassSecondVisit, triggerClassPassHotLead } = require('../services/automatedEmailService');
 const EmailSubscriber = require('../models/EmailSubscriber');
 const User = require('../models/User');
@@ -26,7 +27,7 @@ router.post('/',
   validateRequestBody(),
   async (req, res) => {
     try {
-      const { eventId, name, email, phone, spots, paymentMethod, promoCodeId, promoCode: promoCodeString, subscribeToEmails, bookingSource, classPassBookingId, classPassPayout } = req.body;
+      const { eventId, name, email, phone, spots, paymentMethod, promoCodeId, promoCode: promoCodeString, subscribeToEmails, sendSMS, bookingSource, classPassBookingId, classPassPayout } = req.body;
 
       // Handle email subscription if user opted in
       if (subscribeToEmails) {
@@ -167,6 +168,7 @@ router.post('/',
           paymentStatus: 'completed',
           paymentMethod: 'membership',
           status: 'confirmed',
+          sendSMS: sendSMS !== undefined ? sendSMS : true,
           bookingSource: bookingSource || 'membership',
           classPassBookingId,
           classPassPayout
@@ -195,6 +197,16 @@ router.post('/',
           });
         } catch (emailError) {
           console.error('Error sending confirmation email:', emailError);
+        }
+
+        // Send confirmation SMS if opted in
+        if (booking.sendSMS) {
+          try {
+            await sendBookingConfirmationSMS(booking, event);
+          } catch (smsError) {
+            console.error('Error sending confirmation SMS:', smsError);
+            // Don't fail the booking if SMS fails
+          }
         }
 
         return res.status(201).json({
@@ -240,6 +252,7 @@ router.post('/',
           paymentIntentId: 'venmo_' + Date.now(),
           paymentStatus: 'pending',
           status: 'pending',
+          sendSMS: sendSMS !== undefined ? sendSMS : true,
           bookingSource: bookingSource || 'direct',
           classPassBookingId,
           classPassPayout
@@ -275,6 +288,7 @@ router.post('/',
           paymentIntentId: 'paypal_' + Date.now(),
           paymentStatus: 'pending',
           status: 'pending',
+          sendSMS: sendSMS !== undefined ? sendSMS : true,
           bookingSource: bookingSource || 'direct',
           classPassBookingId,
           classPassPayout
@@ -317,6 +331,7 @@ router.post('/',
           spots,
           totalAmount,
           paymentIntentId: paymentIntent.id,
+          sendSMS: sendSMS !== undefined ? sendSMS : true,
           bookingSource: bookingSource || 'direct',
           classPassBookingId,
           classPassPayout
@@ -541,11 +556,21 @@ router.patch('/:id/status', authenticateUser, requireAdmin, async (req, res) => 
     // Send email if payment was just confirmed
     if (paymentStatus === 'completed' && booking.paymentStatus === 'completed') {
       sendPaymentConfirmation(booking).catch(err => console.error('Payment email failed:', err));
+
+      // Send SMS if opted in
+      if (booking.sendSMS && event) {
+        sendBookingConfirmationSMS(booking, event).catch(err => console.error('SMS failed:', err));
+      }
     }
 
     // Send email if booking was just confirmed
     if (status === 'confirmed' && booking.status === 'confirmed') {
       sendBookingConfirmation(booking).catch(err => console.error('Booking email failed:', err));
+
+      // Send SMS if opted in
+      if (booking.sendSMS && event) {
+        sendBookingConfirmationSMS(booking, event).catch(err => console.error('SMS failed:', err));
+      }
     }
 
     res.json({

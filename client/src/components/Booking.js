@@ -22,7 +22,8 @@ function Booking() {
     phone: '',
     spots: 1,
     paymentMethod: 'venmo',
-    subscribeToEmails: true
+    subscribeToEmails: true,
+    sendSMS: true
   });
   const [promoCode, setPromoCode] = useState('');
   const [promoData, setPromoData] = useState(null);
@@ -391,6 +392,38 @@ function Booking() {
                   <br />
                   <span style={{ fontSize: '0.85rem', opacity: '0.85' }}>
                     Get exclusive updates, early access to new classes, special offers, and community news. You can unsubscribe anytime.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <div className="form-group">
+              <label style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                lineHeight: '1.5'
+              }}>
+                <input
+                  type="checkbox"
+                  name="sendSMS"
+                  checked={formData.sendSMS}
+                  onChange={(e) => setFormData({ ...formData, sendSMS: e.target.checked })}
+                  style={{
+                    marginTop: '4px',
+                    cursor: 'pointer',
+                    width: '18px',
+                    height: '18px',
+                    accentColor: '#c9a86a'
+                  }}
+                />
+                <span>
+                  <strong>Receive SMS notifications</strong>
+                  <br />
+                  <span style={{ fontSize: '0.85rem', opacity: '0.85' }}>
+                    Get booking confirmations and class reminders via text message.
                   </span>
                 </span>
               </label>
