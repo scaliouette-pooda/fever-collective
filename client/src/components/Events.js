@@ -40,7 +40,8 @@ function Events() {
       expandedEvents.push(event);
 
       // If it's a recurring event, generate instances
-      if (event.isRecurring && event.recurrencePattern === 'weekly' && event.recurrenceDays?.length > 0) {
+      // Support both 'weekly' and 'daily' patterns when recurrenceDays are specified
+      if (event.isRecurring && (event.recurrencePattern === 'weekly' || event.recurrencePattern === 'daily') && event.recurrenceDays?.length > 0) {
         const originalDate = parseEventDate(event.date);
         const endDate = event.recurrenceEndDate ? parseEventDate(event.recurrenceEndDate) : new Date(originalDate.getFullYear() + 1, originalDate.getMonth(), originalDate.getDate());
 
