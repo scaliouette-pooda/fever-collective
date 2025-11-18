@@ -113,15 +113,12 @@ function AdminDashboard() {
   const [selectedListForImport, setSelectedListForImport] = useState(null);
   const [showAddSubscriberForm, setShowAddSubscriberForm] = useState(false);
   const [selectedListForAdd, setSelectedListForAdd] = useState(null);
-  const [subscriberForm, setSubscriberForm] = useState({
-    email: '',
-    name: '',
-    phone: ''
-  });
+  const [selectedSubscriberId, setSelectedSubscriberId] = useState('');
   const [expandedListId, setExpandedListId] = useState(null);
   const [listSubscribers, setListSubscribers] = useState({});
   const [showSubscriberForm, setShowSubscriberForm] = useState(false);
   const [editingSubscriber, setEditingSubscriber] = useState(null);
+  const [selectedListIds, setSelectedListIds] = useState([]);
   const [subscriberSearch, setSubscriberSearch] = useState('');
   const [subscriberFilter, setSubscriberFilter] = useState('all');
 
@@ -1100,26 +1097,33 @@ function AdminDashboard() {
   const handleAddSubscriber = async (e) => {
     e.preventDefault();
 
-    if (!subscriberForm.email) {
-      alert('Email is required');
+    if (!selectedSubscriberId) {
+      alert('Please select a subscriber');
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
 
+      // Find the selected subscriber
+      const subscriber = emailSubscribers.find(sub => sub._id === selectedSubscriberId);
+      if (!subscriber) {
+        alert('Subscriber not found');
+        return;
+      }
+
       // Add subscriber to the list
       await api.post(`/api/email-lists/${selectedListForAdd}/subscribers`, {
-        email: subscriberForm.email,
-        name: subscriberForm.name,
-        phone: subscriberForm.phone
+        email: subscriber.email,
+        name: subscriber.name,
+        phone: subscriber.phone
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       alert('Subscriber added successfully!');
       setShowAddSubscriberForm(false);
-      setSubscriberForm({ email: '', name: '', phone: '' });
+      setSelectedSubscriberId('');
       setSelectedListForAdd(null);
       fetchData();
 
@@ -4131,54 +4135,45 @@ jane@example.com,Jane Smith
               <div className="modal-overlay" onClick={() => {
                 setShowAddSubscriberForm(false);
                 setSelectedListForAdd(null);
-                setSubscriberForm({ email: '', name: '', phone: '' });
+                setSelectedSubscriberId('');
               }}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                  <h2>Add Subscriber</h2>
-                  <p>Manually add a single subscriber to this email list.</p>
+                  <h2>Add Subscriber to List</h2>
+                  <p>Select an existing subscriber to add to this email list.</p>
 
                   <form onSubmit={handleAddSubscriber}>
                     <div className="form-group">
-                      <label>Email *</label>
-                      <input
-                        type="email"
-                        value={subscriberForm.email}
-                        onChange={(e) => setSubscriberForm({ ...subscriberForm, email: e.target.value })}
-                        placeholder="subscriber@example.com"
+                      <label>Select Subscriber *</label>
+                      <select
+                        value={selectedSubscriberId}
+                        onChange={(e) => setSelectedSubscriberId(e.target.value)}
                         required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Name (Optional)</label>
-                      <input
-                        type="text"
-                        value={subscriberForm.name}
-                        onChange={(e) => setSubscriberForm({ ...subscriberForm, name: e.target.value })}
-                        placeholder="John Doe"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Phone (Optional)</label>
-                      <input
-                        type="tel"
-                        value={subscriberForm.phone}
-                        onChange={(e) => setSubscriberForm({ ...subscriberForm, phone: e.target.value })}
-                        placeholder="(555) 123-4567"
-                      />
+                      >
+                        <option value="">-- Choose a subscriber --</option>
+                        {emailSubscribers
+                          .filter(sub => sub.isSubscribed && !sub.isBlocked)
+                          .sort((a, b) => (a.email || '').localeCompare(b.email || ''))
+                          .map(subscriber => (
+                            <option key={subscriber._id} value={subscriber._id}>
+                              {subscriber.name ? `${subscriber.name} (${subscriber.email})` : subscriber.email}
+                            </option>
+                          ))}
+                      </select>
+                      <small style={{ color: 'rgba(232, 232, 232, 0.7)', marginTop: '0.5rem' }}>
+                        Only showing active, non-blocked subscribers
+                      </small>
                     </div>
 
                     <div className="form-actions">
                       <button type="button" onClick={() => {
                         setShowAddSubscriberForm(false);
                         setSelectedListForAdd(null);
-                        setSubscriberForm({ email: '', name: '', phone: '' });
+                        setSelectedSubscriberId('');
                       }}>
                         Cancel
                       </button>
                       <button type="submit" style={{ backgroundColor: '#4CAF50' }}>
-                        Add Subscriber
+                        Add to List
                       </button>
                     </div>
                   </form>
