@@ -106,7 +106,7 @@ router.post('/',
 // Update subscriber (admin only)
 router.put('/:id', authenticateUser, requireAdmin, async (req, res) => {
   try {
-    const { name, tags, preferences, isSubscribed, isBlocked } = req.body;
+    const { name, tags, preferences, isSubscribed, isBlocked, lists } = req.body;
 
     const subscriber = await EmailSubscriber.findById(req.params.id);
 
@@ -125,6 +125,50 @@ router.put('/:id', authenticateUser, requireAdmin, async (req, res) => {
       }
     }
     if (isBlocked !== undefined) subscriber.isBlocked = isBlocked;
+
+    // Handle list membership updates
+    if (lists !== undefined && Array.isArray(lists)) {
+      const EmailList = require('../models/EmailList');
+
+      // Get current lists (only static ones)
+      const currentLists = await EmailList.find({
+        type: 'static',
+        subscribers: subscriber._id
+      });
+
+      const currentListIds = currentLists.map(list => list._id.toString());
+      const newListIds = lists.map(id => id.toString());
+
+      // Lists to add subscriber to
+      const listsToAdd = newListIds.filter(id => !currentListIds.includes(id));
+      // Lists to remove subscriber from
+      const listsToRemove = currentListIds.filter(id => !newListIds.includes(id));
+
+      // Add to new lists
+      for (const listId of listsToAdd) {
+        const list = await EmailList.findById(listId);
+        if (list && list.type === 'static') {
+          if (!list.subscribers.includes(subscriber._id)) {
+            list.subscribers.push(subscriber._id);
+            await list.save();
+            await list.updateSubscriberCount();
+          }
+        }
+      }
+
+      // Remove from old lists
+      for (const listId of listsToRemove) {
+        const list = await EmailList.findById(listId);
+        if (list && list.type === 'static') {
+          list.subscribers = list.subscribers.filter(id => id.toString() !== subscriber._id.toString());
+          await list.save();
+          await list.updateSubscriberCount();
+        }
+      }
+
+      // Update subscriber's lists array
+      subscriber.lists = newListIds;
+    }
 
     await subscriber.save();
 

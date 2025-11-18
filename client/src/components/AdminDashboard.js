@@ -4489,6 +4489,7 @@ jane@example.com,Jane Smith
                           <button
                             onClick={() => {
                               setEditingSubscriber(subscriber);
+                              setSelectedListIds(subscriber.lists?.map(list => typeof list === 'string' ? list : list._id) || []);
                               setShowSubscriberForm(true);
                             }}
                             className="action-btn edit-btn"
@@ -4533,6 +4534,7 @@ jane@example.com,Jane Smith
               <div className="modal-overlay" onClick={() => {
                 setShowSubscriberForm(false);
                 setEditingSubscriber(null);
+                setSelectedListIds([]);
               }}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                   <h2>{editingSubscriber ? 'Edit Subscriber' : 'Add New Subscriber'}</h2>
@@ -4543,7 +4545,8 @@ jane@example.com,Jane Smith
                       email: formData.get('email'),
                       name: formData.get('name'),
                       isSubscribed: formData.get('isSubscribed') === 'true',
-                      isBlocked: formData.get('isBlocked') === 'true'
+                      isBlocked: formData.get('isBlocked') === 'true',
+                      lists: editingSubscriber ? selectedListIds : undefined
                     };
 
                     try {
@@ -4561,6 +4564,7 @@ jane@example.com,Jane Smith
                       }
                       setShowSubscriberForm(false);
                       setEditingSubscriber(null);
+                      setSelectedListIds([]);
                       fetchData();
                     } catch (error) {
                       console.error('Error saving subscriber:', error);
@@ -4604,10 +4608,60 @@ jane@example.com,Jane Smith
                       </select>
                     </div>
 
+                    {editingSubscriber && (
+                      <div className="form-group">
+                        <label>Email Lists</label>
+                        <div style={{
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '8px',
+                          padding: '1rem',
+                          maxHeight: '200px',
+                          overflowY: 'auto',
+                          backgroundColor: 'rgba(0,0,0,0.2)'
+                        }}>
+                          {emailLists.filter(list => list.type === 'static').length === 0 ? (
+                            <p style={{ color: 'rgba(255,255,255,0.5)', margin: 0 }}>No static lists available</p>
+                          ) : (
+                            emailLists
+                              .filter(list => list.type === 'static')
+                              .sort((a, b) => a.name.localeCompare(b.name))
+                              .map(list => (
+                                <div key={list._id} style={{ marginBottom: '0.5rem' }}>
+                                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedListIds.includes(list._id)}
+                                      onChange={(e) => {
+                                        if (e.target.checked) {
+                                          setSelectedListIds([...selectedListIds, list._id]);
+                                        } else {
+                                          setSelectedListIds(selectedListIds.filter(id => id !== list._id));
+                                        }
+                                      }}
+                                      style={{ marginRight: '0.5rem' }}
+                                    />
+                                    <span>{list.name}</span>
+                                    {list.description && (
+                                      <small style={{ marginLeft: '0.5rem', color: 'rgba(255,255,255,0.5)' }}>
+                                        ({list.subscriberCount} subscribers)
+                                      </small>
+                                    )}
+                                  </label>
+                                </div>
+                              ))
+                          )}
+                        </div>
+                        <small style={{ color: 'rgba(232, 232, 232, 0.7)', display: 'block', marginTop: '0.5rem' }}>
+                          Select which email lists this subscriber should belong to (static lists only)
+                        </small>
+                      </div>
+                    )}
+
                     <div className="form-actions">
                       <button type="button" onClick={() => {
                         setShowSubscriberForm(false);
                         setEditingSubscriber(null);
+                        setSelectedListIds([]);
                       }}>
                         Cancel
                       </button>
