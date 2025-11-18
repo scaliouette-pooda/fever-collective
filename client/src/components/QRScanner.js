@@ -29,17 +29,110 @@ function QRScanner() {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-      // Filter events for today and future
-      const upcoming = response.data.filter(event => {
-        const eventDate = new Date(event.date);
-        return eventDate >= today;
-      }).slice(0, 10); // Show next 10 events
+      // Expand recurring events
+      const expandedEvents = expandRecurringEvents(response.data);
+
+      // Filter for today and next 7 days, and sort by date/time
+      const sevenDaysFromNow = new Date(today);
+      sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+
+      const upcoming = expandedEvents
+        .filter(event => {
+          const eventDate = new Date(event.date);
+          return eventDate >= today && eventDate <= sevenDaysFromNow;
+        })
+        .sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          if (dateA.getTime() !== dateB.getTime()) {
+            return dateA - dateB;
+          }
+          // If same date, sort by time
+          return a.time.localeCompare(b.time);
+        });
 
       setEvents(upcoming);
+
+      // Auto-select the next upcoming class
+      if (upcoming.length > 0) {
+        const nextClass = findNextClass(upcoming, now);
+        if (nextClass) {
+          setSelectedEvent(nextClass._id);
+        }
+      }
     } catch (err) {
       console.error('Error fetching events:', err);
       setError('Failed to load events');
     }
+  };
+
+  const expandRecurringEvents = (events) => {
+    const expanded = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (const event of events) {
+      if (event.isRecurring && (event.recurrencePattern === 'weekly' || event.recurrencePattern === 'daily') && event.recurrenceDays?.length > 0) {
+        // Expand for next 7 days
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(today);
+          date.setDate(date.getDate() + i);
+          const dayName = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][date.getDay()];
+
+          if (event.recurrenceDays.includes(dayName)) {
+            const dateKey = date.toISOString().split('T')[0];
+            expanded.push({
+              ...event,
+              _id: `${event._id}_${dateKey}`,
+              date: date.toISOString(),
+              isRecurringInstance: true,
+              parentEventId: event._id
+            });
+          }
+        }
+      } else {
+        // Regular one-time event
+        expanded.push(event);
+      }
+    }
+
+    return expanded;
+  };
+
+  const findNextClass = (events, now) => {
+    // Find the class that's happening now or starting soon
+    const nowTime = now.getHours() * 60 + now.getMinutes();
+
+    for (const event of events) {
+      const eventDate = new Date(event.date);
+      const isSameDay = eventDate.toDateString() === now.toDateString();
+
+      if (isSameDay) {
+        // Parse event time (format: "HH:MM AM/PM")
+        const timeParts = event.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (timeParts) {
+          let hours = parseInt(timeParts[1]);
+          const minutes = parseInt(timeParts[2]);
+          const period = timeParts[3].toUpperCase();
+
+          if (period === 'PM' && hours !== 12) hours += 12;
+          if (period === 'AM' && hours === 12) hours = 0;
+
+          const eventTimeInMinutes = hours * 60 + minutes;
+
+          // Select if event is within 1 hour before or hasn't ended (assuming 1 hour duration)
+          if (eventTimeInMinutes >= nowTime - 60 && eventTimeInMinutes <= nowTime + 60) {
+            return event;
+          }
+        }
+      } else if (eventDate > now) {
+        // First future event
+        return event;
+      }
+    }
+
+    // If no class found in time window, return the first one
+    return events[0];
   };
 
   const startScanner = () => {
@@ -91,10 +184,16 @@ function QRScanner() {
       const qrData = JSON.parse(decodedText);
       console.log('Parsed QR data:', qrData);
 
+      // Find the selected event to check if it's a recurring instance
+      const selectedEventData = events.find(e => e._id === selectedEvent);
+      const eventIdToUse = selectedEventData?.isRecurringInstance
+        ? selectedEventData.parentEventId
+        : selectedEvent;
+
       // Send check-in request
       const response = await api.post('/api/bookings/check-in', {
         userId: qrData.userId,
-        eventId: selectedEvent,
+        eventId: eventIdToUse,
         membershipNumber: qrData.membershipNumber
       });
 
