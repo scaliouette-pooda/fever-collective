@@ -136,6 +136,13 @@ router.put('/:id',
   sanitizeInput,
   async (req, res) => {
     try {
+      console.log('Updating event:', req.params.id);
+      console.log('Update data:', {
+        date: req.body.date,
+        time: req.body.time,
+        title: req.body.title
+      });
+
       const event = await Event.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -145,6 +152,12 @@ router.put('/:id',
       if (!event) {
         return res.status(404).json({ error: 'Event not found' });
       }
+
+      console.log('Event updated successfully:', {
+        id: event._id,
+        date: event.date,
+        time: event.time
+      });
 
       res.json(event);
     } catch (error) {

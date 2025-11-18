@@ -349,15 +349,20 @@ function AdminDashboard() {
         imageUrl: imageUrl || ''
       };
 
-      console.log('Creating event with time:', {
-        original: eventForm.time,
-        converted: convertedTime
+      console.log('Saving event:', {
+        isEditing: !!editingEvent,
+        originalDate: eventForm.date,
+        convertedDate: eventDate.toISOString(),
+        originalTime: eventForm.time,
+        convertedTime: convertedTime,
+        eventData: eventData
       });
 
       if (editingEvent) {
-        await api.put(`/api/events/${editingEvent._id}`, eventData, {
+        const response = await api.put(`/api/events/${editingEvent._id}`, eventData, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log('Update response:', response.data);
         alert('Class updated successfully!');
       } else {
         const response = await api.post('/api/events', eventData, {
@@ -380,7 +385,8 @@ function AdminDashboard() {
       fetchData();
     } catch (error) {
       console.error('Error saving event:', error);
-      alert('Failed to save event. Please try again.');
+      console.error('Error details:', error.response?.data);
+      alert(`Failed to save event: ${error.response?.data?.error || error.message}`);
     }
   };
 
