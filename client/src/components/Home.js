@@ -40,7 +40,7 @@ function Home() {
             <h2>Pop-Up Pilates Experiences</h2>
             <p>
               We bring transformative pilates experiences to unique locations.
-              Each event is carefully curated to create an intentional space
+              Each class is carefully curated to create an intentional space
               for movement, connection, and wellness.
             </p>
             <p>
@@ -69,7 +69,7 @@ function Home() {
             in unique locations, creating intentional spaces for movement, connection, and community.
           </p>
           <p>
-            Each event is carefully designed to blend premium instruction with extraordinary
+            Each class is carefully designed to blend premium instruction with extraordinary
             atmospheres, offering an experience that nourishes both body and spirit.
           </p>
         </div>

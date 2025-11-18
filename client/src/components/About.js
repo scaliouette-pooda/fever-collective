@@ -19,7 +19,7 @@ function About() {
             in unique locations, creating intentional spaces for movement, connection, and community.
           </p>
           <p>
-            Each event is carefully designed to blend premium instruction with extraordinary
+            Each class is carefully designed to blend premium instruction with extraordinary
             atmospheres, offering an experience that nourishes both body and spirit.
           </p>
         </div>

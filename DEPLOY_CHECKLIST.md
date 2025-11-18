@@ -6,7 +6,7 @@ Follow these steps to deploy The Fever Studio for external review.
 
 1. Go to https://github.com/new
 2. Repository name: `fever-collective`
-3. Description: "Pilates popup event booking platform"
+3. Description: "Pilates popup class booking platform"
 4. Choose **Public** or **Private**
 5. **Do NOT** check "Initialize with README"
 6. Click **"Create repository"**

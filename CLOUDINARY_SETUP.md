@@ -61,8 +61,8 @@ CLOUDINARY_API_SECRET=your_api_secret_here
 
 1. Start your local server: `cd server && npm start`
 2. Go to the Admin Dashboard at `http://localhost:3000/admin`
-3. Click **Create New Event**
-4. Fill in the event details
+3. Click **Create New Class**
+4. Fill in the Class details
 5. Click **Choose File** under "Event Image"
 6. Select an image (JPG, PNG, or WEBP, max 5MB)
 7. You'll see a preview of the image
