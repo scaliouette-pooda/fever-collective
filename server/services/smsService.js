@@ -1,7 +1,45 @@
 // SMS Service using Twilio
 // Install: npm install twilio
 
+const { replaceVariables, getTemplate } = require('../utils/smsTemplates');
+
 let twilioClient = null;
+let settings = null;
+
+// Cache settings to avoid repeated DB queries
+const getSettings = async () => {
+  if (!settings) {
+    try {
+      const Settings = require('../models/Settings');
+      settings = await Settings.findById('site_settings');
+    } catch (error) {
+      console.error('Failed to load settings for SMS:', error.message);
+    }
+  }
+  return settings;
+};
+
+// Update SMS statistics
+const updateSMSStats = async (success = true, cost = 0.0075) => {
+  try {
+    const Settings = require('../models/Settings');
+    const currentSettings = await Settings.findById('site_settings');
+
+    if (currentSettings) {
+      if (success) {
+        currentSettings.smsStats.totalSent += 1;
+        currentSettings.smsStats.todaySent += 1;
+        currentSettings.smsStats.totalCost += cost;
+      } else {
+        currentSettings.smsStats.totalFailed += 1;
+      }
+
+      await currentSettings.save();
+    }
+  } catch (error) {
+    console.error('Failed to update SMS statistics:', error.message);
+  }
+};
 
 // Initialize Twilio client
 const initializeTwilio = () => {
@@ -71,14 +109,29 @@ const formatPhoneNumber = (phone) => {
 
 // Send a generic SMS
 const sendSMS = async (to, message) => {
+  // Check global SMS settings
+  const smsSettings = await getSettings();
+  if (smsSettings && !smsSettings.smsConfig?.enabled) {
+    console.log('SMS globally disabled in settings - skipping SMS send');
+    return { success: false, error: 'SMS globally disabled' };
+  }
+
+  // Check daily limit
+  if (smsSettings && smsSettings.smsStats?.todaySent >= smsSettings.smsConfig?.dailyLimit) {
+    console.error(`Daily SMS limit reached (${smsSettings.smsConfig.dailyLimit})`);
+    return { success: false, error: 'Daily SMS limit reached' };
+  }
+
   const client = getClient();
   if (!client) {
     console.log('SMS not configured - skipping SMS send');
+    await updateSMSStats(false);
     return { success: false, error: 'SMS not configured' };
   }
 
   if (!process.env.TWILIO_PHONE_NUMBER) {
     console.log('TWILIO_PHONE_NUMBER not set - skipping SMS send');
+    await updateSMSStats(false);
     return { success: false, error: 'Twilio phone number not configured' };
   }
 
@@ -87,6 +140,7 @@ const sendSMS = async (to, message) => {
 
     if (!formattedPhone) {
       console.error('SMS not sent: Invalid phone number format');
+      await updateSMSStats(false);
       return { success: false, error: 'Invalid phone number format' };
     }
 
@@ -97,9 +151,15 @@ const sendSMS = async (to, message) => {
     });
 
     console.log(`✅ SMS sent to ${formattedPhone}: ${result.sid}`);
+
+    // Update statistics
+    const cost = smsSettings?.smsConfig?.costPerMessage || 0.0075;
+    await updateSMSStats(true, cost);
+
     return { success: true, sid: result.sid };
   } catch (error) {
     console.error('Error sending SMS:', error.message);
+    await updateSMSStats(false);
     return { success: false, error: error.message };
   }
 };
@@ -128,7 +188,17 @@ const sendBookingConfirmationSMS = async (booking, event) => {
     year: 'numeric'
   });
 
-  const message = `🎉 Booking Confirmed!\n\n${event.title}\n${eventDate} at ${event.time}\n${event.location}\n\nSpots: ${booking.spots}\nTotal: $${booking.totalAmount}\n\nSee you there!\n- The Fever Studio`;
+  const template = getTemplate('bookingConfirmation');
+  const message = replaceVariables(template, {
+    name: booking.name,
+    eventTitle: event.title,
+    eventDate: event.date,
+    eventTime: event.time,
+    eventLocation: event.location,
+    spots: booking.spots,
+    totalAmount: booking.totalAmount,
+    confirmationNumber: booking.confirmationNumber
+  });
 
   return await sendSMS(booking.phone, message);
 };
@@ -223,5 +293,7 @@ module.exports = {
   sendMembershipConfirmationSMS,
   sendCreditsLowSMS,
   sendBulkSMS,
-  formatPhoneNumber
+  formatPhoneNumber,
+  getSettings,
+  updateSMSStats
 };

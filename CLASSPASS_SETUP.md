@@ -144,7 +144,7 @@ Shows ClassPass users with 2+ visits who haven't converted yet.
 
 Last 10 ClassPass bookings showing:
 - Customer info
-- Event booked
+- Class booked
 - Payout amount
 - Status (completed/pending)
 - Date

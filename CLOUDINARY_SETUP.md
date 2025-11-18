@@ -1,6 +1,6 @@
 # Cloudinary Image Upload Setup Guide
 
-This guide will help you set up Cloudinary for handling event images in The Fever Studio application.
+This guide will help you set up Cloudinary for handling class images in The Fever Studio application.
 
 ## Why Cloudinary?
 
@@ -66,7 +66,7 @@ CLOUDINARY_API_SECRET=your_api_secret_here
 5. Click **Choose File** under "Event Image"
 6. Select an image (JPG, PNG, or WEBP, max 5MB)
 7. You'll see a preview of the image
-8. Click **Create Event**
+8. Click **create class**
 9. The image will be uploaded to Cloudinary and the URL will be saved
 
 ## How It Works

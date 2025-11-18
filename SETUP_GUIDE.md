@@ -72,7 +72,7 @@
    - Click "Create New Event"
    - Fill out all fields
    - Upload an image (optional)
-   - Click "Create Event"
+   - Click "create class"
 
 ### Step 5: View Events
 

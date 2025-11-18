@@ -187,6 +187,90 @@ const settingsSchema = new mongoose.Schema({
     }
   },
 
+  // SMS Configuration
+  smsConfig: {
+    enabled: {
+      type: Boolean,
+      default: false
+    },
+    fromName: {
+      type: String,
+      default: 'Fever Studio'
+    },
+    twilioConfigured: {
+      type: Boolean,
+      default: false
+    },
+    sendBookingConfirmations: {
+      type: Boolean,
+      default: true
+    },
+    sendPaymentConfirmations: {
+      type: Boolean,
+      default: true
+    },
+    sendReminders: {
+      type: Boolean,
+      default: true
+    },
+    reminderHoursBefore: {
+      type: Number,
+      default: 24
+    },
+    sendWaitlistNotifications: {
+      type: Boolean,
+      default: true
+    },
+    sendMembershipConfirmations: {
+      type: Boolean,
+      default: true
+    },
+    sendCreditsLowWarning: {
+      type: Boolean,
+      default: true
+    },
+    creditsLowThreshold: {
+      type: Number,
+      default: 3
+    },
+    allowPromotionalSMS: {
+      type: Boolean,
+      default: false
+    },
+    dailyLimit: {
+      type: Number,
+      default: 1000 // Prevent runaway costs
+    },
+    costPerMessage: {
+      type: Number,
+      default: 0.0075 // USD per SMS for tracking
+    }
+  },
+
+  // SMS Statistics
+  smsStats: {
+    totalSent: {
+      type: Number,
+      default: 0
+    },
+    totalFailed: {
+      type: Number,
+      default: 0
+    },
+    totalCost: {
+      type: Number,
+      default: 0
+    },
+    lastResetDate: {
+      type: Date,
+      default: Date.now
+    },
+    todaySent: {
+      type: Number,
+      default: 0
+    }
+  },
+
   updatedAt: {
     type: Date,
     default: Date.now
