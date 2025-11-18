@@ -4714,6 +4714,12 @@ jane@example.com,Jane Smith
                 >
                   Quick Reference
                 </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'sms-setup' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('sms-setup')}
+                >
+                  SMS Notifications
+                </div>
               </div>
 
               {/* Content Area */}
@@ -5640,6 +5646,325 @@ jane@example.com,Jane Smith
                       <li>Database queries: Direct inspection of collections for troubleshooting</li>
                       <li>Environment variables: Verify SMTP, API keys, and configuration</li>
                     </ul>
+                  </div>
+                )}
+
+                {/* SMS Notifications Section */}
+                {activeHelpSection === 'sms-setup' && (
+                  <div className="help-section-content">
+                    <h3>SMS Notifications Setup & Management</h3>
+
+                    <p>
+                      Send text message notifications to your members for bookings, reminders, and important updates.
+                      Powered by Twilio SMS service with full opt-out compliance.
+                    </p>
+
+                    <h4>What is SMS Notifications?</h4>
+                    <p>
+                      SMS notifications allow you to communicate with members via text messages for time-sensitive updates
+                      like booking confirmations, class reminders, payment confirmations, and promotional offers. All SMS
+                      features comply with SMS marketing regulations and include automatic opt-out handling.
+                    </p>
+
+                    <h4>Setup Requirements</h4>
+                    <p>Before you can send SMS messages, you'll need:</p>
+                    <ul>
+                      <li><strong>Twilio Account:</strong> Sign up at twilio.com (free trial available)</li>
+                      <li><strong>Phone Number:</strong> Purchase a Twilio phone number ($1.15/month)</li>
+                      <li><strong>Account Credentials:</strong> Account SID and Auth Token from Twilio</li>
+                      <li><strong>Vercel Configuration:</strong> Add environment variables to Vercel</li>
+                    </ul>
+
+                    <h4>Configuration Steps</h4>
+
+                    <div className="help-expandable" style={{ marginBottom: '1.5rem' }}>
+                      <strong>Step 1: Create Twilio Account</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <ol>
+                          <li>Go to <a href="https://twilio.com" target="_blank" rel="noopener noreferrer" style={{ color: '#007aff' }}>twilio.com</a></li>
+                          <li>Sign up for a free account (includes $15 trial credit)</li>
+                          <li>Verify your email and phone number</li>
+                          <li>Complete the account setup wizard</li>
+                        </ol>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginBottom: '1.5rem' }}>
+                      <strong>Step 2: Get Phone Number</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <ol>
+                          <li>In Twilio Console, go to Phone Numbers → Buy a number</li>
+                          <li>Choose a US number with SMS capabilities ($1.15/month)</li>
+                          <li>Verify your caller ID if required</li>
+                          <li>Note the phone number (format: +1234567890)</li>
+                        </ol>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginBottom: '1.5rem' }}>
+                      <strong>Step 3: Get API Credentials</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <p>In Twilio Console dashboard, you'll find:</p>
+                        <div className="help-code-block" style={{ marginTop: '0.5rem' }}>
+                          Account SID: ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+                          Auth Token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                        </div>
+                        <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#ff453a' }}>
+                          ⚠️ Keep these credentials secure - never commit to GitHub or share publicly
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginBottom: '1.5rem' }}>
+                      <strong>Step 4: Configure Vercel Environment Variables</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <ol>
+                          <li>Go to your Vercel Dashboard</li>
+                          <li>Select your fever-collective project</li>
+                          <li>Navigate to Settings → Environment Variables</li>
+                          <li>Add these three variables:</li>
+                        </ol>
+                        <div className="help-code-block" style={{ marginTop: '0.5rem' }}>
+                          TWILIO_ACCOUNT_SID = Your Account SID<br/>
+                          TWILIO_AUTH_TOKEN = Your Auth Token<br/>
+                          TWILIO_PHONE_NUMBER = Your phone number (e.g., +14088055814)
+                        </div>
+                        <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                          Set for: Production, Preview, and Development environments
+                        </p>
+                        <ol start="5">
+                          <li>Save and redeploy your application</li>
+                        </ol>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginBottom: '1.5rem' }}>
+                      <strong>Step 5: Configure Webhook (Optional - for opt-out automation)</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #c9a86a' }}>
+                        <p>To enable automatic STOP/START handling:</p>
+                        <ol>
+                          <li>In Twilio Console, go to Phone Numbers → Manage → Active numbers</li>
+                          <li>Select your phone number</li>
+                          <li>Scroll to "Messaging" section</li>
+                          <li>For "A MESSAGE COMES IN", configure webhook:</li>
+                        </ol>
+                        <div className="help-code-block" style={{ marginTop: '0.5rem' }}>
+                          URL: https://fever-collective.vercel.app/api/sms/webhook/incoming<br/>
+                          Method: POST
+                        </div>
+                        <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                          This enables users to text STOP to unsubscribe and START to re-subscribe
+                        </p>
+                      </div>
+                    </div>
+
+                    <h4>Admin Dashboard Features</h4>
+
+                    <div className="help-code-block">
+                      Settings Tab → SMS Configuration:<br/>
+                      <br/>
+                      ✅ Twilio connection status indicator<br/>
+                      ✅ Master enable/disable toggle<br/>
+                      ✅ Individual notification type toggles:<br/>
+                      &nbsp;&nbsp;&nbsp;- Booking confirmations<br/>
+                      &nbsp;&nbsp;&nbsp;- Payment confirmations<br/>
+                      &nbsp;&nbsp;&nbsp;- Class reminders (24h before)<br/>
+                      &nbsp;&nbsp;&nbsp;- Waitlist notifications<br/>
+                      &nbsp;&nbsp;&nbsp;- Membership confirmations<br/>
+                      &nbsp;&nbsp;&nbsp;- Low credits warnings<br/>
+                      &nbsp;&nbsp;&nbsp;- Promotional SMS<br/>
+                      ✅ Daily SMS limit (cost control)<br/>
+                      ✅ Real-time statistics dashboard<br/>
+                      ✅ Test SMS tool<br/>
+                      <br/>
+                      Email Automation Tab → SMS Toggle:<br/>
+                      ✅ Add SMS to automated email campaigns<br/>
+                      ✅ 160 character SMS composer<br/>
+                      ✅ Template variables support<br/>
+                      ✅ Character counter
+                    </div>
+
+                    <h4>SMS Template Variables</h4>
+                    <p>Use these placeholders in your SMS messages:</p>
+                    <div className="help-code-block">
+                      {`{{name}}`} - User's full name<br/>
+                      {`{{firstName}}`} - User's first name<br/>
+                      {`{{eventTitle}}`} - Class title<br/>
+                      {`{{eventDate}}`} - Class date (formatted)<br/>
+                      {`{{eventTime}}`} - Class time<br/>
+                      {`{{eventLocation}}`} - Studio location<br/>
+                      {`{{confirmationNumber}}`} - Booking confirmation #<br/>
+                      {`{{spots}}`} - Number of spots booked<br/>
+                      {`{{totalAmount}}`} - Total payment amount<br/>
+                      {`{{membershipTier}}`} - Member's tier name<br/>
+                      {`{{creditsRemaining}}`} - Available credits<br/>
+                      {`{{studioName}}`} - The Fever Studio<br/>
+                      {`{{studioPhone}}`} - (408) 805-5814
+                    </div>
+
+                    <h4>User SMS Preferences</h4>
+                    <p>Members can manage their SMS preferences in their Profile:</p>
+                    <ul>
+                      <li><strong>Master Toggle:</strong> Enable/disable all SMS notifications</li>
+                      <li><strong>Booking Confirmations:</strong> Text confirmations for bookings and payments</li>
+                      <li><strong>Class Reminders:</strong> 24-hour reminders before classes</li>
+                      <li><strong>Promotional:</strong> Marketing and special offer messages (opt-in required)</li>
+                    </ul>
+
+                    <h4>Opt-Out Compliance</h4>
+                    <p>Automatic handling of SMS regulations:</p>
+                    <ul>
+                      <li><strong>STOP Keyword:</strong> Users can text STOP to unsubscribe instantly</li>
+                      <li><strong>START Keyword:</strong> Users can text START to re-subscribe</li>
+                      <li><strong>HELP Keyword:</strong> Provides contact information</li>
+                      <li><strong>Opt-In Required:</strong> Users must check SMS opt-in during booking</li>
+                      <li><strong>Clear Instructions:</strong> Profile shows "Reply STOP to unsubscribe"</li>
+                    </ul>
+
+                    <h4>SMS Scheduler</h4>
+                    <p>Automated SMS processing for campaigns:</p>
+                    <ul>
+                      <li>Runs every 5 minutes to process pending SMS</li>
+                      <li>Respects user opt-out preferences</li>
+                      <li>Enforces daily sending limits</li>
+                      <li>Tracks delivery status (sent, failed, skipped)</li>
+                      <li>1-second delay between sends to avoid rate limiting</li>
+                    </ul>
+
+                    <h4>Cost Management</h4>
+                    <div className="help-code-block">
+                      Twilio Pricing (US):<br/>
+                      - SMS (outbound): $0.0075 per message<br/>
+                      - Phone number: $1.15/month<br/>
+                      <br/>
+                      Monthly Cost Examples:<br/>
+                      100 SMS = $0.75 + $1.15 = $1.90/month<br/>
+                      500 SMS = $3.75 + $1.15 = $4.90/month<br/>
+                      1000 SMS = $7.50 + $1.15 = $8.65/month<br/>
+                      <br/>
+                      Cost Control Features:<br/>
+                      ✅ Daily limit setting (default: 1000)<br/>
+                      ✅ Real-time cost tracking<br/>
+                      ✅ Statistics dashboard<br/>
+                      ✅ Failed message monitoring
+                    </div>
+
+                    <h4>Testing SMS</h4>
+                    <div className="help-checklist">
+                      <li>Go to Settings tab → SMS Configuration</li>
+                      <li>Verify Twilio shows "✅ Connected"</li>
+                      <li>Enter your phone number in Test SMS section</li>
+                      <li>Type a test message (e.g., "Test from The Fever Studio")</li>
+                      <li>Click "Send Test SMS"</li>
+                      <li>Check your phone for the message</li>
+                      <li>Reply STOP to test opt-out (then START to re-enable)</li>
+                    </div>
+
+                    <h4>Troubleshooting</h4>
+
+                    <div className="help-expandable">
+                      <strong>❌ Twilio Not Configured</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #ff453a' }}>
+                        <p><strong>Symptom:</strong> Red "❌ Twilio Not Configured" message in Settings</p>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                          <li>Check Vercel environment variables are set correctly</li>
+                          <li>Verify no extra spaces in variable values</li>
+                          <li>Phone number must include + sign (e.g., +14088055814)</li>
+                          <li>Redeploy application after adding variables</li>
+                        </ol>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>SMS Not Sending</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #ffd60a' }}>
+                        <p><strong>Possible Causes:</strong></p>
+                        <ul>
+                          <li>SMS globally disabled in Settings</li>
+                          <li>Daily limit reached</li>
+                          <li>Invalid phone number format</li>
+                          <li>User opted out</li>
+                          <li>Twilio account balance depleted</li>
+                        </ul>
+                        <p><strong>Check:</strong></p>
+                        <ul>
+                          <li>Settings → SMS Config → Enabled = ON</li>
+                          <li>Statistics → Today Sent &lt; Daily Limit</li>
+                          <li>Phone number format: +1XXXXXXXXXX</li>
+                          <li>User Profile → SMS Preferences → Enabled</li>
+                          <li>Twilio Console → Account balance</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable">
+                      <strong>High Failure Rate</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid #ff453a' }}>
+                        <p><strong>Common Issues:</strong></p>
+                        <ul>
+                          <li>Invalid phone numbers in database</li>
+                          <li>Landline numbers (SMS not supported)</li>
+                          <li>Carrier blocking (spam detection)</li>
+                        </ul>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                          <li>Validate phone numbers during registration</li>
+                          <li>Use formatPhoneNumber() utility in backend</li>
+                          <li>Register brand with Twilio for better deliverability</li>
+                          <li>Avoid spam trigger words in messages</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <h4>Best Practices</h4>
+                    <ul>
+                      <li><strong>Keep Messages Short:</strong> Under 160 characters to avoid multi-part SMS</li>
+                      <li><strong>Include Studio Name:</strong> Always identify "The Fever Studio"</li>
+                      <li><strong>Clear Call-to-Action:</strong> Tell them what to do next</li>
+                      <li><strong>Timing Matters:</strong> Don't send late at night (after 9 PM)</li>
+                      <li><strong>Personalize:</strong> Use {`{{name}}`} or {`{{firstName}}`} variables</li>
+                      <li><strong>Monitor Stats:</strong> Check delivery rates weekly</li>
+                      <li><strong>Respect Opt-Outs:</strong> Never manually re-enable for opted-out users</li>
+                      <li><strong>Test Before Bulk:</strong> Always test with your phone first</li>
+                    </ul>
+
+                    <h4>Compliance Checklist</h4>
+                    <div className="help-checklist">
+                      <li>✅ Opt-in checkbox in booking flow</li>
+                      <li>✅ STOP keyword automatically disables SMS</li>
+                      <li>✅ START keyword re-enables SMS</li>
+                      <li>✅ Opt-out instructions in user profile</li>
+                      <li>✅ Sender identification in messages</li>
+                      <li>✅ User preferences stored and respected</li>
+                      <li>✅ Webhook configured for automatic opt-out</li>
+                      <li>✅ Daily limits prevent abuse</li>
+                    </div>
+
+                    <h4>Quick Reference</h4>
+                    <div className="help-code-block">
+                      SMS Routes:<br/>
+                      - Test SMS: POST /api/sms/test<br/>
+                      - Get Stats: GET /api/sms/stats<br/>
+                      - Config Status: GET /api/sms/config-status<br/>
+                      - Bulk SMS: POST /api/sms/bulk<br/>
+                      - Webhook: POST /api/sms/webhook/incoming<br/>
+                      <br/>
+                      Twilio Limits:<br/>
+                      - Default: 1 message/second<br/>
+                      - Trial: Can only send to verified numbers<br/>
+                      - Production: Unlimited after verification<br/>
+                      <br/>
+                      Character Limits:<br/>
+                      - Single SMS: 160 characters<br/>
+                      - Multi-part: 153 chars per segment<br/>
+                      - Recommended: Keep under 160 chars<br/>
+                      <br/>
+                      Support:<br/>
+                      - Twilio Docs: twilio.com/docs/sms<br/>
+                      - SMS Guide: SMS_IMPLEMENTATION_GUIDE.md<br/>
+                      - Help: Contact support@thefeverstudio.com
+                    </div>
                   </div>
                 )}
               </div>
