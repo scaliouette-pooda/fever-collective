@@ -1192,7 +1192,7 @@ function AdminDashboard() {
           className={activeTab === 'events' ? 'active' : ''}
           onClick={() => setActiveTab('events')}
         >
-          Events
+          Classes
         </button>
         <button
           className={activeTab === 'bookings' ? 'active' : ''}
@@ -1328,7 +1328,7 @@ function AdminDashboard() {
                   setEditingEvent(null);
                   resetEventForm();
                 }}>
-                  Create New Event
+                  Create New Class
                 </button>
               </div>
             </div>
@@ -1336,7 +1336,7 @@ function AdminDashboard() {
             {showEventForm && (
               <div className="event-form-modal">
                 <div className="event-form-container">
-                  <h3>{editingEvent ? 'Edit Event' : 'Create New Event'}</h3>
+                  <h3>{editingEvent ? 'Edit Class' : 'Create New Class'}</h3>
                   <form onSubmit={handleCreateEvent}>
                     <div className="form-row">
                       <div className="form-group">
