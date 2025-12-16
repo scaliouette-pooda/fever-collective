@@ -418,6 +418,7 @@ const settingsSchema = new mongoose.Schema({
 
   // Visual Style Customizer
   styleCustomizer: {
+    // Site-wide
     primaryColor: { type: String, default: '#c9a86a' },
     backgroundColor: { type: String, default: '#1a1a1a' },
     textColor: { type: String, default: '#e8e8e8' },
@@ -428,6 +429,23 @@ const settingsSchema = new mongoose.Schema({
     sectionPadding: { type: String, default: '4rem' },
     buttonRadius: { type: String, default: '0' },
     maxWidth: { type: String, default: '1400px' },
+
+    // Navigation
+    navBackgroundColor: { type: String, default: '#000000' },
+    navTextColor: { type: String, default: '#e8e8e8' },
+    navHeight: { type: String, default: '5rem' },
+
+    // Events
+    eventCardBackground: { type: String, default: '#1a1a1a' },
+    eventCardBorder: { type: String, default: '#c9a86a' },
+    eventCardRadius: { type: String, default: '0' },
+
+    // Forms
+    inputBackground: { type: String, default: '#2a2a2a' },
+    inputBorder: { type: String, default: '#c9a86a' },
+    inputTextColor: { type: String, default: '#e8e8e8' },
+
+    // Visibility
     showSocialLinks: { type: Boolean, default: true },
     showFooter: { type: Boolean, default: true }
   },

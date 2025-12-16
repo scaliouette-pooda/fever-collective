@@ -35,6 +35,8 @@ function App() {
 
           generatedCSS = `
             /* Visual Style Customizer Generated CSS */
+
+            /* Site-wide Styles */
             body {
               background-color: ${sc.backgroundColor || '#1a1a1a'} !important;
               color: ${sc.textColor || '#e8e8e8'} !important;
@@ -82,6 +84,41 @@ function App() {
               max-width: ${sc.maxWidth || '1400px'} !important;
               margin-left: auto !important;
               margin-right: auto !important;
+            }
+
+            /* Navigation Bar */
+            nav,
+            .navigation {
+              background-color: ${sc.navBackgroundColor || '#000000'} !important;
+              height: ${sc.navHeight || '5rem'} !important;
+            }
+
+            nav a,
+            .navigation a,
+            .nav-links a {
+              color: ${sc.navTextColor || '#e8e8e8'} !important;
+            }
+
+            /* Events Page */
+            .event-card {
+              background-color: ${sc.eventCardBackground || '#1a1a1a'} !important;
+              border-color: ${sc.eventCardBorder || '#c9a86a'} !important;
+              border-radius: ${sc.eventCardRadius || '0'} !important;
+            }
+
+            /* Forms & Inputs */
+            input,
+            textarea,
+            select {
+              background-color: ${sc.inputBackground || '#2a2a2a'} !important;
+              border-color: ${sc.inputBorder || '#c9a86a'} !important;
+              color: ${sc.inputTextColor || '#e8e8e8'} !important;
+            }
+
+            input:focus,
+            textarea:focus,
+            select:focus {
+              border-color: ${sc.primaryColor || '#c9a86a'} !important;
             }
 
             /* Visibility controls */

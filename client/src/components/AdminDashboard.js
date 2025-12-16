@@ -164,7 +164,7 @@ function AdminDashboard() {
       } else if (activeTab === 'bookings') {
         const res = await api.get('/api/bookings', config);
         setBookings(res.data);
-      } else if (activeTab === 'settings') {
+      } else if (activeTab === 'settings' || activeTab === 'homePage' || activeTab === 'cssEditor') {
         const [settingsRes, smsStatsRes, twilioStatusRes] = await Promise.all([
           api.get('/api/settings', config),
           api.get('/api/sms/stats', config).catch(() => ({ data: null })),
@@ -3913,6 +3913,168 @@ function AdminDashboard() {
                       <option value="1600px">Wide (1600px)</option>
                       <option value="100%">Full Width</option>
                     </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Bar */}
+              <div className="settings-card">
+                <h3>🧭 Navigation Bar</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Customize navigation appearance
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Navigation Background</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.navBackgroundColor || '#000000'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, navBackgroundColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.navBackgroundColor || '#000000'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Navigation Text Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.navTextColor || '#e8e8e8'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, navTextColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.navTextColor || '#e8e8e8'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Navigation Height</label>
+                    <select
+                      value={settings.styleCustomizer?.navHeight || '5rem'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, navHeight: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="4rem">Compact</option>
+                      <option value="5rem">Default</option>
+                      <option value="6rem">Tall</option>
+                      <option value="7rem">Extra Tall</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Events Page */}
+              <div className="settings-card">
+                <h3>📅 Events Page</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Customize events display
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Event Card Background</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.eventCardBackground || '#1a1a1a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, eventCardBackground: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.eventCardBackground || '#1a1a1a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Event Card Border Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.eventCardBorder || '#c9a86a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, eventCardBorder: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.eventCardBorder || '#c9a86a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Event Card Corner Radius</label>
+                    <select
+                      value={settings.styleCustomizer?.eventCardRadius || '0'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, eventCardRadius: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="0">Sharp (Square)</option>
+                      <option value="4px">Slightly Rounded</option>
+                      <option value="8px">Rounded</option>
+                      <option value="12px">Very Rounded</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Forms & Inputs */}
+              <div className="settings-card">
+                <h3>📋 Forms & Inputs</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Customize form appearance
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Input Background</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.inputBackground || '#2a2a2a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, inputBackground: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.inputBackground || '#2a2a2a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Input Border Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.inputBorder || '#c9a86a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, inputBorder: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.inputBorder || '#c9a86a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Input Text Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.inputTextColor || '#e8e8e8'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, inputTextColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.inputTextColor || '#e8e8e8'}</small>
                   </div>
                 </div>
               </div>
