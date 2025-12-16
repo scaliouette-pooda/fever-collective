@@ -3783,7 +3783,7 @@ function AdminDashboard() {
 
                   <div className="form-group">
                     <label>Muted Text</label>
-                    <input type="color" value={settings.styleCustomizer?.mutedTextColor || 'rgba(232, 232, 232, 0.7)'}
+                    <input type="color" value={settings.styleCustomizer?.mutedTextColor || '#b8b8b8'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, mutedTextColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
                     <small style={{ color: 'rgba(232,232,232,0.5)' }}>Subtle, secondary text</small>
@@ -3823,7 +3823,7 @@ function AdminDashboard() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div className="form-group">
                     <label>Border Color</label>
-                    <input type="color" value={settings.styleCustomizer?.borderColor || 'rgba(255, 255, 255, 0.1)'}
+                    <input type="color" value={settings.styleCustomizer?.borderColor || '#333333'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, borderColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
                     <small style={{ color: 'rgba(232,232,232,0.5)' }}>Lines and borders</small>
@@ -3921,142 +3921,6 @@ function AdminDashboard() {
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
                     />
                     <small>Current: {settings.styleCustomizer?.headingColor || '#ffffff'}</small>
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional Colors */}
-              <div className="settings-card">
-                <h3>🎨 Additional Colors</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
-                  Fine-tune specific color elements across your site
-                </p>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
-                  <div className="form-group">
-                    <label>Link Color (Normal)</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.linkColor || '#c9a86a'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, linkColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.linkColor || '#c9a86a'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Link Hover Color</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.linkHoverColor || '#d4b97a'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, linkHoverColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.linkHoverColor || '#d4b97a'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Button Hover Color</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.buttonHoverColor || '#d4b97a'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, buttonHoverColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.buttonHoverColor || '#d4b97a'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Muted Text Color (Subtle Text)</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.mutedTextColor || 'rgba(232, 232, 232, 0.7)'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, mutedTextColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.mutedTextColor || 'rgba(232, 232, 232, 0.7)'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Secondary Background (Cards, Sections)</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.secondaryBackground || '#2a2a2a'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, secondaryBackground: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.secondaryBackground || '#2a2a2a'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Border Color (General Borders)</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.borderColor || 'rgba(255, 255, 255, 0.1)'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, borderColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.borderColor || 'rgba(255, 255, 255, 0.1)'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Success/Active Color</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.successColor || '#4caf50'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, successColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.successColor || '#4caf50'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Warning/Alert Color</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.warningColor || '#ff9800'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, warningColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.warningColor || '#ff9800'}</small>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Error/Danger Color</label>
-                    <input
-                      type="color"
-                      value={settings.styleCustomizer?.errorColor || '#f44336'}
-                      onChange={(e) => setSettings(prev => ({
-                        ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, errorColor: e.target.value }
-                      }))}
-                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
-                    />
-                    <small>Current: {settings.styleCustomizer?.errorColor || '#f44336'}</small>
                   </div>
                 </div>
               </div>

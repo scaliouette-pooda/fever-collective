@@ -46,7 +46,7 @@ function App() {
               /* Text Colors */
               --text-color: ${sc.textColor || '#e8e8e8'};
               --heading-color: ${sc.headingColor || '#ffffff'};
-              --muted-text-color: ${sc.mutedTextColor || 'rgba(232, 232, 232, 0.7)'};
+              --muted-text-color: ${sc.mutedTextColor || '#b8b8b8'};
 
               /* Interactive Elements */
               --link-color: ${sc.linkColor || sc.primaryColor || '#c9a86a'};
@@ -54,7 +54,7 @@ function App() {
               --button-hover-color: ${sc.buttonHoverColor || '#d4b97a'};
 
               /* Borders */
-              --border-color: ${sc.borderColor || 'rgba(255, 255, 255, 0.1)'};
+              --border-color: ${sc.borderColor || '#333333'};
 
               /* Status Colors */
               --success-color: ${sc.successColor || '#4caf50'};
