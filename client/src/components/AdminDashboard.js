@@ -648,8 +648,14 @@ function AdminDashboard() {
       setAboutImageFile(null);
       setMissionImageFile(null);
 
-      alert('Settings updated successfully!');
-      fetchData(); // Refresh settings
+      // If CSS Editor changes were made, reload the page to apply them
+      if (activeTab === 'cssEditor') {
+        alert('Settings updated successfully! Page will reload to apply style changes.');
+        window.location.reload();
+      } else {
+        alert('Settings updated successfully!');
+        fetchData(); // Refresh settings
+      }
     } catch (error) {
       console.error('Error updating settings:', error);
       alert('Failed to update settings. Please try again.');
