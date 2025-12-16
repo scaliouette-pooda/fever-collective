@@ -1517,6 +1517,12 @@ function AdminDashboard() {
           </button>
         )}
         <button
+          className={activeTab === 'homePage' ? 'active' : ''}
+          onClick={() => setActiveTab('homePage')}
+        >
+          Home Page
+        </button>
+        <button
           className={activeTab === 'settings' ? 'active' : ''}
           onClick={() => setActiveTab('settings')}
         >
@@ -2818,21 +2824,19 @@ function AdminDashboard() {
                           : '-'}
                       </td>
                       <td>
+                        <button
+                          onClick={() => handleEditCampaign(campaign)}
+                          style={{ backgroundColor: '#c9a86a', marginRight: '0.5rem' }}
+                        >
+                          Edit
+                        </button>
                         {campaign.status === 'draft' && (
-                          <>
-                            <button
-                              onClick={() => handleEditCampaign(campaign)}
-                              style={{ backgroundColor: '#c9a86a', marginRight: '0.5rem' }}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleSendCampaign(campaign._id)}
-                              style={{ backgroundColor: '#4CAF50' }}
-                            >
-                              Send Now
-                            </button>
-                          </>
+                          <button
+                            onClick={() => handleSendCampaign(campaign._id)}
+                            style={{ backgroundColor: '#4CAF50', marginRight: '0.5rem' }}
+                          >
+                            Send Now
+                          </button>
                         )}
                         {campaign.status !== 'sending' && (
                           <button onClick={() => handleDeleteCampaign(campaign._id)}>
@@ -3068,6 +3072,404 @@ function AdminDashboard() {
                 <li>Custom date range filters</li>
               </ul>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'homePage' && settings && (
+          <div className="settings-section">
+            <h2>Home Page Content</h2>
+            <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '2rem' }}>
+              Customize all the text and images that appear on your home page. Changes will be reflected immediately.
+            </p>
+            <form onSubmit={handleUpdateSettings} className="settings-form">
+
+              {/* Hero Section */}
+              <div className="settings-card">
+                <h3>Hero Section</h3>
+                <div className="form-group">
+                  <label>Main Title</label>
+                  <input
+                    type="text"
+                    value={settings.homePageContent?.heroTitle || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', 'heroTitle', e.target.value)}
+                    placeholder="The Fever Studio"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Tagline</label>
+                  <input
+                    type="text"
+                    value={settings.homePageContent?.heroTagline || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', 'heroTagline', e.target.value)}
+                    placeholder="Heat That Heals. Movement That Empowers."
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Secondary Tagline</label>
+                  <input
+                    type="text"
+                    value={settings.homePageContent?.heroSecondaryTagline || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', 'heroSecondaryTagline', e.target.value)}
+                    placeholder="sculpt · strength · sweat · stretch"
+                  />
+                </div>
+              </div>
+
+              {/* About Section */}
+              <div className="settings-card">
+                <h3>About Section</h3>
+                <div className="form-group">
+                  <label>Section Title</label>
+                  <input
+                    type="text"
+                    name="homePageContent.aboutTitle"
+                    value={settings.homePageContent?.aboutTitle || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="Pop-Up Pilates Experiences"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>First Paragraph</label>
+                  <textarea
+                    name="homePageContent.aboutParagraph1"
+                    value={settings.homePageContent?.aboutParagraph1 || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    rows="3"
+                    placeholder="We bring transformative pilates experiences..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Second Paragraph</label>
+                  <textarea
+                    name="homePageContent.aboutParagraph2"
+                    value={settings.homePageContent?.aboutParagraph2 || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    rows="3"
+                    placeholder="Join our community..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label>About Image URL</label>
+                  <input
+                    type="url"
+                    name="homePageContent.aboutImage"
+                    value={settings.homePageContent?.aboutImage || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <small>Enter the full URL to an image hosted online</small>
+                </div>
+              </div>
+
+              {/* Mission Section */}
+              <div className="settings-card">
+                <h3>Mission Section</h3>
+                <div className="form-group">
+                  <label>Section Title</label>
+                  <input
+                    type="text"
+                    name="homePageContent.missionTitle"
+                    value={settings.homePageContent?.missionTitle || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="Our Mission"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>First Paragraph</label>
+                  <textarea
+                    name="homePageContent.missionParagraph1"
+                    value={settings.homePageContent?.missionParagraph1 || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    rows="3"
+                    placeholder="The Fever Studio is more than a workout..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Second Paragraph</label>
+                  <textarea
+                    name="homePageContent.missionParagraph2"
+                    value={settings.homePageContent?.missionParagraph2 || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    rows="3"
+                    placeholder="Each class is carefully designed..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Mission Image URL</label>
+                  <input
+                    type="url"
+                    name="homePageContent.missionImage"
+                    value={settings.homePageContent?.missionImage || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <small>Enter the full URL to an image hosted online</small>
+                </div>
+              </div>
+
+              {/* Values Section */}
+              <div className="settings-card">
+                <h3>Values Section</h3>
+                <div className="form-group">
+                  <label>Section Title</label>
+                  <input
+                    type="text"
+                    name="homePageContent.valuesTitle"
+                    value={settings.homePageContent?.valuesTitle || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="What We Believe"
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1rem' }}>
+                  {/* Value 1 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 1</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.value1Title"
+                        value={settings.homePageContent?.value1Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="You Belong Here"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.value1Description"
+                        value={settings.homePageContent?.value1Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="We create inclusive spaces..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Value 2 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 2</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.value2Title"
+                        value={settings.homePageContent?.value2Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Community First"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.value2Description"
+                        value={settings.homePageContent?.value2Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="Movement is better together..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Value 3 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 3</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.value3Title"
+                        value={settings.homePageContent?.value3Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Holistic Wellness"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.value3Description"
+                        value={settings.homePageContent?.value3Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="True wellness encompasses..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Value 4 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 4</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.value4Title"
+                        value={settings.homePageContent?.value4Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Intentional Experiences"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.value4Description"
+                        value={settings.homePageContent?.value4Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="Every detail matters..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Approach Section */}
+              <div className="settings-card">
+                <h3>Approach Section</h3>
+                <div className="form-group">
+                  <label>Section Title</label>
+                  <input
+                    type="text"
+                    name="homePageContent.approachTitle"
+                    value={settings.homePageContent?.approachTitle || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="Our Approach"
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1rem' }}>
+                  {/* Approach 1 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 1</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.approach1Title"
+                        value={settings.homePageContent?.approach1Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Popup Locations"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.approach1Description"
+                        value={settings.homePageContent?.approach1Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="We partner with unique venues..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Approach 2 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 2</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.approach2Title"
+                        value={settings.homePageContent?.approach2Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Expert Instruction"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.approach2Description"
+                        value={settings.homePageContent?.approach2Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="Our certified instructors..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Approach 3 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 3</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.approach3Title"
+                        value={settings.homePageContent?.approach3Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="All Levels Welcome"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.approach3Description"
+                        value={settings.homePageContent?.approach3Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="Whether you're brand new..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Approach 4 */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 4</h4>
+                    <div className="form-group">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.approach4Title"
+                        value={settings.homePageContent?.approach4Title || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Premium Equipment"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        name="homePageContent.approach4Description"
+                        value={settings.homePageContent?.approach4Description || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="We provide everything you need..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Section */}
+              <div className="settings-card">
+                <h3>Call-to-Action Section</h3>
+                <div className="form-group">
+                  <label>CTA Title</label>
+                  <input
+                    type="text"
+                    name="homePageContent.ctaTitle"
+                    value={settings.homePageContent?.ctaTitle || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="Join The Collective"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>CTA Subtitle</label>
+                  <input
+                    type="text"
+                    name="homePageContent.ctaSubtitle"
+                    value={settings.homePageContent?.ctaSubtitle || ''}
+                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                    placeholder="Experience wellness that's out of this world"
+                  />
+                </div>
+              </div>
+
+              <button type="submit" className="submit-button">
+                Save Home Page Changes
+              </button>
+            </form>
           </div>
         )}
 

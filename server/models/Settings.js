@@ -151,7 +151,146 @@ const settingsSchema = new mongoose.Schema({
     }
   },
 
-  // Home Page Images
+  // Home Page Content
+  homePageContent: {
+    // Hero Section
+    heroTitle: {
+      type: String,
+      default: 'The Fever Studio'
+    },
+    heroTagline: {
+      type: String,
+      default: 'Heat That Heals. Movement That Empowers.'
+    },
+    heroSecondaryTagline: {
+      type: String,
+      default: 'sculpt · strength · sweat · stretch'
+    },
+
+    // About Section
+    aboutTitle: {
+      type: String,
+      default: 'Pop-Up Pilates Experiences'
+    },
+    aboutParagraph1: {
+      type: String,
+      default: 'We bring transformative pilates experiences to unique locations. Each class is carefully curated to create an intentional space for movement, connection, and wellness.'
+    },
+    aboutParagraph2: {
+      type: String,
+      default: 'Join our community and discover a new approach to fitness that transcends the traditional studio experience.'
+    },
+    aboutImage: {
+      type: String,
+      default: ''
+    },
+
+    // Mission Section
+    missionTitle: {
+      type: String,
+      default: 'Our Mission'
+    },
+    missionParagraph1: {
+      type: String,
+      default: 'The Fever Studio is more than a workout—it\'s a holistic wellness experience that transcends traditional fitness. We curate transformative pilates popup events in unique locations, creating intentional spaces for movement, connection, and community.'
+    },
+    missionParagraph2: {
+      type: String,
+      default: 'Each class is carefully designed to blend premium instruction with extraordinary atmospheres, offering an experience that nourishes both body and spirit.'
+    },
+    missionImage: {
+      type: String,
+      default: ''
+    },
+
+    // Values Section
+    valuesTitle: {
+      type: String,
+      default: 'What We Believe'
+    },
+    value1Title: {
+      type: String,
+      default: 'You Belong Here'
+    },
+    value1Description: {
+      type: String,
+      default: 'We create inclusive spaces where everyone feels welcome, regardless of experience level or fitness background.'
+    },
+    value2Title: {
+      type: String,
+      default: 'Community First'
+    },
+    value2Description: {
+      type: String,
+      default: 'Movement is better together. We foster genuine connections that extend beyond the mat.'
+    },
+    value3Title: {
+      type: String,
+      default: 'Holistic Wellness'
+    },
+    value3Description: {
+      type: String,
+      default: 'True wellness encompasses mind, body, and spirit. Our approach integrates all three dimensions.'
+    },
+    value4Title: {
+      type: String,
+      default: 'Intentional Experiences'
+    },
+    value4Description: {
+      type: String,
+      default: 'Every detail matters. From location selection to music curation, we craft memorable moments.'
+    },
+
+    // Approach Section
+    approachTitle: {
+      type: String,
+      default: 'Our Approach'
+    },
+    approach1Title: {
+      type: String,
+      default: 'Popup Locations'
+    },
+    approach1Description: {
+      type: String,
+      default: 'We partner with unique venues—rooftops, galleries, gardens, and hidden gems—transforming spaces into wellness sanctuaries.'
+    },
+    approach2Title: {
+      type: String,
+      default: 'Expert Instruction'
+    },
+    approach2Description: {
+      type: String,
+      default: 'Our certified instructors bring years of experience and a passion for holistic movement practices.'
+    },
+    approach3Title: {
+      type: String,
+      default: 'All Levels Welcome'
+    },
+    approach3Description: {
+      type: String,
+      default: 'Whether you\'re brand new to pilates or a seasoned practitioner, we offer modifications and challenges for every body.'
+    },
+    approach4Title: {
+      type: String,
+      default: 'Premium Equipment'
+    },
+    approach4Description: {
+      type: String,
+      default: 'We provide everything you need—mats, props, towels—so you can focus on your practice.'
+    },
+
+    // CTA Section
+    ctaTitle: {
+      type: String,
+      default: 'Join The Collective'
+    },
+    ctaSubtitle: {
+      type: String,
+      default: 'Experience wellness that\'s out of this world'
+    }
+  },
+
+  // Legacy homeImages for backward compatibility
   homeImages: {
     aboutImage: {
       type: String,
