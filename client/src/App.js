@@ -42,14 +42,41 @@ function App() {
               color: ${sc.textColor || '#e8e8e8'} !important;
               font-family: ${sc.fontFamily || 'Arial, sans-serif'} !important;
               font-size: ${sc.fontSize || '16px'} !important;
+              font-weight: ${sc.bodyFontWeight || '400'} !important;
             }
 
+            /* Headings */
             h1, h2, h3, h4, h5, h6 {
               color: ${sc.headingColor || '#ffffff'} !important;
               font-weight: ${sc.headingWeight || '600'} !important;
             }
 
-            /* Primary color for buttons and accents */
+            h1 {
+              font-family: ${sc.h1FontFamily || 'inherit'} !important;
+              font-size: ${sc.h1FontSize || '4rem'} !important;
+              font-weight: ${sc.h1FontWeight || '200'} !important;
+            }
+
+            h2 {
+              font-size: ${sc.h2FontSize || '2rem'} !important;
+              font-weight: ${sc.h2FontWeight || '300'} !important;
+            }
+
+            h3 {
+              font-size: ${sc.h3FontSize || '1.5rem'} !important;
+              font-weight: ${sc.h3FontWeight || '300'} !important;
+            }
+
+            /* Links */
+            a {
+              color: ${sc.linkColor || sc.primaryColor || '#c9a86a'} !important;
+            }
+
+            a:hover {
+              color: ${sc.linkHoverColor || '#d4b97a'} !important;
+            }
+
+            /* Buttons */
             button,
             .btn-primary,
             .hero button,
@@ -59,8 +86,61 @@ function App() {
               border-radius: ${sc.buttonRadius || '0'} !important;
             }
 
-            a {
-              color: ${sc.primaryColor || '#c9a86a'} !important;
+            button:hover,
+            .btn-primary:hover,
+            .hero button:hover,
+            .cta button:hover,
+            .submit-button:hover {
+              background-color: ${sc.buttonHoverColor || '#d4b97a'} !important;
+            }
+
+            /* Secondary backgrounds (cards, sections) */
+            .about-grid,
+            .mission,
+            .value-card,
+            .approach-item,
+            .settings-card,
+            .card,
+            .section-secondary {
+              background-color: ${sc.secondaryBackground || '#2a2a2a'} !important;
+            }
+
+            /* Borders */
+            .border,
+            .about-image img,
+            .mission-image img,
+            .placeholder-image,
+            .placeholder-mission-img,
+            .value-card {
+              border-color: ${sc.borderColor || 'rgba(255, 255, 255, 0.1)'} !important;
+            }
+
+            /* Muted text */
+            .tagline,
+            .cta p,
+            .muted,
+            .text-muted,
+            small {
+              color: ${sc.mutedTextColor || 'rgba(232, 232, 232, 0.7)'} !important;
+            }
+
+            /* Status colors */
+            .success,
+            .status-active,
+            .status-confirmed {
+              color: ${sc.successColor || '#4caf50'} !important;
+            }
+
+            .warning,
+            .status-pending,
+            .status-waitlist {
+              color: ${sc.warningColor || '#ff9800'} !important;
+            }
+
+            .error,
+            .status-cancelled,
+            .status-failed {
+              color: ${sc.errorColor || '#f44336'} !important;
             }
 
             /* Section padding */

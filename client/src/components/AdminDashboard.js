@@ -3790,24 +3790,163 @@ function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Typography */}
+              {/* Additional Colors */}
               <div className="settings-card">
-                <h3>📝 Typography</h3>
+                <h3>🎨 Additional Colors</h3>
                 <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
-                  Customize fonts and text sizes
+                  Fine-tune specific color elements across your site
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
                   <div className="form-group">
-                    <label>Font Family</label>
+                    <label>Link Color (Normal)</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.linkColor || '#c9a86a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, linkColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.linkColor || '#c9a86a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Link Hover Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.linkHoverColor || '#d4b97a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, linkHoverColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.linkHoverColor || '#d4b97a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Button Hover Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.buttonHoverColor || '#d4b97a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, buttonHoverColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.buttonHoverColor || '#d4b97a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Muted Text Color (Subtle Text)</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.mutedTextColor || 'rgba(232, 232, 232, 0.7)'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, mutedTextColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.mutedTextColor || 'rgba(232, 232, 232, 0.7)'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Secondary Background (Cards, Sections)</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.secondaryBackground || '#2a2a2a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, secondaryBackground: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.secondaryBackground || '#2a2a2a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Border Color (General Borders)</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.borderColor || 'rgba(255, 255, 255, 0.1)'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, borderColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.borderColor || 'rgba(255, 255, 255, 0.1)'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Success/Active Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.successColor || '#4caf50'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, successColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.successColor || '#4caf50'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Warning/Alert Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.warningColor || '#ff9800'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, warningColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.warningColor || '#ff9800'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Error/Danger Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.errorColor || '#f44336'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, errorColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.errorColor || '#f44336'}</small>
+                  </div>
+                </div>
+              </div>
+
+              {/* Typography */}
+              <div className="settings-card">
+                <h3>📝 Typography</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Customize all fonts and text sizes throughout your site
+                </p>
+
+                {/* Body Text */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#c9a86a' }}>Body Text (Paragraphs)</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  <div className="form-group">
+                    <label>Body Font Family</label>
                     <select
-                      value={settings.styleCustomizer?.fontFamily || 'Arial, sans-serif'}
+                      value={settings.styleCustomizer?.fontFamily || '-apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif'}
                       onChange={(e) => setSettings(prev => ({
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, fontFamily: e.target.value }
                       }))}
                       style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
                     >
+                      <option value="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif">System Default (Helvetica/Arial)</option>
                       <option value="Arial, sans-serif">Arial</option>
                       <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
                       <option value="'Georgia', serif">Georgia</option>
@@ -3816,11 +3955,13 @@ function AdminDashboard() {
                       <option value="'Verdana', sans-serif">Verdana</option>
                       <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
                       <option value="'Palatino', serif">Palatino</option>
+                      <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                      <option value="'Impact', sans-serif">Impact</option>
                     </select>
                   </div>
 
                   <div className="form-group">
-                    <label>Base Font Size</label>
+                    <label>Body Font Size</label>
                     <select
                       value={settings.styleCustomizer?.fontSize || '16px'}
                       onChange={(e) => setSettings(prev => ({
@@ -3829,28 +3970,173 @@ function AdminDashboard() {
                       }))}
                       style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
                     >
+                      <option value="12px">Very Small (12px)</option>
                       <option value="14px">Small (14px)</option>
-                      <option value="16px">Medium (16px)</option>
+                      <option value="16px">Medium (16px) - Default</option>
                       <option value="18px">Large (18px)</option>
                       <option value="20px">Extra Large (20px)</option>
+                      <option value="22px">Huge (22px)</option>
                     </select>
                   </div>
 
                   <div className="form-group">
-                    <label>Heading Font Weight</label>
+                    <label>Body Font Weight</label>
                     <select
-                      value={settings.styleCustomizer?.headingWeight || '600'}
+                      value={settings.styleCustomizer?.bodyFontWeight || '400'}
                       onChange={(e) => setSettings(prev => ({
                         ...prev,
-                        styleCustomizer: { ...prev.styleCustomizer, headingWeight: e.target.value }
+                        styleCustomizer: { ...prev.styleCustomizer, bodyFontWeight: e.target.value }
                       }))}
                       style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
                     >
+                      <option value="200">Extra Light</option>
+                      <option value="300">Light</option>
+                      <option value="400">Normal</option>
+                      <option value="500">Medium</option>
+                      <option value="600">Semi-Bold</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Main Headings (H1) */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#c9a86a' }}>Main Headings (H1 - Large Titles)</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  <div className="form-group">
+                    <label>H1 Font Family</label>
+                    <select
+                      value={settings.styleCustomizer?.h1FontFamily || 'inherit'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, h1FontFamily: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="inherit">Same as Body</option>
+                      <option value="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif">System Default</option>
+                      <option value="'Georgia', serif">Georgia</option>
+                      <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                      <option value="'Palatino', serif">Palatino</option>
+                      <option value="'Impact', sans-serif">Impact</option>
+                      <option value="'Arial Black', sans-serif">Arial Black</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>H1 Font Size</label>
+                    <select
+                      value={settings.styleCustomizer?.h1FontSize || '4rem'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, h1FontSize: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="2.5rem">Small (2.5rem)</option>
+                      <option value="3rem">Medium (3rem)</option>
+                      <option value="4rem">Default (4rem)</option>
+                      <option value="5rem">Large (5rem)</option>
+                      <option value="6rem">Extra Large (6rem)</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>H1 Font Weight</label>
+                    <select
+                      value={settings.styleCustomizer?.h1FontWeight || '200'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, h1FontWeight: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="200">Extra Light</option>
+                      <option value="300">Light</option>
                       <option value="400">Normal</option>
                       <option value="500">Medium</option>
                       <option value="600">Semi-Bold</option>
                       <option value="700">Bold</option>
                       <option value="800">Extra Bold</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Sub Headings (H2) */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#c9a86a' }}>Sub Headings (H2 - Section Titles)</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                  <div className="form-group">
+                    <label>H2 Font Size</label>
+                    <select
+                      value={settings.styleCustomizer?.h2FontSize || '2rem'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, h2FontSize: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="1.5rem">Small (1.5rem)</option>
+                      <option value="1.8rem">Medium (1.8rem)</option>
+                      <option value="2rem">Default (2rem)</option>
+                      <option value="2.5rem">Large (2.5rem)</option>
+                      <option value="3rem">Extra Large (3rem)</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>H2 Font Weight</label>
+                    <select
+                      value={settings.styleCustomizer?.h2FontWeight || '300'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, h2FontWeight: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="200">Extra Light</option>
+                      <option value="300">Light</option>
+                      <option value="400">Normal</option>
+                      <option value="500">Medium</option>
+                      <option value="600">Semi-Bold</option>
+                      <option value="700">Bold</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Sub Sub Headings (H3) */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: '#c9a86a' }}>Sub-Sub Headings (H3 - Smaller Titles)</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>H3 Font Size</label>
+                    <select
+                      value={settings.styleCustomizer?.h3FontSize || '1.5rem'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, h3FontSize: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="1.2rem">Small (1.2rem)</option>
+                      <option value="1.3rem">Medium (1.3rem)</option>
+                      <option value="1.5rem">Default (1.5rem)</option>
+                      <option value="1.8rem">Large (1.8rem)</option>
+                      <option value="2rem">Extra Large (2rem)</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>H3 Font Weight</label>
+                    <select
+                      value={settings.styleCustomizer?.h3FontWeight || '300'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, h3FontWeight: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="300">Light</option>
+                      <option value="400">Normal</option>
+                      <option value="500">Medium</option>
+                      <option value="600">Semi-Bold</option>
+                      <option value="700">Bold</option>
                     </select>
                   </div>
                 </div>

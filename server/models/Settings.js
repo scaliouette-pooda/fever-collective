@@ -430,6 +430,29 @@ const settingsSchema = new mongoose.Schema({
     buttonRadius: { type: String, default: '0' },
     maxWidth: { type: String, default: '1400px' },
 
+    // Additional Colors
+    linkColor: { type: String, default: '#c9a86a' },
+    linkHoverColor: { type: String, default: '#d4b97a' },
+    buttonHoverColor: { type: String, default: '#d4b97a' },
+    mutedTextColor: { type: String, default: 'rgba(232, 232, 232, 0.7)' },
+    secondaryBackground: { type: String, default: '#2a2a2a' },
+    borderColor: { type: String, default: 'rgba(255, 255, 255, 0.1)' },
+    successColor: { type: String, default: '#4caf50' },
+    warningColor: { type: String, default: '#ff9800' },
+    errorColor: { type: String, default: '#f44336' },
+
+    // Typography - Body
+    bodyFontWeight: { type: String, default: '400' },
+
+    // Typography - Headings
+    h1FontFamily: { type: String, default: 'inherit' },
+    h1FontSize: { type: String, default: '4rem' },
+    h1FontWeight: { type: String, default: '200' },
+    h2FontSize: { type: String, default: '2rem' },
+    h2FontWeight: { type: String, default: '300' },
+    h3FontSize: { type: String, default: '1.5rem' },
+    h3FontWeight: { type: String, default: '300' },
+
     // Navigation
     navBackgroundColor: { type: String, default: '#000000' },
     navTextColor: { type: String, default: '#e8e8e8' },
