@@ -416,6 +416,22 @@ const settingsSchema = new mongoose.Schema({
     default: ''
   },
 
+  // Visual Style Customizer
+  styleCustomizer: {
+    primaryColor: { type: String, default: '#c9a86a' },
+    backgroundColor: { type: String, default: '#1a1a1a' },
+    textColor: { type: String, default: '#e8e8e8' },
+    headingColor: { type: String, default: '#ffffff' },
+    fontFamily: { type: String, default: 'Arial, sans-serif' },
+    fontSize: { type: String, default: '16px' },
+    headingWeight: { type: String, default: '600' },
+    sectionPadding: { type: String, default: '4rem' },
+    buttonRadius: { type: String, default: '0' },
+    maxWidth: { type: String, default: '1400px' },
+    showSocialLinks: { type: Boolean, default: true },
+    showFooter: { type: Boolean, default: true }
+  },
+
   updatedAt: {
     type: Date,
     default: Date.now

@@ -3716,171 +3716,298 @@ function AdminDashboard() {
           <div className="settings-section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <div>
-                <h2>CSS Editor</h2>
+                <h2>Style Customizer</h2>
                 <p style={{ color: 'rgba(232, 232, 232, 0.7)', margin: '0.5rem 0 0 0' }}>
-                  Customize your site's appearance with custom CSS. Changes apply across all pages.
+                  Easily customize colors, fonts, and styling for your entire site
                 </p>
               </div>
             </div>
 
-            <div className="settings-card" style={{
-              background: 'rgba(0, 0, 0, 0.4)',
-              border: '2px solid rgba(201, 168, 106, 0.3)'
-            }}>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <h3 style={{ color: '#c9a86a', fontSize: '1.3rem', marginBottom: '1rem' }}>Custom CSS</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1rem' }}>
-                  Add your own CSS styles below. These styles will be applied site-wide to all pages.
+            <form onSubmit={handleUpdateSettings}>
+              {/* Site-wide Colors */}
+              <div className="settings-card">
+                <h3>🎨 Site Colors</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Choose colors for your site's appearance
                 </p>
 
-                <div style={{
-                  background: 'rgba(201, 168, 106, 0.1)',
-                  border: '1px solid rgba(201, 168, 106, 0.3)',
-                  borderRadius: '4px',
-                  padding: '1rem',
-                  marginBottom: '1.5rem'
-                }}>
-                  <h4 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', color: '#c9a86a' }}>💡 Quick Tips:</h4>
-                  <ul style={{ margin: 0, paddingLeft: '1.5rem', color: 'rgba(232, 232, 232, 0.8)', fontSize: '0.9rem' }}>
-                    <li>Target elements with specific classes or IDs</li>
-                    <li>Use <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '3px' }}>!important</code> to override existing styles</li>
-                    <li>Changes take effect immediately after saving</li>
-                    <li>Test on different pages to ensure consistency</li>
-                  </ul>
-                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Primary Accent Color (Buttons, Links)</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.primaryColor || '#c9a86a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, primaryColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.primaryColor || '#c9a86a'}</small>
+                  </div>
 
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '4px',
-                  padding: '1rem',
-                  marginBottom: '1rem'
-                }}>
-                  <h4 style={{ fontSize: '0.9rem', marginBottom: '0.75rem', color: 'rgba(232, 232, 232, 0.9)' }}>Common Customizations:</h4>
-                  <details style={{ marginBottom: '0.5rem' }}>
-                    <summary style={{ cursor: 'pointer', color: '#c9a86a', marginBottom: '0.5rem' }}>Change Primary Color</summary>
-                    <pre style={{ background: 'rgba(0,0,0,0.5)', padding: '0.75rem', borderRadius: '4px', margin: '0.5rem 0 0 0', overflow: 'auto' }}>
-{`/* Change gold accent color */
-.hero button,
-.cta button {
-  background: #your-color !important;
-}`}</pre>
-                  </details>
-                  <details style={{ marginBottom: '0.5rem' }}>
-                    <summary style={{ cursor: 'pointer', color: '#c9a86a', marginBottom: '0.5rem' }}>Change Font</summary>
-                    <pre style={{ background: 'rgba(0,0,0,0.5)', padding: '0.75rem', borderRadius: '4px', margin: '0.5rem 0 0 0', overflow: 'auto' }}>
-{`/* Change site font */
-body {
-  font-family: 'Your Font', sans-serif !important;
-}`}</pre>
-                  </details>
-                  <details style={{ marginBottom: '0.5rem' }}>
-                    <summary style={{ cursor: 'pointer', color: '#c9a86a', marginBottom: '0.5rem' }}>Adjust Spacing</summary>
-                    <pre style={{ background: 'rgba(0,0,0,0.5)', padding: '0.75rem', borderRadius: '4px', margin: '0.5rem 0 0 0', overflow: 'auto' }}>
-{`/* Add more padding to sections */
-.hero,
-.about,
-.mission {
-  padding: 8rem 2rem !important;
-}`}</pre>
-                  </details>
+                  <div className="form-group">
+                    <label>Background Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.backgroundColor || '#1a1a1a'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, backgroundColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.backgroundColor || '#1a1a1a'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Text Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.textColor || '#e8e8e8'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, textColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.textColor || '#e8e8e8'}</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Heading Color</label>
+                    <input
+                      type="color"
+                      value={settings.styleCustomizer?.headingColor || '#ffffff'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, headingColor: e.target.value }
+                      }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }}
+                    />
+                    <small>Current: {settings.styleCustomizer?.headingColor || '#ffffff'}</small>
+                  </div>
                 </div>
               </div>
 
-              <form onSubmit={handleUpdateSettings}>
-                <div className="form-group">
-                  <label style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>
-                    Your Custom CSS
-                  </label>
-                  <textarea
-                    value={settings.customCSS || ''}
-                    onChange={(e) => setSettings(prev => ({ ...prev, customCSS: e.target.value }))}
-                    placeholder="/* Enter your custom CSS here */
+              {/* Typography */}
+              <div className="settings-card">
+                <h3>📝 Typography</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Customize fonts and text sizes
+                </p>
 
-.hero {
-  /* Your styles */
-}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Font Family</label>
+                    <select
+                      value={settings.styleCustomizer?.fontFamily || 'Arial, sans-serif'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, fontFamily: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="Arial, sans-serif">Arial</option>
+                      <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
+                      <option value="'Georgia', serif">Georgia</option>
+                      <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                      <option value="'Courier New', Courier, monospace">Courier</option>
+                      <option value="'Verdana', sans-serif">Verdana</option>
+                      <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+                      <option value="'Palatino', serif">Palatino</option>
+                    </select>
+                  </div>
 
-/* Add more styles below */
-"
-                    rows="20"
-                    style={{
-                      width: '100%',
-                      padding: '1rem',
-                      background: 'rgba(0, 0, 0, 0.6)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      borderRadius: '4px',
-                      color: '#e8e8e8',
-                      fontFamily: "'Courier New', 'Consolas', monospace",
-                      fontSize: '0.95rem',
-                      lineHeight: '1.6',
-                      resize: 'vertical'
-                    }}
-                  />
-                  <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>
-                    Write standard CSS. Changes will apply to all pages after saving.
-                  </small>
+                  <div className="form-group">
+                    <label>Base Font Size</label>
+                    <select
+                      value={settings.styleCustomizer?.fontSize || '16px'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, fontSize: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="14px">Small (14px)</option>
+                      <option value="16px">Medium (16px)</option>
+                      <option value="18px">Large (18px)</option>
+                      <option value="20px">Extra Large (20px)</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Heading Font Weight</label>
+                    <select
+                      value={settings.styleCustomizer?.headingWeight || '600'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, headingWeight: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="400">Normal</option>
+                      <option value="500">Medium</option>
+                      <option value="600">Semi-Bold</option>
+                      <option value="700">Bold</option>
+                      <option value="800">Extra Bold</option>
+                    </select>
+                  </div>
                 </div>
+              </div>
 
-                <div style={{
-                  display: 'flex',
-                  gap: '1rem',
-                  justifyContent: 'center',
-                  marginTop: '2rem',
-                  paddingTop: '2rem',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-                }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (window.confirm('Reset CSS to default? This will remove all custom styles.')) {
-                        setSettings(prev => ({ ...prev, customCSS: '' }));
-                      }
-                    }}
-                    style={{
-                      padding: '0.75rem 2rem',
-                      background: 'transparent',
-                      border: '1px solid rgba(255, 100, 100, 0.5)',
-                      borderRadius: '4px',
-                      color: 'rgba(255, 100, 100, 0.8)',
-                      cursor: 'pointer',
-                      fontSize: '1rem'
-                    }}
-                  >
-                    Reset CSS
-                  </button>
-                  <button
-                    type="submit"
-                    style={{
-                      padding: '0.75rem 3rem',
-                      background: '#c9a86a',
-                      border: 'none',
-                      borderRadius: '4px',
-                      color: '#000',
-                      cursor: 'pointer',
-                      fontSize: '1rem',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    💾 Save Custom CSS
-                  </button>
+              {/* Spacing & Layout */}
+              <div className="settings-card">
+                <h3>📏 Spacing & Layout</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Adjust spacing and padding
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Section Padding</label>
+                    <select
+                      value={settings.styleCustomizer?.sectionPadding || '4rem'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, sectionPadding: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="2rem">Compact</option>
+                      <option value="4rem">Default</option>
+                      <option value="6rem">Spacious</option>
+                      <option value="8rem">Extra Spacious</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Button Border Radius</label>
+                    <select
+                      value={settings.styleCustomizer?.buttonRadius || '0'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, buttonRadius: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="0">Sharp (Square)</option>
+                      <option value="4px">Slightly Rounded</option>
+                      <option value="8px">Rounded</option>
+                      <option value="25px">Very Rounded (Pill)</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Maximum Page Width</label>
+                    <select
+                      value={settings.styleCustomizer?.maxWidth || '1400px'}
+                      onChange={(e) => setSettings(prev => ({
+                        ...prev,
+                        styleCustomizer: { ...prev.styleCustomizer, maxWidth: e.target.value }
+                      }))}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                    >
+                      <option value="1200px">Narrow (1200px)</option>
+                      <option value="1400px">Default (1400px)</option>
+                      <option value="1600px">Wide (1600px)</option>
+                      <option value="100%">Full Width</option>
+                    </select>
+                  </div>
                 </div>
-              </form>
-            </div>
+              </div>
 
-            <div style={{
-              marginTop: '2rem',
-              padding: '1.5rem',
-              background: 'rgba(100, 150, 255, 0.1)',
-              border: '1px solid rgba(100, 150, 255, 0.3)',
-              borderRadius: '4px'
-            }}>
-              <h4 style={{ color: 'rgba(100, 150, 255, 0.9)', marginBottom: '0.75rem' }}>ℹ️ Need Help?</h4>
-              <p style={{ color: 'rgba(232, 232, 232, 0.8)', margin: 0 }}>
-                If you're not familiar with CSS, consider hiring a developer or refer to CSS documentation online.
-                Incorrect CSS may affect your site's appearance. Always test changes thoroughly.
-              </p>
-            </div>
+              {/* Visibility Options */}
+              <div className="settings-card">
+                <h3>👁️ Show/Hide Elements</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                  Control which elements are visible
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={settings.styleCustomizer?.showSocialLinks !== false}
+                        onChange={(e) => setSettings(prev => ({
+                          ...prev,
+                          styleCustomizer: { ...prev.styleCustomizer, showSocialLinks: e.target.checked }
+                        }))}
+                        style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                      />
+                      <span>Show Social Media Links</span>
+                    </label>
+                  </div>
+
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={settings.styleCustomizer?.showFooter !== false}
+                        onChange={(e) => setSettings(prev => ({
+                          ...prev,
+                          styleCustomizer: { ...prev.styleCustomizer, showFooter: e.target.checked }
+                        }))}
+                        style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                      />
+                      <span>Show Footer</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div style={{
+                position: 'sticky',
+                bottom: '0',
+                background: 'rgba(0, 0, 0, 0.95)',
+                padding: '1.5rem',
+                marginTop: '2rem',
+                marginLeft: '-2rem',
+                marginRight: '-2rem',
+                marginBottom: '-2rem',
+                borderTop: '2px solid #c9a86a',
+                display: 'flex',
+                gap: '1rem',
+                justifyContent: 'center'
+              }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm('Reset all styles to default?')) {
+                      setSettings(prev => ({ ...prev, styleCustomizer: {} }));
+                    }
+                  }}
+                  style={{
+                    padding: '0.75rem 2rem',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '4px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '1rem'
+                  }}
+                >
+                  Reset to Defaults
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '0.75rem 3rem',
+                    background: '#c9a86a',
+                    border: 'none',
+                    borderRadius: '4px',
+                    color: '#000',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  💾 Save All Changes
+                </button>
+              </div>
+            </form>
           </div>
         )}
 
