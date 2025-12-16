@@ -57,6 +57,15 @@ router.put('/', authenticateUser, requireAdmin, async (req, res) => {
     if (updates.classPassIntegration) {
       settings.classPassIntegration = { ...settings.classPassIntegration, ...updates.classPassIntegration };
     }
+    if (updates.styleCustomizer) {
+      settings.styleCustomizer = { ...settings.styleCustomizer, ...updates.styleCustomizer };
+    }
+    if (updates.customCSS !== undefined) {
+      settings.customCSS = updates.customCSS;
+    }
+    if (updates.homePageContent) {
+      settings.homePageContent = { ...settings.homePageContent, ...updates.homePageContent };
+    }
 
     settings.updatedBy = req.user.userId;
     await settings.save();
