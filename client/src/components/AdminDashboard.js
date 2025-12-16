@@ -3735,14 +3735,14 @@ function AdminDashboard() {
                 <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: '#c9a86a' }}>🎨 Colors</h3>
 
                 {/* Primary & Backgrounds */}
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '1.5rem' }}>Main Colors</h4>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '1.5rem', color: 'var(--primary-color)' }}>Main Colors</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div className="form-group">
                     <label>Primary Color</label>
                     <input type="color" value={settings.styleCustomizer?.primaryColor || '#c9a86a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, primaryColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Buttons, links, accents</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Buttons, links, accents</small>
                   </div>
 
                   <div className="form-group">
@@ -3750,7 +3750,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.backgroundColor || '#1a1a1a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, backgroundColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Main page background</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Main page background</small>
                   </div>
 
                   <div className="form-group">
@@ -3758,19 +3758,19 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.secondaryBackground || '#2a2a2a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, secondaryBackground: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Cards, forms, sections</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Cards, forms, sections</small>
                   </div>
                 </div>
 
                 {/* Text Colors */}
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Text Colors</h4>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem', color: 'var(--primary-color)' }}>Text Colors</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div className="form-group">
                     <label>Body Text</label>
                     <input type="color" value={settings.styleCustomizer?.textColor || '#e8e8e8'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, textColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Main paragraph text</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Main paragraph text</small>
                   </div>
 
                   <div className="form-group">
@@ -3778,7 +3778,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.headingColor || '#ffffff'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, headingColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>H1, H2, H3 titles</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>H1, H2, H3 titles</small>
                   </div>
 
                   <div className="form-group">
@@ -3786,19 +3786,19 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.mutedTextColor || '#b8b8b8'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, mutedTextColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Subtle, secondary text</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Subtle, secondary text</small>
                   </div>
                 </div>
 
                 {/* Links & Buttons */}
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Interactive Elements</h4>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem', color: 'var(--primary-color)' }}>Interactive Elements</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div className="form-group">
                     <label>Link Color</label>
                     <input type="color" value={settings.styleCustomizer?.linkColor || '#c9a86a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, linkColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Normal link color</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Normal link color</small>
                   </div>
 
                   <div className="form-group">
@@ -3806,7 +3806,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.linkHoverColor || '#d4b97a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, linkHoverColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Link on hover</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Link on hover</small>
                   </div>
 
                   <div className="form-group">
@@ -3814,31 +3814,31 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.buttonHoverColor || '#d4b97a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, buttonHoverColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Button on hover</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Button on hover</small>
                   </div>
                 </div>
 
                 {/* Borders */}
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Borders & Dividers</h4>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem', color: 'var(--primary-color)' }}>Borders & Dividers</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div className="form-group">
                     <label>Border Color</label>
                     <input type="color" value={settings.styleCustomizer?.borderColor || '#333333'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, borderColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Lines and borders</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Lines and borders</small>
                   </div>
                 </div>
 
                 {/* Status Colors */}
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Status Colors</h4>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem', color: 'var(--primary-color)' }}>Status Colors</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div className="form-group">
                     <label>Success</label>
                     <input type="color" value={settings.styleCustomizer?.successColor || '#4caf50'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, successColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Confirmed, active</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Confirmed, active</small>
                   </div>
 
                   <div className="form-group">
@@ -3846,7 +3846,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.warningColor || '#ff9800'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, warningColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Pending, waitlist</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Pending, waitlist</small>
                   </div>
 
                   <div className="form-group">
@@ -3854,7 +3854,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.errorColor || '#f44336'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, errorColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Cancelled, failed</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Cancelled, failed</small>
                   </div>
                 </div>
               </div>
@@ -3862,7 +3862,7 @@ function AdminDashboard() {
               {/* TYPOGRAPHY & LAYOUT SECTION */}
               <div className="settings-card">
                 <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: '#c9a86a' }}>📝 Typography & Layout</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--muted-text-color)', marginBottom: '1.5rem' }}>
                   Choose colors for your site's appearance
                 </p>
 
@@ -3928,7 +3928,7 @@ function AdminDashboard() {
               {/* Typography */}
               <div className="settings-card">
                 <h3>📝 Typography</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--muted-text-color)', marginBottom: '1.5rem' }}>
                   Customize all fonts and text sizes throughout your site
                 </p>
 
@@ -3943,7 +3943,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, fontFamily: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif">System Default (Helvetica/Arial)</option>
                       <option value="Arial, sans-serif">Arial</option>
@@ -3967,7 +3967,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, fontSize: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="12px">Very Small (12px)</option>
                       <option value="14px">Small (14px)</option>
@@ -3986,7 +3986,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, bodyFontWeight: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="200">Extra Light</option>
                       <option value="300">Light</option>
@@ -4008,7 +4008,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, h1FontFamily: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="inherit">Same as Body</option>
                       <option value="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif">System Default</option>
@@ -4028,7 +4028,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, h1FontSize: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="2.5rem">Small (2.5rem)</option>
                       <option value="3rem">Medium (3rem)</option>
@@ -4046,7 +4046,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, h1FontWeight: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="200">Extra Light</option>
                       <option value="300">Light</option>
@@ -4070,7 +4070,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, h2FontSize: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="1.5rem">Small (1.5rem)</option>
                       <option value="1.8rem">Medium (1.8rem)</option>
@@ -4088,7 +4088,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, h2FontWeight: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="200">Extra Light</option>
                       <option value="300">Light</option>
@@ -4111,7 +4111,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, h3FontSize: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="1.2rem">Small (1.2rem)</option>
                       <option value="1.3rem">Medium (1.3rem)</option>
@@ -4129,7 +4129,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, h3FontWeight: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="300">Light</option>
                       <option value="400">Normal</option>
@@ -4144,7 +4144,7 @@ function AdminDashboard() {
               {/* Spacing & Layout */}
               <div className="settings-card">
                 <h3>📏 Spacing & Layout</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--muted-text-color)', marginBottom: '1.5rem' }}>
                   Adjust spacing and padding
                 </p>
 
@@ -4157,7 +4157,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, sectionPadding: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="2rem">Compact</option>
                       <option value="4rem">Default</option>
@@ -4174,7 +4174,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, buttonRadius: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="0">Sharp (Square)</option>
                       <option value="4px">Slightly Rounded</option>
@@ -4191,7 +4191,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, maxWidth: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="1200px">Narrow (1200px)</option>
                       <option value="1400px">Default (1400px)</option>
@@ -4205,7 +4205,7 @@ function AdminDashboard() {
               {/* Navigation Bar */}
               <div className="settings-card">
                 <h3>🧭 Navigation Bar</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--muted-text-color)', marginBottom: '1.5rem' }}>
                   Customize navigation appearance
                 </p>
 
@@ -4246,7 +4246,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, navHeight: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="4rem">Compact</option>
                       <option value="5rem">Default</option>
@@ -4260,7 +4260,7 @@ function AdminDashboard() {
               {/* Events Page */}
               <div className="settings-card">
                 <h3>📅 Events Page</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--muted-text-color)', marginBottom: '1.5rem' }}>
                   Customize events display
                 </p>
 
@@ -4301,7 +4301,7 @@ function AdminDashboard() {
                         ...prev,
                         styleCustomizer: { ...prev.styleCustomizer, eventCardRadius: e.target.value }
                       }))}
-                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#e8e8e8', borderRadius: '4px' }}
+                      style={{ width: '100%', padding: '0.75rem', background: 'var(--input-background)', border: '1px solid var(--input-border)', color: 'var(--input-text-color)', borderRadius: '4px' }}
                     >
                       <option value="0">Sharp (Square)</option>
                       <option value="4px">Slightly Rounded</option>
@@ -4315,7 +4315,7 @@ function AdminDashboard() {
               {/* Forms & Inputs */}
               <div className="settings-card">
                 <h3>📋 Forms & Inputs</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--muted-text-color)', marginBottom: '1.5rem' }}>
                   Customize form appearance
                 </p>
 
@@ -4367,7 +4367,7 @@ function AdminDashboard() {
               {/* Visibility Options */}
               <div className="settings-card">
                 <h3>👁️ Show/Hide Elements</h3>
-                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--muted-text-color)', marginBottom: '1.5rem' }}>
                   Control which elements are visible
                 </p>
 
