@@ -31,7 +31,8 @@
       "Bash(node scripts/seedClassPassCampaigns.js:*)",
       "Bash(node -c:*)",
       "Bash(nul)",
-      "Bash(timeout /t 2 /nobreak)"
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(npm start)"
     ],
     "deny": [],
     "ask": []
