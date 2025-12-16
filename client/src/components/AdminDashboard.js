@@ -3716,17 +3716,146 @@ function AdminDashboard() {
           <div className="settings-section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <div>
-                <h2>Style Customizer</h2>
+                <h2>Site Style Editor</h2>
                 <p style={{ color: 'rgba(232, 232, 232, 0.7)', margin: '0.5rem 0 0 0' }}>
-                  Easily customize colors, fonts, and styling for your entire site
+                  Control all colors and styles across your entire website. Changes apply to all pages.
                 </p>
               </div>
             </div>
 
             <form onSubmit={handleUpdateSettings}>
-              {/* Site-wide Colors */}
+              {/* COLORS SECTION */}
               <div className="settings-card">
-                <h3>🎨 Site Colors</h3>
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: '#c9a86a' }}>🎨 Colors</h3>
+
+                {/* Primary & Backgrounds */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '1.5rem' }}>Main Colors</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Primary Color</label>
+                    <input type="color" value={settings.styleCustomizer?.primaryColor || '#c9a86a'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, primaryColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Buttons, links, accents</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Background</label>
+                    <input type="color" value={settings.styleCustomizer?.backgroundColor || '#1a1a1a'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, backgroundColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Main page background</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Secondary Background</label>
+                    <input type="color" value={settings.styleCustomizer?.secondaryBackground || '#2a2a2a'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, secondaryBackground: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Cards, forms, sections</small>
+                  </div>
+                </div>
+
+                {/* Text Colors */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Text Colors</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Body Text</label>
+                    <input type="color" value={settings.styleCustomizer?.textColor || '#e8e8e8'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, textColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Main paragraph text</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Headings</label>
+                    <input type="color" value={settings.styleCustomizer?.headingColor || '#ffffff'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, headingColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>H1, H2, H3 titles</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Muted Text</label>
+                    <input type="color" value={settings.styleCustomizer?.mutedTextColor || 'rgba(232, 232, 232, 0.7)'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, mutedTextColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Subtle, secondary text</small>
+                  </div>
+                </div>
+
+                {/* Links & Buttons */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Interactive Elements</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Link Color</label>
+                    <input type="color" value={settings.styleCustomizer?.linkColor || '#c9a86a'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, linkColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Normal link color</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Link Hover</label>
+                    <input type="color" value={settings.styleCustomizer?.linkHoverColor || '#d4b97a'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, linkHoverColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Link on hover</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Button Hover</label>
+                    <input type="color" value={settings.styleCustomizer?.buttonHoverColor || '#d4b97a'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, buttonHoverColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Button on hover</small>
+                  </div>
+                </div>
+
+                {/* Borders */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Borders & Dividers</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Border Color</label>
+                    <input type="color" value={settings.styleCustomizer?.borderColor || 'rgba(255, 255, 255, 0.1)'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, borderColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Lines and borders</small>
+                  </div>
+                </div>
+
+                {/* Status Colors */}
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', marginTop: '2rem' }}>Status Colors</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label>Success</label>
+                    <input type="color" value={settings.styleCustomizer?.successColor || '#4caf50'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, successColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Confirmed, active</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Warning</label>
+                    <input type="color" value={settings.styleCustomizer?.warningColor || '#ff9800'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, warningColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Pending, waitlist</small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Error</label>
+                    <input type="color" value={settings.styleCustomizer?.errorColor || '#f44336'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, errorColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'rgba(232,232,232,0.5)' }}>Cancelled, failed</small>
+                  </div>
+                </div>
+              </div>
+
+              {/* TYPOGRAPHY & LAYOUT SECTION */}
+              <div className="settings-card">
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: '#c9a86a' }}>📝 Typography & Layout</h3>
                 <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
                   Choose colors for your site's appearance
                 </p>

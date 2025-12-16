@@ -34,46 +34,102 @@ function App() {
           const sc = response.data.styleCustomizer;
 
           generatedCSS = `
-            /* Visual Style Customizer Generated CSS */
+            /* Visual Style Customizer - CSS Variables */
+            /* All colors and styles are controlled from Admin Dashboard > CSS Editor */
 
-            /* Site-wide Styles */
+            :root {
+              /* Main Colors */
+              --primary-color: ${sc.primaryColor || '#c9a86a'};
+              --background-color: ${sc.backgroundColor || '#1a1a1a'};
+              --secondary-background: ${sc.secondaryBackground || '#2a2a2a'};
+
+              /* Text Colors */
+              --text-color: ${sc.textColor || '#e8e8e8'};
+              --heading-color: ${sc.headingColor || '#ffffff'};
+              --muted-text-color: ${sc.mutedTextColor || 'rgba(232, 232, 232, 0.7)'};
+
+              /* Interactive Elements */
+              --link-color: ${sc.linkColor || sc.primaryColor || '#c9a86a'};
+              --link-hover-color: ${sc.linkHoverColor || '#d4b97a'};
+              --button-hover-color: ${sc.buttonHoverColor || '#d4b97a'};
+
+              /* Borders */
+              --border-color: ${sc.borderColor || 'rgba(255, 255, 255, 0.1)'};
+
+              /* Status Colors */
+              --success-color: ${sc.successColor || '#4caf50'};
+              --warning-color: ${sc.warningColor || '#ff9800'};
+              --error-color: ${sc.errorColor || '#f44336'};
+
+              /* Typography */
+              --font-family: ${sc.fontFamily || 'Arial, sans-serif'};
+              --font-size: ${sc.fontSize || '16px'};
+              --body-font-weight: ${sc.bodyFontWeight || '400'};
+              --h1-font-size: ${sc.h1FontSize || '4rem'};
+              --h1-font-weight: ${sc.h1FontWeight || '200'};
+              --h2-font-size: ${sc.h2FontSize || '2rem'};
+              --h2-font-weight: ${sc.h2FontWeight || '300'};
+              --h3-font-size: ${sc.h3FontSize || '1.5rem'};
+              --h3-font-weight: ${sc.h3FontWeight || '300'};
+
+              /* Layout */
+              --section-padding: ${sc.sectionPadding || '4rem'};
+              --button-radius: ${sc.buttonRadius || '0'};
+              --max-width: ${sc.maxWidth || '1400px'};
+
+              /* Navigation */
+              --nav-background: ${sc.navBackgroundColor || '#000000'};
+              --nav-text-color: ${sc.navTextColor || '#e8e8e8'};
+              --nav-height: ${sc.navHeight || '5rem'};
+
+              /* Events */
+              --event-card-background: ${sc.eventCardBackground || '#1a1a1a'};
+              --event-card-border: ${sc.eventCardBorder || '#c9a86a'};
+              --event-card-radius: ${sc.eventCardRadius || '0'};
+
+              /* Forms */
+              --input-background: ${sc.inputBackground || '#2a2a2a'};
+              --input-border: ${sc.inputBorder || '#c9a86a'};
+              --input-text-color: ${sc.inputTextColor || '#e8e8e8'};
+            }
+
+            /* Apply CSS Variables to Elements */
+
             body {
-              background-color: ${sc.backgroundColor || '#1a1a1a'} !important;
-              color: ${sc.textColor || '#e8e8e8'} !important;
-              font-family: ${sc.fontFamily || 'Arial, sans-serif'} !important;
-              font-size: ${sc.fontSize || '16px'} !important;
-              font-weight: ${sc.bodyFontWeight || '400'} !important;
+              background-color: var(--background-color) !important;
+              color: var(--text-color) !important;
+              font-family: var(--font-family) !important;
+              font-size: var(--font-size) !important;
+              font-weight: var(--body-font-weight) !important;
             }
 
             /* Headings */
             h1, h2, h3, h4, h5, h6 {
-              color: ${sc.headingColor || '#ffffff'} !important;
-              font-weight: ${sc.headingWeight || '600'} !important;
+              color: var(--heading-color) !important;
             }
 
             h1 {
-              font-family: ${sc.h1FontFamily || 'inherit'} !important;
-              font-size: ${sc.h1FontSize || '4rem'} !important;
-              font-weight: ${sc.h1FontWeight || '200'} !important;
+              font-size: var(--h1-font-size) !important;
+              font-weight: var(--h1-font-weight) !important;
             }
 
             h2 {
-              font-size: ${sc.h2FontSize || '2rem'} !important;
-              font-weight: ${sc.h2FontWeight || '300'} !important;
+              font-size: var(--h2-font-size) !important;
+              font-weight: var(--h2-font-weight) !important;
             }
 
             h3 {
-              font-size: ${sc.h3FontSize || '1.5rem'} !important;
-              font-weight: ${sc.h3FontWeight || '300'} !important;
+              font-size: var(--h3-font-size) !important;
+              font-weight: var(--h3-font-weight) !important;
             }
 
             /* Links */
             a {
-              color: ${sc.linkColor || sc.primaryColor || '#c9a86a'} !important;
+              color: var(--link-color) !important;
             }
 
             a:hover {
-              color: ${sc.linkHoverColor || '#d4b97a'} !important;
+              color: var(--link-hover-color) !important;
             }
 
             /* Buttons */
@@ -82,8 +138,8 @@ function App() {
             .hero button,
             .cta button,
             .submit-button {
-              background-color: ${sc.primaryColor || '#c9a86a'} !important;
-              border-radius: ${sc.buttonRadius || '0'} !important;
+              background-color: var(--primary-color) !important;
+              border-radius: var(--button-radius) !important;
             }
 
             button:hover,
@@ -91,28 +147,27 @@ function App() {
             .hero button:hover,
             .cta button:hover,
             .submit-button:hover {
-              background-color: ${sc.buttonHoverColor || '#d4b97a'} !important;
+              background-color: var(--button-hover-color) !important;
             }
 
-            /* Secondary backgrounds (cards, sections) */
-            .about-grid,
-            .mission,
-            .value-card,
-            .approach-item,
+            /* Backgrounds */
+            .form-group,
             .settings-card,
             .card,
-            .section-secondary {
-              background-color: ${sc.secondaryBackground || '#2a2a2a'} !important;
+            .event-summary,
+            .booking-form-container,
+            select option {
+              background-color: var(--secondary-background) !important;
             }
 
             /* Borders */
             .border,
-            .about-image img,
-            .mission-image img,
-            .placeholder-image,
-            .placeholder-mission-img,
-            .value-card {
-              border-color: ${sc.borderColor || 'rgba(255, 255, 255, 0.1)'} !important;
+            .event-item,
+            .value-card,
+            input,
+            textarea,
+            select {
+              border-color: var(--border-color) !important;
             }
 
             /* Muted text */
@@ -120,27 +175,28 @@ function App() {
             .cta p,
             .muted,
             .text-muted,
+            .detail-label,
             small {
-              color: ${sc.mutedTextColor || 'rgba(232, 232, 232, 0.7)'} !important;
+              color: var(--muted-text-color) !important;
             }
 
             /* Status colors */
             .success,
             .status-active,
             .status-confirmed {
-              color: ${sc.successColor || '#4caf50'} !important;
+              color: var(--success-color) !important;
             }
 
             .warning,
             .status-pending,
             .status-waitlist {
-              color: ${sc.warningColor || '#ff9800'} !important;
+              color: var(--warning-color) !important;
             }
 
             .error,
             .status-cancelled,
             .status-failed {
-              color: ${sc.errorColor || '#f44336'} !important;
+              color: var(--error-color) !important;
             }
 
             /* Section padding */
@@ -151,7 +207,7 @@ function App() {
             .approach,
             .cta,
             section {
-              padding: ${sc.sectionPadding || '4rem'} 2rem !important;
+              padding: var(--section-padding) 2rem !important;
             }
 
             /* Maximum width */
@@ -161,47 +217,48 @@ function App() {
             .values-grid,
             .approach-content,
             .cta-content {
-              max-width: ${sc.maxWidth || '1400px'} !important;
+              max-width: var(--max-width) !important;
               margin-left: auto !important;
               margin-right: auto !important;
             }
 
-            /* Navigation Bar */
+            /* Navigation */
             nav,
             .navigation {
-              background-color: ${sc.navBackgroundColor || '#000000'} !important;
-              height: ${sc.navHeight || '5rem'} !important;
+              background-color: var(--nav-background) !important;
+              height: var(--nav-height) !important;
             }
 
             nav a,
             .navigation a,
             .nav-links a {
-              color: ${sc.navTextColor || '#e8e8e8'} !important;
+              color: var(--nav-text-color) !important;
             }
 
-            /* Events Page */
-            .event-card {
-              background-color: ${sc.eventCardBackground || '#1a1a1a'} !important;
-              border-color: ${sc.eventCardBorder || '#c9a86a'} !important;
-              border-radius: ${sc.eventCardRadius || '0'} !important;
+            /* Events */
+            .event-card,
+            .class-card {
+              background-color: var(--event-card-background) !important;
+              border-color: var(--event-card-border) !important;
+              border-radius: var(--event-card-radius) !important;
             }
 
-            /* Forms & Inputs */
+            /* Forms */
             input,
             textarea,
             select {
-              background-color: ${sc.inputBackground || '#2a2a2a'} !important;
-              border-color: ${sc.inputBorder || '#c9a86a'} !important;
-              color: ${sc.inputTextColor || '#e8e8e8'} !important;
+              background-color: var(--input-background) !important;
+              border-color: var(--input-border) !important;
+              color: var(--input-text-color) !important;
             }
 
             input:focus,
             textarea:focus,
             select:focus {
-              border-color: ${sc.primaryColor || '#c9a86a'} !important;
+              border-color: var(--primary-color) !important;
             }
 
-            /* Visibility controls */
+            /* Visibility */
             ${sc.showSocialLinks === false ? `.social-links { display: none !important; }` : ''}
             ${sc.showFooter === false ? `footer { display: none !important; }` : ''}
           `;
@@ -209,7 +266,7 @@ function App() {
 
         // Append custom CSS if exists
         if (response.data?.customCSS) {
-          generatedCSS += '\n\n/* Custom CSS */\n' + response.data.customCSS;
+          generatedCSS += '\\n\\n/* Custom CSS */\\n' + response.data.customCSS;
         }
 
         if (generatedCSS) {
