@@ -3077,246 +3077,363 @@ function AdminDashboard() {
 
         {activeTab === 'homePage' && settings && (
           <div className="settings-section">
-            <h2>Home Page Content</h2>
-            <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '2rem' }}>
-              Customize all the text and images that appear on your home page. Changes will be reflected immediately.
-            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <div>
+                <h2>Edit Home Page</h2>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', margin: '0.5rem 0 0 0' }}>
+                  Edit your home page content in a layout that mirrors the actual page
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => window.open('/', '_blank')}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  background: 'rgba(201, 168, 106, 0.2)',
+                  border: '1px solid #c9a86a',
+                  borderRadius: '4px',
+                  color: '#c9a86a',
+                  cursor: 'pointer'
+                }}
+              >
+                Preview Home Page →
+              </button>
+            </div>
             <form onSubmit={handleUpdateSettings} className="settings-form">
 
               {/* Hero Section */}
-              <div className="settings-card">
-                <h3>Hero Section</h3>
+              <div className="settings-card" style={{
+                background: 'linear-gradient(135deg, rgba(201, 168, 106, 0.15) 0%, rgba(0,0,0,0.3) 100%)',
+                border: '2px solid rgba(201, 168, 106, 0.3)',
+                padding: '2rem'
+              }}>
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    color: '#c9a86a',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    background: 'rgba(201, 168, 106, 0.2)',
+                    padding: '0.25rem 1rem',
+                    borderRadius: '20px'
+                  }}>
+                    ✨ Hero Section (Top of Page)
+                  </span>
+                </div>
                 <div className="form-group">
-                  <label>Main Title</label>
+                  <label style={{ fontSize: '0.9rem', color: '#c9a86a' }}>Main Title</label>
                   <input
                     type="text"
                     value={settings.homePageContent?.heroTitle || ''}
                     onChange={(e) => handleSettingsChange('homePageContent', 'heroTitle', e.target.value)}
                     placeholder="The Fever Studio"
+                    style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center' }}
                   />
                 </div>
                 <div className="form-group">
-                  <label>Tagline</label>
+                  <label style={{ fontSize: '0.9rem', color: '#c9a86a' }}>Tagline</label>
                   <input
                     type="text"
                     value={settings.homePageContent?.heroTagline || ''}
                     onChange={(e) => handleSettingsChange('homePageContent', 'heroTagline', e.target.value)}
                     placeholder="Heat That Heals. Movement That Empowers."
+                    style={{ fontSize: '1.1rem', textAlign: 'center' }}
                   />
                 </div>
                 <div className="form-group">
-                  <label>Secondary Tagline</label>
+                  <label style={{ fontSize: '0.9rem', color: '#c9a86a' }}>Secondary Tagline</label>
                   <input
                     type="text"
                     value={settings.homePageContent?.heroSecondaryTagline || ''}
                     onChange={(e) => handleSettingsChange('homePageContent', 'heroSecondaryTagline', e.target.value)}
                     placeholder="sculpt · strength · sweat · stretch"
+                    style={{ textAlign: 'center' }}
                   />
                 </div>
               </div>
 
               {/* About Section */}
-              <div className="settings-card">
-                <h3>About Section</h3>
-                <div className="form-group">
-                  <label>Section Title</label>
-                  <input
-                    type="text"
-                    name="homePageContent.aboutTitle"
-                    value={settings.homePageContent?.aboutTitle || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    placeholder="Pop-Up Pilates Experiences"
-                  />
+              <div className="settings-card" style={{
+                background: 'rgba(0,0,0,0.3)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255,255,255,0.6)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    background: 'rgba(255,255,255,0.05)',
+                    padding: '0.25rem 1rem',
+                    borderRadius: '20px'
+                  }}>
+                    📖 About Section
+                  </span>
                 </div>
-                <div className="form-group">
-                  <label>First Paragraph</label>
-                  <textarea
-                    name="homePageContent.aboutParagraph1"
-                    value={settings.homePageContent?.aboutParagraph1 || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    rows="3"
-                    placeholder="We bring transformative pilates experiences..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Second Paragraph</label>
-                  <textarea
-                    name="homePageContent.aboutParagraph2"
-                    value={settings.homePageContent?.aboutParagraph2 || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    rows="3"
-                    placeholder="Join our community..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label>About Image URL</label>
-                  <input
-                    type="url"
-                    name="homePageContent.aboutImage"
-                    value={settings.homePageContent?.aboutImage || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <small>Enter the full URL to an image hosted online</small>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
+                  <div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Section Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.aboutTitle"
+                        value={settings.homePageContent?.aboutTitle || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Pop-Up Pilates Experiences"
+                        style={{ fontSize: '1.3rem', fontWeight: 'bold' }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.85rem' }}>First Paragraph</label>
+                      <textarea
+                        name="homePageContent.aboutParagraph1"
+                        value={settings.homePageContent?.aboutParagraph1 || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="4"
+                        placeholder="We bring transformative pilates experiences..."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.85rem' }}>Second Paragraph</label>
+                      <textarea
+                        name="homePageContent.aboutParagraph2"
+                        value={settings.homePageContent?.aboutParagraph2 || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="Join our community..."
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>About Image</label>
+                      <input
+                        type="url"
+                        name="homePageContent.aboutImage"
+                        value={settings.homePageContent?.aboutImage || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                      <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>Image appears on the right side</small>
+                      {settings.homePageContent?.aboutImage && (
+                        <div style={{ marginTop: '1rem', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', overflow: 'hidden' }}>
+                          <img
+                            src={settings.homePageContent.aboutImage}
+                            alt="Preview"
+                            style={{ width: '100%', height: 'auto', display: 'block' }}
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Mission Section */}
-              <div className="settings-card">
-                <h3>Mission Section</h3>
-                <div className="form-group">
-                  <label>Section Title</label>
-                  <input
-                    type="text"
-                    name="homePageContent.missionTitle"
-                    value={settings.homePageContent?.missionTitle || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    placeholder="Our Mission"
-                  />
+              <div className="settings-card" style={{
+                background: 'rgba(0,0,0,0.3)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255,255,255,0.6)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    background: 'rgba(255,255,255,0.05)',
+                    padding: '0.25rem 1rem',
+                    borderRadius: '20px'
+                  }}>
+                    🎯 Mission Section
+                  </span>
                 </div>
-                <div className="form-group">
-                  <label>First Paragraph</label>
-                  <textarea
-                    name="homePageContent.missionParagraph1"
-                    value={settings.homePageContent?.missionParagraph1 || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    rows="3"
-                    placeholder="The Fever Studio is more than a workout..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Second Paragraph</label>
-                  <textarea
-                    name="homePageContent.missionParagraph2"
-                    value={settings.homePageContent?.missionParagraph2 || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    rows="3"
-                    placeholder="Each class is carefully designed..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Mission Image URL</label>
-                  <input
-                    type="url"
-                    name="homePageContent.missionImage"
-                    value={settings.homePageContent?.missionImage || ''}
-                    onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <small>Enter the full URL to an image hosted online</small>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
+                  <div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Mission Image</label>
+                      <input
+                        type="url"
+                        name="homePageContent.missionImage"
+                        value={settings.homePageContent?.missionImage || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                      <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>Image appears on the left side</small>
+                      {settings.homePageContent?.missionImage && (
+                        <div style={{ marginTop: '1rem', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', overflow: 'hidden' }}>
+                          <img
+                            src={settings.homePageContent.missionImage}
+                            alt="Preview"
+                            style={{ width: '100%', height: 'auto', display: 'block' }}
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Section Title</label>
+                      <input
+                        type="text"
+                        name="homePageContent.missionTitle"
+                        value={settings.homePageContent?.missionTitle || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        placeholder="Our Mission"
+                        style={{ fontSize: '1.3rem', fontWeight: 'bold' }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.85rem' }}>First Paragraph</label>
+                      <textarea
+                        name="homePageContent.missionParagraph1"
+                        value={settings.homePageContent?.missionParagraph1 || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="4"
+                        placeholder="The Fever Studio is more than a workout..."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label style={{ fontSize: '0.85rem' }}>Second Paragraph</label>
+                      <textarea
+                        name="homePageContent.missionParagraph2"
+                        value={settings.homePageContent?.missionParagraph2 || ''}
+                        onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
+                        rows="3"
+                        placeholder="Each class is carefully designed..."
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Values Section */}
-              <div className="settings-card">
-                <h3>Values Section</h3>
-                <div className="form-group">
-                  <label>Section Title</label>
+              <div className="settings-card" style={{
+                background: 'rgba(0,0,0,0.3)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255,255,255,0.6)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    background: 'rgba(255,255,255,0.05)',
+                    padding: '0.25rem 1rem',
+                    borderRadius: '20px'
+                  }}>
+                    💎 Values Section (4 Cards)
+                  </span>
+                </div>
+                <div className="form-group" style={{ marginBottom: '2rem' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Section Title</label>
                   <input
                     type="text"
                     name="homePageContent.valuesTitle"
                     value={settings.homePageContent?.valuesTitle || ''}
                     onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                     placeholder="What We Believe"
+                    style={{ fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center' }}
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   {/* Value 1 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 1</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Card 1 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.value1Title"
                         value={settings.homePageContent?.value1Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="You Belong Here"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.value1Description"
                         value={settings.homePageContent?.value1Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="We create inclusive spaces..."
                       />
                     </div>
                   </div>
 
                   {/* Value 2 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 2</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Card 2 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.value2Title"
                         value={settings.homePageContent?.value2Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="Community First"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.value2Description"
                         value={settings.homePageContent?.value2Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="Movement is better together..."
                       />
                     </div>
                   </div>
 
                   {/* Value 3 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 3</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Card 3 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.value3Title"
                         value={settings.homePageContent?.value3Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="Holistic Wellness"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.value3Description"
                         value={settings.homePageContent?.value3Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="True wellness encompasses..."
                       />
                     </div>
                   </div>
 
                   {/* Value 4 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Value 4</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Card 4 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.value4Title"
                         value={settings.homePageContent?.value4Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="Intentional Experiences"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.value4Description"
                         value={settings.homePageContent?.value4Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="Every detail matters..."
                       />
                     </div>
@@ -3325,115 +3442,131 @@ function AdminDashboard() {
               </div>
 
               {/* Approach Section */}
-              <div className="settings-card">
-                <h3>Approach Section</h3>
-                <div className="form-group">
-                  <label>Section Title</label>
+              <div className="settings-card" style={{
+                background: 'rgba(0,0,0,0.3)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255,255,255,0.6)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    background: 'rgba(255,255,255,0.05)',
+                    padding: '0.25rem 1rem',
+                    borderRadius: '20px'
+                  }}>
+                    🎨 Approach Section (4 Items)
+                  </span>
+                </div>
+                <div className="form-group" style={{ marginBottom: '2rem' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Section Title</label>
                   <input
                     type="text"
                     name="homePageContent.approachTitle"
                     value={settings.homePageContent?.approachTitle || ''}
                     onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                     placeholder="Our Approach"
+                    style={{ fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center' }}
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   {/* Approach 1 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 1</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Item 1 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.approach1Title"
                         value={settings.homePageContent?.approach1Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="Popup Locations"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.approach1Description"
                         value={settings.homePageContent?.approach1Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="We partner with unique venues..."
                       />
                     </div>
                   </div>
 
                   {/* Approach 2 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 2</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Item 2 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.approach2Title"
                         value={settings.homePageContent?.approach2Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="Expert Instruction"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.approach2Description"
                         value={settings.homePageContent?.approach2Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="Our certified instructors..."
                       />
                     </div>
                   </div>
 
                   {/* Approach 3 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 3</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Item 3 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.approach3Title"
                         value={settings.homePageContent?.approach3Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="All Levels Welcome"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.approach3Description"
                         value={settings.homePageContent?.approach3Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="Whether you're brand new..."
                       />
                     </div>
                   </div>
 
                   {/* Approach 4 */}
-                  <div>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Approach 4</h4>
+                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                     <div className="form-group">
-                      <label>Title</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Item 4 - Title</label>
                       <input
                         type="text"
                         name="homePageContent.approach4Title"
                         value={settings.homePageContent?.approach4Title || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                         placeholder="Premium Equipment"
+                        style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
                       />
                     </div>
                     <div className="form-group">
-                      <label>Description</label>
+                      <label style={{ fontSize: '0.8rem', opacity: 0.7 }}>Description</label>
                       <textarea
                         name="homePageContent.approach4Description"
                         value={settings.homePageContent?.approach4Description || ''}
                         onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
-                        rows="3"
+                        rows="4"
                         placeholder="We provide everything you need..."
                       />
                     </div>
@@ -3442,33 +3575,93 @@ function AdminDashboard() {
               </div>
 
               {/* CTA Section */}
-              <div className="settings-card">
-                <h3>Call-to-Action Section</h3>
+              <div className="settings-card" style={{
+                background: 'linear-gradient(135deg, rgba(201, 168, 106, 0.15) 0%, rgba(0,0,0,0.3) 100%)',
+                border: '2px solid rgba(201, 168, 106, 0.3)',
+                padding: '2rem'
+              }}>
+                <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                  <span style={{
+                    fontSize: '0.75rem',
+                    color: '#c9a86a',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    background: 'rgba(201, 168, 106, 0.2)',
+                    padding: '0.25rem 1rem',
+                    borderRadius: '20px'
+                  }}>
+                    🚀 Call-to-Action Section (Bottom of Page)
+                  </span>
+                </div>
                 <div className="form-group">
-                  <label>CTA Title</label>
+                  <label style={{ fontSize: '0.9rem', color: '#c9a86a' }}>CTA Title</label>
                   <input
                     type="text"
                     name="homePageContent.ctaTitle"
                     value={settings.homePageContent?.ctaTitle || ''}
                     onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                     placeholder="Join The Collective"
+                    style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center' }}
                   />
                 </div>
                 <div className="form-group">
-                  <label>CTA Subtitle</label>
+                  <label style={{ fontSize: '0.9rem', color: '#c9a86a' }}>CTA Subtitle</label>
                   <input
                     type="text"
                     name="homePageContent.ctaSubtitle"
                     value={settings.homePageContent?.ctaSubtitle || ''}
                     onChange={(e) => handleSettingsChange('homePageContent', e.target.name.split(".")[1], e.target.value)}
                     placeholder="Experience wellness that's out of this world"
+                    style={{ fontSize: '1.1rem', textAlign: 'center' }}
                   />
                 </div>
               </div>
 
-              <button type="submit" className="submit-button">
-                Save Home Page Changes
-              </button>
+              <div style={{
+                position: 'sticky',
+                bottom: '0',
+                background: 'rgba(0, 0, 0, 0.95)',
+                padding: '1.5rem',
+                marginTop: '2rem',
+                marginLeft: '-2rem',
+                marginRight: '-2rem',
+                marginBottom: '-2rem',
+                borderTop: '2px solid #c9a86a',
+                display: 'flex',
+                gap: '1rem',
+                justifyContent: 'center'
+              }}>
+                <button
+                  type="button"
+                  onClick={() => window.open('/', '_blank')}
+                  style={{
+                    padding: '0.75rem 2rem',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '4px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '1rem'
+                  }}
+                >
+                  Preview Home Page
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '0.75rem 3rem',
+                    background: '#c9a86a',
+                    border: 'none',
+                    borderRadius: '4px',
+                    color: '#000',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  💾 Save All Changes
+                </button>
+              </div>
             </form>
           </div>
         )}
