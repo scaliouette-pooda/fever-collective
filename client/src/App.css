@@ -128,6 +128,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 
 .form-group {
   margin-bottom: 2rem;
+  background-color: var(--secondary-background);
+  padding: 1.5rem;
+  border-radius: 4px;
 }
 
 label {
