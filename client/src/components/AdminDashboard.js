@@ -3207,6 +3207,25 @@ function AdminDashboard() {
                   <div>
                     <div className="form-group">
                       <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>About Image</label>
+
+                      <div style={{ marginBottom: '1rem' }}>
+                        <label style={{ fontSize: '0.85rem', display: 'block', marginBottom: '0.5rem', opacity: 0.8 }}>Upload Image</label>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp"
+                          onChange={handleAboutImageChange}
+                          style={{
+                            padding: '0.5rem',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            borderRadius: '4px',
+                            color: 'white',
+                            width: '100%'
+                          }}
+                        />
+                        <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>Or enter image URL below</small>
+                      </div>
+
                       <input
                         type="url"
                         name="homePageContent.aboutImage"
@@ -3215,10 +3234,11 @@ function AdminDashboard() {
                         placeholder="https://example.com/image.jpg"
                       />
                       <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>Image appears on the right side</small>
-                      {settings.homePageContent?.aboutImage && (
+
+                      {(aboutImagePreview || settings.homePageContent?.aboutImage || settings.homeImages?.aboutImage) && (
                         <div style={{ marginTop: '1rem', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', overflow: 'hidden' }}>
                           <img
-                            src={settings.homePageContent.aboutImage}
+                            src={aboutImagePreview || settings.homePageContent?.aboutImage || settings.homeImages?.aboutImage}
                             alt="Preview"
                             style={{ width: '100%', height: 'auto', display: 'block' }}
                             onError={(e) => { e.target.style.display = 'none'; }}
@@ -3252,6 +3272,25 @@ function AdminDashboard() {
                   <div>
                     <div className="form-group">
                       <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Mission Image</label>
+
+                      <div style={{ marginBottom: '1rem' }}>
+                        <label style={{ fontSize: '0.85rem', display: 'block', marginBottom: '0.5rem', opacity: 0.8 }}>Upload Image</label>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp"
+                          onChange={handleMissionImageChange}
+                          style={{
+                            padding: '0.5rem',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            borderRadius: '4px',
+                            color: 'white',
+                            width: '100%'
+                          }}
+                        />
+                        <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>Or enter image URL below</small>
+                      </div>
+
                       <input
                         type="url"
                         name="homePageContent.missionImage"
@@ -3260,10 +3299,11 @@ function AdminDashboard() {
                         placeholder="https://example.com/image.jpg"
                       />
                       <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>Image appears on the left side</small>
-                      {settings.homePageContent?.missionImage && (
+
+                      {(missionImagePreview || settings.homePageContent?.missionImage || settings.homeImages?.missionImage) && (
                         <div style={{ marginTop: '1rem', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', overflow: 'hidden' }}>
                           <img
-                            src={settings.homePageContent.missionImage}
+                            src={missionImagePreview || settings.homePageContent?.missionImage || settings.homeImages?.missionImage}
                             alt="Preview"
                             style={{ width: '100%', height: 'auto', display: 'block' }}
                             onError={(e) => { e.target.style.display = 'none'; }}
@@ -4156,50 +4196,6 @@ function AdminDashboard() {
                     </div>
                   </>
                 )}
-              </div>
-
-              {/* Home Page Images Section */}
-              <div className="settings-card">
-                <h3>Home Page Images</h3>
-                <p style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1.5rem' }}>
-                  Upload images for the home page sections. Images will be optimized and stored in Cloudinary.
-                </p>
-
-                <div className="form-group">
-                  <label>About Section Image (Wellness · Community · Movement)</label>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handleAboutImageChange}
-                  />
-                  {(aboutImagePreview || settings.homeImages?.aboutImage) && (
-                    <div className="image-preview" style={{ marginTop: '1rem' }}>
-                      <img
-                        src={aboutImagePreview || settings.homeImages?.aboutImage}
-                        alt="About section preview"
-                        style={{ maxWidth: '300px', border: '1px solid rgba(255,255,255,0.2)' }}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-group">
-                  <label>Mission Section Image (Movement · Community · Wellness)</label>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handleMissionImageChange}
-                  />
-                  {(missionImagePreview || settings.homeImages?.missionImage) && (
-                    <div className="image-preview" style={{ marginTop: '1rem' }}>
-                      <img
-                        src={missionImagePreview || settings.homeImages?.missionImage}
-                        alt="Mission section preview"
-                        style={{ maxWidth: '300px', border: '1px solid rgba(255,255,255,0.2)' }}
-                      />
-                    </div>
-                  )}
-                </div>
               </div>
 
               <div className="form-actions" style={{ marginTop: '2rem' }}>

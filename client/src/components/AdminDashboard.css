@@ -134,8 +134,9 @@
 .event-form-container input:focus,
 .event-form-container select:focus,
 .event-form-container textarea:focus {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.1);
   border-color: #c9a86a;
+  box-shadow: 0 0 0 2px rgba(201, 168, 106, 0.2);
 }
 
 .event-form-container select option {
@@ -391,7 +392,8 @@ td button:last-of-type:hover {
 .settings-card textarea:focus {
   outline: none;
   border-color: #c9a86a;
-  background: rgba(26, 26, 26, 0.8);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(201, 168, 106, 0.2);
 }
 
 .settings-card input[type="checkbox"] {
