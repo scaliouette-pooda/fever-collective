@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import './App.css';
@@ -17,11 +17,34 @@ import Profile from './components/Profile';
 import AdminDashboard from './components/AdminDashboard';
 import Memberships from './components/Memberships';
 import MembershipCheckout from './components/MembershipCheckout';
+import api from './config/api';
 
 function App() {
+  const [customCSS, setCustomCSS] = useState('');
+
+  useEffect(() => {
+    // Fetch custom CSS from settings
+    const fetchCustomCSS = async () => {
+      try {
+        const response = await api.get('/api/settings');
+        if (response.data?.customCSS) {
+          setCustomCSS(response.data.customCSS);
+        }
+      } catch (error) {
+        console.error('Error fetching custom CSS:', error);
+      }
+    };
+
+    fetchCustomCSS();
+  }, []);
+
   return (
     <Router>
       <div className="App">
+        {/* Inject custom CSS */}
+        {customCSS && (
+          <style>{customCSS}</style>
+        )}
         <Navigation />
         <Routes>
           <Route path="/" element={<Home />} />

@@ -1523,6 +1523,12 @@ function AdminDashboard() {
           Home Page
         </button>
         <button
+          className={activeTab === 'cssEditor' ? 'active' : ''}
+          onClick={() => setActiveTab('cssEditor')}
+        >
+          CSS Editor
+        </button>
+        <button
           className={activeTab === 'settings' ? 'active' : ''}
           onClick={() => setActiveTab('settings')}
         >
@@ -3703,6 +3709,178 @@ function AdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {activeTab === 'cssEditor' && settings && (
+          <div className="settings-section">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <div>
+                <h2>CSS Editor</h2>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', margin: '0.5rem 0 0 0' }}>
+                  Customize your site's appearance with custom CSS. Changes apply across all pages.
+                </p>
+              </div>
+            </div>
+
+            <div className="settings-card" style={{
+              background: 'rgba(0, 0, 0, 0.4)',
+              border: '2px solid rgba(201, 168, 106, 0.3)'
+            }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ color: '#c9a86a', fontSize: '1.3rem', marginBottom: '1rem' }}>Custom CSS</h3>
+                <p style={{ color: 'rgba(232, 232, 232, 0.7)', marginBottom: '1rem' }}>
+                  Add your own CSS styles below. These styles will be applied site-wide to all pages.
+                </p>
+
+                <div style={{
+                  background: 'rgba(201, 168, 106, 0.1)',
+                  border: '1px solid rgba(201, 168, 106, 0.3)',
+                  borderRadius: '4px',
+                  padding: '1rem',
+                  marginBottom: '1.5rem'
+                }}>
+                  <h4 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', color: '#c9a86a' }}>💡 Quick Tips:</h4>
+                  <ul style={{ margin: 0, paddingLeft: '1.5rem', color: 'rgba(232, 232, 232, 0.8)', fontSize: '0.9rem' }}>
+                    <li>Target elements with specific classes or IDs</li>
+                    <li>Use <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '3px' }}>!important</code> to override existing styles</li>
+                    <li>Changes take effect immediately after saving</li>
+                    <li>Test on different pages to ensure consistency</li>
+                  </ul>
+                </div>
+
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '4px',
+                  padding: '1rem',
+                  marginBottom: '1rem'
+                }}>
+                  <h4 style={{ fontSize: '0.9rem', marginBottom: '0.75rem', color: 'rgba(232, 232, 232, 0.9)' }}>Common Customizations:</h4>
+                  <details style={{ marginBottom: '0.5rem' }}>
+                    <summary style={{ cursor: 'pointer', color: '#c9a86a', marginBottom: '0.5rem' }}>Change Primary Color</summary>
+                    <pre style={{ background: 'rgba(0,0,0,0.5)', padding: '0.75rem', borderRadius: '4px', margin: '0.5rem 0 0 0', overflow: 'auto' }}>
+{`/* Change gold accent color */
+.hero button,
+.cta button {
+  background: #your-color !important;
+}`}</pre>
+                  </details>
+                  <details style={{ marginBottom: '0.5rem' }}>
+                    <summary style={{ cursor: 'pointer', color: '#c9a86a', marginBottom: '0.5rem' }}>Change Font</summary>
+                    <pre style={{ background: 'rgba(0,0,0,0.5)', padding: '0.75rem', borderRadius: '4px', margin: '0.5rem 0 0 0', overflow: 'auto' }}>
+{`/* Change site font */
+body {
+  font-family: 'Your Font', sans-serif !important;
+}`}</pre>
+                  </details>
+                  <details style={{ marginBottom: '0.5rem' }}>
+                    <summary style={{ cursor: 'pointer', color: '#c9a86a', marginBottom: '0.5rem' }}>Adjust Spacing</summary>
+                    <pre style={{ background: 'rgba(0,0,0,0.5)', padding: '0.75rem', borderRadius: '4px', margin: '0.5rem 0 0 0', overflow: 'auto' }}>
+{`/* Add more padding to sections */
+.hero,
+.about,
+.mission {
+  padding: 8rem 2rem !important;
+}`}</pre>
+                  </details>
+                </div>
+              </div>
+
+              <form onSubmit={handleUpdateSettings}>
+                <div className="form-group">
+                  <label style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>
+                    Your Custom CSS
+                  </label>
+                  <textarea
+                    value={settings.customCSS || ''}
+                    onChange={(e) => setSettings(prev => ({ ...prev, customCSS: e.target.value }))}
+                    placeholder="/* Enter your custom CSS here */
+
+.hero {
+  /* Your styles */
+}
+
+/* Add more styles below */
+"
+                    rows="20"
+                    style={{
+                      width: '100%',
+                      padding: '1rem',
+                      background: 'rgba(0, 0, 0, 0.6)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '4px',
+                      color: '#e8e8e8',
+                      fontFamily: "'Courier New', 'Consolas', monospace",
+                      fontSize: '0.95rem',
+                      lineHeight: '1.6',
+                      resize: 'vertical'
+                    }}
+                  />
+                  <small style={{ display: 'block', marginTop: '0.5rem', opacity: 0.7 }}>
+                    Write standard CSS. Changes will apply to all pages after saving.
+                  </small>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  justifyContent: 'center',
+                  marginTop: '2rem',
+                  paddingTop: '2rem',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm('Reset CSS to default? This will remove all custom styles.')) {
+                        setSettings(prev => ({ ...prev, customCSS: '' }));
+                      }
+                    }}
+                    style={{
+                      padding: '0.75rem 2rem',
+                      background: 'transparent',
+                      border: '1px solid rgba(255, 100, 100, 0.5)',
+                      borderRadius: '4px',
+                      color: 'rgba(255, 100, 100, 0.8)',
+                      cursor: 'pointer',
+                      fontSize: '1rem'
+                    }}
+                  >
+                    Reset CSS
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: '0.75rem 3rem',
+                      background: '#c9a86a',
+                      border: 'none',
+                      borderRadius: '4px',
+                      color: '#000',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    💾 Save Custom CSS
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div style={{
+              marginTop: '2rem',
+              padding: '1.5rem',
+              background: 'rgba(100, 150, 255, 0.1)',
+              border: '1px solid rgba(100, 150, 255, 0.3)',
+              borderRadius: '4px'
+            }}>
+              <h4 style={{ color: 'rgba(100, 150, 255, 0.9)', marginBottom: '0.75rem' }}>ℹ️ Need Help?</h4>
+              <p style={{ color: 'rgba(232, 232, 232, 0.8)', margin: 0 }}>
+                If you're not familiar with CSS, consider hiring a developer or refer to CSS documentation online.
+                Incorrect CSS may affect your site's appearance. Always test changes thoroughly.
+              </p>
+            </div>
           </div>
         )}
 

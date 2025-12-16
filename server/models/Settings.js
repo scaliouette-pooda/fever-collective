@@ -410,6 +410,12 @@ const settingsSchema = new mongoose.Schema({
     }
   },
 
+  // Custom CSS for site-wide styling
+  customCSS: {
+    type: String,
+    default: ''
+  },
+
   updatedAt: {
     type: Date,
     default: Date.now
