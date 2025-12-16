@@ -16,7 +16,7 @@
 
 .admin-header p {
   font-size: 1.1rem;
-  color: rgba(232, 232, 232, 0.7);
+  color: var(--muted-text-color);
 }
 
 .admin-tabs {
@@ -25,14 +25,14 @@
   gap: 1rem;
   margin-bottom: 3rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .admin-tabs button {
   padding: 1rem 1.5rem;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(232, 232, 232, 0.7);
+  border: 1px solid var(--border-color);
+  color: var(--muted-text-color);
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
@@ -42,15 +42,15 @@
 }
 
 .admin-tabs button:hover {
-  color: #e8e8e8;
+  color: var(--text-color);
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(201, 168, 106, 0.5);
+  border-color: var(--primary-color);
 }
 
 .admin-tabs button.active {
-  color: #1a1a1a;
-  background: #c9a86a;
-  border-color: #c9a86a;
+  color: var(--background-color);
+  background: var(--primary-color);
+  border-color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -86,8 +86,8 @@
 }
 
 .event-form-container {
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
   padding: 3rem;
   max-width: 800px;
   width: 100%;
@@ -98,7 +98,7 @@
 .event-form-container h3 {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: #c9a86a;
+  color: var(--primary-color);
 }
 
 .form-row {
@@ -110,14 +110,14 @@
 
 /* Ensure form elements have proper contrast in dark mode */
 .event-form-container label {
-  color: #e8e8e8;
+  color: var(--text-color);
   font-weight: 500;
   margin-bottom: 0.5rem;
   display: block;
 }
 
 .event-form-container small {
-  color: rgba(232, 232, 232, 0.7);
+  color: var(--muted-text-color);
   font-size: 0.85rem;
   display: block;
   margin-top: 0.5rem;
@@ -126,22 +126,22 @@
 .event-form-container input,
 .event-form-container select,
 .event-form-container textarea {
-  color: #e8e8e8;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--input-text-color);
+  background-color: var(--input-background);
+  border: 1px solid var(--input-border);
 }
 
 .event-form-container input:focus,
 .event-form-container select:focus,
 .event-form-container textarea:focus {
   background-color: rgba(255, 255, 255, 0.1);
-  border-color: #c9a86a;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(201, 168, 106, 0.2);
 }
 
 .event-form-container select option {
-  background-color: #2a2a2a;
-  color: #e8e8e8;
+  background-color: var(--secondary-background);
+  color: var(--text-color);
 }
 
 .event-form-container input[type="date"],
@@ -222,24 +222,24 @@ td button {
 
 td button:first-of-type {
   background: transparent;
-  border: 1px solid #c9a86a;
-  color: #c9a86a;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
 }
 
 td button:first-of-type:hover {
-  background: #c9a86a;
-  color: #1a1a1a;
+  background: var(--primary-color);
+  color: var(--background-color);
 }
 
 td button:last-of-type {
   background: transparent;
-  border: 1px solid rgba(255, 100, 100, 0.5);
-  color: rgba(255, 100, 100, 0.8);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
 }
 
 td button:last-of-type:hover {
   background: rgba(255, 100, 100, 0.2);
-  border-color: rgba(255, 100, 100, 0.8);
+  border-color: var(--error-color);
 }
 
 .status-badge {
@@ -253,20 +253,20 @@ td button:last-of-type:hover {
 
 .status-badge.completed {
   background: rgba(100, 255, 100, 0.1);
-  color: rgb(100, 255, 100);
-  border: 1px solid rgba(100, 255, 100, 0.3);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
 }
 
 .status-badge.pending {
   background: rgba(255, 200, 100, 0.1);
-  color: rgb(255, 200, 100);
-  border: 1px solid rgba(255, 200, 100, 0.3);
+  color: var(--warning-color);
+  border: 1px solid var(--warning-color);
 }
 
 .status-badge.failed {
   background: rgba(255, 100, 100, 0.1);
-  color: rgb(255, 100, 100);
-  border: 1px solid rgba(255, 100, 100, 0.3);
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
 }
 
 /* Analytics */
@@ -278,14 +278,14 @@ td button:last-of-type:hover {
 }
 
 .stat-card {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
   padding: 2.5rem;
   text-align: center;
   transition: all 0.3s ease;
 }
 
 .stat-card:hover {
-  border-color: rgba(201, 168, 106, 0.5);
+  border-color: var(--primary-color);
   transform: translateY(-5px);
 }
 
@@ -293,14 +293,14 @@ td button:last-of-type:hover {
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(232, 232, 232, 0.7);
+  color: var(--muted-text-color);
   margin-bottom: 1rem;
 }
 
 .stat-value {
   font-size: 3rem;
   font-weight: 200;
-  color: #c9a86a;
+  color: var(--primary-color);
   line-height: 1;
 }
 
@@ -334,23 +334,23 @@ td button:last-of-type:hover {
 
 .settings-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
   padding: 2rem;
   transition: all 0.3s ease;
 }
 
 .settings-card:hover {
-  border-color: rgba(201, 168, 106, 0.3);
+  border-color: var(--primary-color);
   background: rgba(255, 255, 255, 0.05);
 }
 
 .settings-card h3 {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
-  color: #c9a86a;
+  color: var(--primary-color);
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-bottom: 1px solid rgba(201, 168, 106, 0.3);
+  border-bottom: 1px solid var(--primary-color);
   padding-bottom: 0.75rem;
 }
 
@@ -368,7 +368,7 @@ td button:last-of-type:hover {
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(232, 232, 232, 0.8);
+  color: var(--text-color);
 }
 
 .settings-card input[type="text"],
@@ -378,9 +378,9 @@ td button:last-of-type:hover {
 .settings-card textarea {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e8e8e8;
+  background: var(--input-background);
+  border: 1px solid var(--input-border);
+  color: var(--input-text-color);
   font-size: 1rem;
   transition: all 0.3s ease;
 }
@@ -391,16 +391,16 @@ td button:last-of-type:hover {
 .settings-card input[type="tel"]:focus,
 .settings-card textarea:focus {
   outline: none;
-  border-color: #c9a86a;
+  border-color: var(--primary-color);
   background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 2px rgba(201, 168, 106, 0.2);
+  box-shadow: 0 0 0 2px var(--primary-color);
 }
 
 .settings-card input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #c9a86a;
+  accent-color: var(--primary-color);
 }
 
 .settings-card textarea {
