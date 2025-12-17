@@ -4433,9 +4433,52 @@ function AdminDashboard() {
                     if (window.confirm('Reset all styles to default? This will reload the page.')) {
                       try {
                         const token = localStorage.getItem('token');
+
+                        // Default values from Settings schema
+                        const defaultStyles = {
+                          primaryColor: '#c9a86a',
+                          backgroundColor: '#1a1a1a',
+                          textColor: '#e8e8e8',
+                          headingColor: '#ffffff',
+                          fontFamily: 'Arial, sans-serif',
+                          fontSize: '16px',
+                          headingWeight: '600',
+                          sectionPadding: '4rem',
+                          buttonRadius: '0',
+                          maxWidth: '1400px',
+                          linkColor: '#c9a86a',
+                          linkHoverColor: '#d4b97a',
+                          buttonHoverColor: '#d4b97a',
+                          mutedTextColor: '#b8b8b8',
+                          labelColor: '#e8e8e8',
+                          secondaryBackground: '#2a2a2a',
+                          borderColor: '#333333',
+                          successColor: '#4caf50',
+                          warningColor: '#ff9800',
+                          errorColor: '#f44336',
+                          bodyFontWeight: '400',
+                          h1FontSize: '4rem',
+                          h1FontWeight: '200',
+                          h2FontSize: '2rem',
+                          h2FontWeight: '300',
+                          h3FontSize: '1.5rem',
+                          h3FontWeight: '300',
+                          navBackgroundColor: '#000000',
+                          navTextColor: '#e8e8e8',
+                          navHeight: '5rem',
+                          eventCardBackground: '#1a1a1a',
+                          eventCardBorder: '#c9a86a',
+                          eventCardRadius: '0',
+                          inputBackground: '#2a2a2a',
+                          inputBorder: '#c9a86a',
+                          inputTextColor: '#e8e8e8',
+                          showSocialLinks: true,
+                          showFooter: true
+                        };
+
                         const updatedSettings = {
                           ...settings,
-                          styleCustomizer: {}
+                          styleCustomizer: defaultStyles
                         };
 
                         await api.put('/api/settings', updatedSettings, {
