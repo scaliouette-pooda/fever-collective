@@ -3724,7 +3724,8 @@ function AdminDashboard() {
               <div>
                 <h2>Site Style Editor</h2>
                 <p style={{ color: 'rgba(232, 232, 232, 0.7)', margin: '0.5rem 0 0 0' }}>
-                  Control all colors and styles across your entire website. Changes apply to all pages.
+                  Control all colors across your website. Each description shows exactly where that color appears.
+                  Click "Save Settings" to apply changes - the page will reload automatically.
                 </p>
               </div>
             </div>
@@ -3742,7 +3743,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.primaryColor || '#c9a86a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, primaryColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Buttons, links, accents</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>All buttons across site, navigation links, accent colors, event card borders</small>
                   </div>
 
                   <div className="form-group">
@@ -3750,7 +3751,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.backgroundColor || '#1a1a1a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, backgroundColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Main page background</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Behind all page content - home page, events page, all pages</small>
                   </div>
 
                   <div className="form-group">
@@ -3758,7 +3759,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.secondaryBackground || '#2a2a2a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, secondaryBackground: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Cards, forms, sections</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Event cards, all forms & form groups, booking forms, admin dashboard cards, table headers</small>
                   </div>
                 </div>
 
@@ -3770,7 +3771,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.textColor || '#e8e8e8'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, textColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Main paragraph text</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>All body paragraphs, form text, page descriptions, most readable text</small>
                   </div>
 
                   <div className="form-group">
@@ -3778,7 +3779,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.headingColor || '#ffffff'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, headingColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>H1, H2, H3 titles</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Page titles (H1), section titles (H2), subsection titles (H3), admin section headers</small>
                   </div>
 
                   <div className="form-group">
@@ -3786,7 +3787,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.mutedTextColor || '#b8b8b8'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, mutedTextColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Subtle, secondary text</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Helper text, small descriptions, event dates, time stamps, hints and tooltips</small>
                   </div>
 
                   <div className="form-group">
@@ -3794,7 +3795,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.labelColor || '#e8e8e8'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, labelColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Form labels, input labels</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>THIS TEXT - All form field labels, input labels, CSS Editor labels, booking form labels</small>
                   </div>
                 </div>
 
@@ -3806,7 +3807,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.linkColor || '#c9a86a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, linkColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Normal link color</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Clickable links, navigation menu links, footer links, in-text links</small>
                   </div>
 
                   <div className="form-group">
@@ -3814,7 +3815,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.linkHoverColor || '#d4b97a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, linkHoverColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Link on hover</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>When you hover over any link - shows interactivity</small>
                   </div>
 
                   <div className="form-group">
@@ -3822,7 +3823,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.buttonHoverColor || '#d4b97a'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, buttonHoverColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Button on hover</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>When you hover over any button - "Book Now", "Save Settings", etc.</small>
                   </div>
                 </div>
 
@@ -3834,7 +3835,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.borderColor || '#333333'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, borderColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Lines and borders</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Card borders, divider lines, input field borders, box outlines</small>
                   </div>
                 </div>
 
@@ -3846,7 +3847,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.successColor || '#4caf50'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, successColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Confirmed, active</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Booking confirmed, active status, success messages</small>
                   </div>
 
                   <div className="form-group">
@@ -3854,7 +3855,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.warningColor || '#ff9800'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, warningColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Pending, waitlist</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Pending bookings, waitlist status, warning messages</small>
                   </div>
 
                   <div className="form-group">
@@ -3862,7 +3863,7 @@ function AdminDashboard() {
                     <input type="color" value={settings.styleCustomizer?.errorColor || '#f44336'}
                       onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, errorColor: e.target.value } }))}
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
-                    <small style={{ color: 'var(--muted-text-color)' }}>Cancelled, failed</small>
+                    <small style={{ color: 'var(--muted-text-color)' }}>Cancelled bookings, failed payments, error messages</small>
                   </div>
                 </div>
               </div>
