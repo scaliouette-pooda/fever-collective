@@ -6608,7 +6608,7 @@ jane@example.com,Jane Smith
                     <h4>Booking Types Comparison</h4>
                     <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
                       <thead>
-                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                        <tr style={{ background: 'var(--secondary-background)', borderBottom: '2px solid var(--primary-color)' }}>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Type</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Revenue</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Tracking</th>
@@ -6851,7 +6851,7 @@ jane@example.com,Jane Smith
 
                     <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
                       <thead>
-                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                        <tr style={{ background: 'var(--secondary-background)', borderBottom: '2px solid var(--primary-color)' }}>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Scenario</th>
                           <th style={{ padding: '0.75rem', textAlign: 'right' }}>ClassPass</th>
                           <th style={{ padding: '0.75rem', textAlign: 'right' }}>Membership</th>
@@ -7131,7 +7131,7 @@ jane@example.com,Jane Smith
                     <h4>Campaign Timing Reference</h4>
                     <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
                       <thead>
-                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                        <tr style={{ background: 'var(--secondary-background)', borderBottom: '2px solid var(--primary-color)' }}>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Campaign</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Trigger</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Delay</th>
@@ -7175,7 +7175,7 @@ jane@example.com,Jane Smith
                     <h4>Membership Tiers & Credits</h4>
                     <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
                       <thead>
-                        <tr style={{ background: '#2a2a2a', borderBottom: '2px solid #c9a86a' }}>
+                        <tr style={{ background: 'var(--secondary-background)', borderBottom: '2px solid var(--primary-color)' }}>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Tier</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Classes/Month</th>
                           <th style={{ padding: '0.75rem', textAlign: 'left' }}>Price</th>
