@@ -1,6 +1,6 @@
 .App {
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: var(--background-color);
 }
 
 /* Navigation */
@@ -8,11 +8,11 @@ nav {
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: rgba(26, 26, 26, 0.95);
+  background-color: var(--nav-background);
   backdrop-filter: blur(10px);
   padding: 1.5rem 3rem;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .nav-content {
@@ -28,7 +28,7 @@ nav {
   font-weight: 300;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #e8e8e8;
+  color: var(--nav-text-color);
 }
 
 nav ul {
@@ -39,7 +39,7 @@ nav ul {
 }
 
 nav a {
-  color: #e8e8e8;
+  color: var(--nav-text-color);
   text-decoration: none;
   font-weight: 300;
   font-size: 0.9rem;
@@ -49,7 +49,7 @@ nav a {
 }
 
 nav a:hover {
-  color: #c9a86a;
+  color: var(--link-hover-color);
 }
 
 /* Container */
@@ -63,8 +63,8 @@ nav a:hover {
 button {
   padding: 1rem 2.5rem;
   background-color: transparent;
-  color: #e8e8e8;
-  border: 1px solid #e8e8e8;
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
   border-radius: 0;
   cursor: pointer;
   font-size: 0.9rem;
@@ -75,37 +75,37 @@ button {
 }
 
 button:hover {
-  background-color: #e8e8e8;
-  color: #1a1a1a;
+  background-color: var(--text-color);
+  color: var(--background-color);
 }
 
 /* Form Elements */
 input, textarea, select {
   width: 100%;
   padding: 1rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: var(--input-background);
+  border: 1px solid var(--input-border);
   border-radius: 0;
   font-size: 1rem;
-  color: #e8e8e8;
+  color: var(--input-text-color);
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Arial', sans-serif;
   transition: border-color 0.3s ease;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #c9a86a;
+  border-color: var(--primary-color);
   background-color: rgba(255, 255, 255, 0.08);
 }
 
 input::placeholder {
-  color: rgba(232, 232, 232, 0.5);
+  color: var(--muted-text-color);
 }
 
 /* Select dropdown options - ensure good contrast */
 select option {
-  background-color: #2a2a2a;
-  color: #e8e8e8;
+  background-color: var(--secondary-background);
+  color: var(--text-color);
   padding: 0.5rem;
 }
 
@@ -113,7 +113,7 @@ select option {
 input[type="date"],
 input[type="time"],
 input[type="datetime-local"] {
-  color: #e8e8e8;
+  color: var(--input-text-color);
   color-scheme: dark;
 }
 
@@ -140,7 +140,7 @@ label {
   letter-spacing: 1px;
   text-transform: uppercase;
   font-size: 0.85rem;
-  color: rgba(232, 232, 232, 0.8);
+  color: var(--muted-text-color);
 }
 
 /* Typography */
@@ -172,7 +172,7 @@ p {
   font-size: 1rem;
   font-weight: 300;
   line-height: 1.8;
-  color: rgba(232, 232, 232, 0.9);
+  color: var(--text-color);
   letter-spacing: 0.5px;
 }
 
@@ -281,7 +281,7 @@ p {
 
   /* Improved touch targets for mobile */
   a, button, input, select, textarea {
-    -webkit-tap-highlight-color: rgba(201, 168, 106, 0.3);
+    -webkit-tap-highlight-color: var(--primary-color);
   }
 }
 

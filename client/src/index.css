@@ -8,8 +8,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #1a1a1a;
-  color: #e8e8e8;
+  background-color: var(--background-color);
+  color: var(--text-color);
   line-height: 1.6;
 }
 

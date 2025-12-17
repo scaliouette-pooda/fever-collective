@@ -16,7 +16,7 @@
 
 .booking-instructor {
   font-size: 1.2rem;
-  color: #c9a86a;
+  color: var(--primary-color);
   font-style: italic;
 }
 
@@ -60,12 +60,12 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(232, 232, 232, 0.6);
+  color: var(--muted-text-color);
 }
 
 .detail-value {
   font-size: 1rem;
-  color: #e8e8e8;
+  color: var(--text-color);
   text-align: right;
 }
 
@@ -110,8 +110,8 @@
 
 .apply-promo-btn {
   padding: 0.75rem 1.5rem;
-  background: #c9a86a;
-  color: #1a1a1a;
+  background: var(--primary-color);
+  color: var(--background-color);
   border: none;
   cursor: pointer;
   font-weight: 600;
@@ -121,7 +121,7 @@
 }
 
 .apply-promo-btn:hover:not(:disabled) {
-  background: #e8e8e8;
+  background: var(--button-hover-color);
 }
 
 .apply-promo-btn:disabled {
@@ -153,14 +153,14 @@
 
 .promo-desc {
   font-size: 0.85rem;
-  color: rgba(232, 232, 232, 0.7);
+  color: var(--muted-text-color);
 }
 
 .remove-promo-btn {
   padding: 0.5rem 1rem;
   background: transparent;
-  color: rgba(232, 232, 232, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--muted-text-color);
+  border: 1px solid var(--border-color);
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.3s ease;
@@ -217,7 +217,7 @@
 .total-amount {
   font-size: 2rem;
   font-weight: 300;
-  color: #e8e8e8;
+  color: var(--text-color);
 }
 
 .booking-submit {
