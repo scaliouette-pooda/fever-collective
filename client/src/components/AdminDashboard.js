@@ -3788,6 +3788,14 @@ function AdminDashboard() {
                       style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
                     <small style={{ color: 'var(--muted-text-color)' }}>Subtle, secondary text</small>
                   </div>
+
+                  <div className="form-group">
+                    <label>Label Color</label>
+                    <input type="color" value={settings.styleCustomizer?.labelColor || '#e8e8e8'}
+                      onChange={(e) => setSettings(prev => ({ ...prev, styleCustomizer: { ...prev.styleCustomizer, labelColor: e.target.value } }))}
+                      style={{ width: '100%', height: '50px', cursor: 'pointer', borderRadius: '4px' }} />
+                    <small style={{ color: 'var(--muted-text-color)' }}>Form labels, input labels</small>
+                  </div>
                 </div>
 
                 {/* Links & Buttons */}

@@ -47,6 +47,7 @@ function App() {
               --text-color: ${sc.textColor || '#e8e8e8'};
               --heading-color: ${sc.headingColor || '#ffffff'};
               --muted-text-color: ${sc.mutedTextColor || '#b8b8b8'};
+              --label-color: ${sc.labelColor || '#e8e8e8'};
 
               /* Interactive Elements */
               --link-color: ${sc.linkColor || sc.primaryColor || '#c9a86a'};
@@ -130,6 +131,11 @@ function App() {
 
             a:hover {
               color: var(--link-hover-color) !important;
+            }
+
+            /* Labels */
+            label {
+              color: var(--label-color) !important;
             }
 
             /* Buttons */

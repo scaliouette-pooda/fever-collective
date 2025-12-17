@@ -435,6 +435,7 @@ const settingsSchema = new mongoose.Schema({
     linkHoverColor: { type: String, default: '#d4b97a' },
     buttonHoverColor: { type: String, default: '#d4b97a' },
     mutedTextColor: { type: String, default: '#b8b8b8' },
+    labelColor: { type: String, default: '#e8e8e8' },
     secondaryBackground: { type: String, default: '#2a2a2a' },
     borderColor: { type: String, default: '#333333' },
     successColor: { type: String, default: '#4caf50' },
