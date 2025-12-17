@@ -4429,9 +4429,25 @@ function AdminDashboard() {
               }}>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (window.confirm('Reset all styles to default?')) {
-                      setSettings(prev => ({ ...prev, styleCustomizer: {} }));
+                  onClick={async () => {
+                    if (window.confirm('Reset all styles to default? This will reload the page.')) {
+                      try {
+                        const token = localStorage.getItem('token');
+                        const updatedSettings = {
+                          ...settings,
+                          styleCustomizer: {}
+                        };
+
+                        await api.put('/api/settings', updatedSettings, {
+                          headers: { Authorization: `Bearer ${token}` }
+                        });
+
+                        alert('Styles reset to defaults! Page will reload.');
+                        window.location.reload();
+                      } catch (error) {
+                        console.error('Error resetting styles:', error);
+                        alert('Failed to reset styles. Please try again.');
+                      }
                     }
                   }}
                   style={{
