@@ -1554,7 +1554,22 @@ function AdminDashboard() {
             <div className="section-header">
               <h2>Manage Classes</h2>
               <div style={{ display: 'flex', gap: '10px' }}>
-               
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('help')}
+                  style={{
+                    background: 'var(--secondary-background)',
+                    color: 'var(--primary-color)',
+                    border: '1px solid var(--primary-color)',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  View Help
+                </button>
                 <button onClick={() => {
                   setShowEventForm(true);
                   setEditingEvent(null);
@@ -2035,29 +2050,47 @@ function AdminDashboard() {
           <div className="bookings-section">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ margin: 0 }}>Recent Bookings</h2>
-              {settings?.classPassIntegration?.enabled && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <label style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.8)' }}>Filter by Source:</label>
-                  <select
-                    value={bookingSourceFilter}
-                    onChange={(e) => setBookingSourceFilter(e.target.value)}
-                    style={{
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      border: '1px solid rgba(201, 168, 106, 0.3)',
-                      background: '#1a1a1a',
-                      color: '#e8e8e8',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="all">All Sources</option>
-                    <option value="direct">Direct Bookings</option>
-                    <option value="classpass">ClassPass</option>
-                    <option value="membership">Membership</option>
-                    <option value="referral">Referral</option>
-                  </select>
-                </div>
-              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('help')}
+                  style={{
+                    background: 'var(--secondary-background)',
+                    color: 'var(--primary-color)',
+                    border: '1px solid var(--primary-color)',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  View Help
+                </button>
+                {settings?.classPassIntegration?.enabled && (
+                  <>
+                    <label style={{ fontSize: '0.9rem', color: 'rgba(232, 232, 232, 0.8)' }}>Filter by Source:</label>
+                    <select
+                      value={bookingSourceFilter}
+                      onChange={(e) => setBookingSourceFilter(e.target.value)}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '4px',
+                        border: '1px solid rgba(201, 168, 106, 0.3)',
+                        background: '#1a1a1a',
+                        color: '#e8e8e8',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="all">All Sources</option>
+                      <option value="direct">Direct Bookings</option>
+                      <option value="classpass">ClassPass</option>
+                      <option value="membership">Membership</option>
+                      <option value="referral">Referral</option>
+                    </select>
+                  </>
+                )}
+              </div>
             </div>
             <div className="bookings-table">
               <table>
@@ -2314,13 +2347,31 @@ function AdminDashboard() {
           <div className="promo-codes-section">
             <div className="section-header">
               <h2>Manage Promo Codes</h2>
-              <button onClick={() => {
-                setShowPromoForm(true);
-                setEditingPromo(null);
-                resetPromoForm();
-              }}>
-                Create New Promo Code
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('help')}
+                  style={{
+                    background: 'var(--secondary-background)',
+                    color: 'var(--primary-color)',
+                    border: '1px solid var(--primary-color)',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  View Help
+                </button>
+                <button onClick={() => {
+                  setShowPromoForm(true);
+                  setEditingPromo(null);
+                  resetPromoForm();
+                }}>
+                  Create New Promo Code
+                </button>
+              </div>
             </div>
 
             {/* Description/Help Text */}
@@ -2576,12 +2627,30 @@ function AdminDashboard() {
           <div className="email-marketing-section">
             <div className="section-header">
               <h2>Email Marketing</h2>
-              <button onClick={() => {
-                setShowEmailForm(true);
-                resetEmailForm();
-              }}>
-                Create New Campaign
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('help')}
+                  style={{
+                    background: 'var(--secondary-background)',
+                    color: 'var(--primary-color)',
+                    border: '1px solid var(--primary-color)',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  View Help
+                </button>
+                <button onClick={() => {
+                  setShowEmailForm(true);
+                  resetEmailForm();
+                }}>
+                  Create New Campaign
+                </button>
+              </div>
             </div>
 
             {/* Description */}
@@ -2866,7 +2935,25 @@ function AdminDashboard() {
 
         {activeTab === 'analytics' && (
           <div className="analytics-section">
-            <h2>Analytics Dashboard</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2>Analytics Dashboard</h2>
+              <button
+                type="button"
+                onClick={() => setActiveTab('help')}
+                style={{
+                  background: 'var(--secondary-background)',
+                  color: 'var(--primary-color)',
+                  border: '1px solid var(--primary-color)',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}
+              >
+                View Help
+              </button>
+            </div>
 
             {/* Core Metrics */}
             <div style={{ marginBottom: '2rem' }}>
@@ -3096,20 +3183,48 @@ function AdminDashboard() {
                   Edit your home page content in a layout that mirrors the actual page
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => window.open('/', '_blank')}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  background: 'rgba(201, 168, 106, 0.2)',
-                  border: '1px solid #c9a86a',
-                  borderRadius: '4px',
-                  color: '#c9a86a',
-                  cursor: 'pointer'
-                }}
-              >
-                Preview Home Page →
-              </button>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('help')}
+                  style={{
+                    background: 'var(--secondary-background)',
+                    color: 'var(--primary-color)',
+                    border: '1px solid var(--primary-color)',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.95rem',
+                    fontWeight: '500',
+                    transition: 'all 0.3s ease',
+                    whiteSpace: 'nowrap'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'var(--primary-color)';
+                    e.target.style.color = '#000';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'var(--secondary-background)';
+                    e.target.style.color = 'var(--primary-color)';
+                  }}
+                >
+                  View Help
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.open('/', '_blank')}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: 'rgba(201, 168, 106, 0.2)',
+                    border: '1px solid #c9a86a',
+                    borderRadius: '4px',
+                    color: '#c9a86a',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Preview Home Page →
+                </button>
+              </div>
             </div>
             <form onSubmit={handleUpdateSettings} className="settings-form">
 
@@ -3728,6 +3843,35 @@ function AdminDashboard() {
                   Click "Save Settings" to apply changes - the page will reload automatically.
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('help');
+                  setActiveHelpSection('css-editor');
+                }}
+                style={{
+                  background: 'var(--secondary-background)',
+                  color: 'var(--primary-color)',
+                  border: '1px solid var(--primary-color)',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.95rem',
+                  fontWeight: '500',
+                  transition: 'all 0.3s ease',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'var(--primary-color)';
+                  e.target.style.color = '#000';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'var(--secondary-background)';
+                  e.target.style.color = 'var(--primary-color)';
+                }}
+              >
+                CSS Editor Guide
+              </button>
             </div>
 
             <form onSubmit={handleUpdateSettings}>
@@ -4528,7 +4672,35 @@ function AdminDashboard() {
 
         {activeTab === 'settings' && settings && (
           <div className="settings-section">
-            <h2>Site Settings</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2>Site Settings</h2>
+              <button
+                type="button"
+                onClick={() => setActiveTab('help')}
+                style={{
+                  background: 'var(--secondary-background)',
+                  color: 'var(--primary-color)',
+                  border: '1px solid var(--primary-color)',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  transition: 'all 0.3s ease',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'var(--primary-color)';
+                  e.target.style.color = '#000';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'var(--secondary-background)';
+                  e.target.style.color = 'var(--primary-color)';
+                }}
+              >
+                View Help
+              </button>
+            </div>
             <form onSubmit={handleUpdateSettings} className="settings-form">
 
               {/* Social Media Section */}
@@ -6101,7 +6273,25 @@ jane@example.com,Jane Smith
         {/* Reviews Tab */}
         {activeTab === 'reviews' && (
           <div>
-            <h2>Manage Reviews</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2>Manage Reviews</h2>
+              <button
+                type="button"
+                onClick={() => setActiveTab('help')}
+                style={{
+                  background: 'var(--secondary-background)',
+                  color: 'var(--primary-color)',
+                  border: '1px solid var(--primary-color)',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}
+              >
+                View Help
+              </button>
+            </div>
 
             <div className="section-description">
               <h3>⭐ Review Management</h3>
@@ -6383,6 +6573,12 @@ jane@example.com,Jane Smith
                   onClick={() => setActiveHelpSection('sms-setup')}
                 >
                   SMS Notifications
+                </div>
+                <div
+                  className={`help-sidebar-item ${activeHelpSection === 'css-editor' ? 'active' : ''}`}
+                  onClick={() => setActiveHelpSection('css-editor')}
+                >
+                  CSS Editor Guide
                 </div>
               </div>
 
@@ -7628,6 +7824,196 @@ jane@example.com,Jane Smith
                       - Twilio Docs: twilio.com/docs/sms<br/>
                       - SMS Guide: SMS_IMPLEMENTATION_GUIDE.md<br/>
                       - Help: Contact support@thefeverstudio.com
+                    </div>
+                  </div>
+                )}
+
+                {/* CSS Editor Guide */}
+                {activeHelpSection === 'css-editor' && (
+                  <div className="help-section-content">
+                    <h3>CSS Editor Guide</h3>
+                    <p>
+                      The CSS Editor allows you to customize all colors across your entire website. Each field controls specific elements site-wide.
+                    </p>
+
+                    <h4>Main Colors</h4>
+                    <div className="help-expandable">
+                      <strong>Primary Color</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>All buttons across the site (Book Now, Save Settings, etc.)</li>
+                          <li>Navigation menu links</li>
+                          <li>Accent colors and decorative elements</li>
+                          <li>Event card borders</li>
+                          <li>Interactive elements</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> Choose your brand's signature color. This is the most visible color on your site.</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginTop: '1rem' }}>
+                      <strong>Background</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>Behind all page content</li>
+                          <li>Home page background</li>
+                          <li>Events page background</li>
+                          <li>All pages across the site</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> Dark colors (like #1a1a1a) work well for modern designs. Light colors (#f5f5f5) for clean, bright looks.</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginTop: '1rem' }}>
+                      <strong>Secondary Background</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>Event cards</li>
+                          <li>All form groups and form containers</li>
+                          <li>Booking forms</li>
+                          <li>Admin dashboard cards</li>
+                          <li>Table headers in analytics</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> Should be slightly different from main background for contrast. If background is #1a1a1a, try #2a2a2a.</p>
+                      </div>
+                    </div>
+
+                    <h4>Text Colors</h4>
+                    <div className="help-expandable">
+                      <strong>Body Text</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>All body paragraphs</li>
+                          <li>Form input text</li>
+                          <li>Page descriptions</li>
+                          <li>Most readable content</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> High contrast with background. Light gray (#e8e8e8) on dark backgrounds, dark gray (#333333) on light backgrounds.</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginTop: '1rem' }}>
+                      <strong>Headings</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>Page titles (H1 elements)</li>
+                          <li>Section titles (H2 elements)</li>
+                          <li>Subsection titles (H3 elements)</li>
+                          <li>Admin section headers</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> Brighter than body text for emphasis. White (#ffffff) or your primary color work well.</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginTop: '1rem' }}>
+                      <strong>Muted Text</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>Helper text and hints</li>
+                          <li>Small descriptions (like these descriptions in CSS Editor)</li>
+                          <li>Event dates and timestamps</li>
+                          <li>Tooltips and secondary information</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> Lower contrast than body text. Medium gray (#b8b8b8) works well.</p>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginTop: '1rem' }}>
+                      <strong>Label Color</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>All form field labels (including "Label Color", "Primary Color", etc.)</li>
+                          <li>Input labels in booking forms</li>
+                          <li>CSS Editor field labels</li>
+                          <li>Profile form labels</li>
+                        </ul>
+                        <p><strong>Note:</strong> This color controls the label text you're reading right now!</p>
+                      </div>
+                    </div>
+
+                    <h4>Interactive Elements</h4>
+                    <div className="help-expandable">
+                      <strong>Link Color</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>All clickable links</li>
+                          <li>Navigation menu links</li>
+                          <li>Footer links</li>
+                          <li>In-text hyperlinks</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="help-expandable" style={{ marginTop: '1rem' }}>
+                      <strong>Link Hover & Button Hover</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--primary-color)' }}>
+                        <p><strong>Where it appears:</strong></p>
+                        <ul>
+                          <li>When mouse hovers over links or buttons</li>
+                          <li>Provides visual feedback for interactivity</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> Slightly lighter or darker than the original color. If primary is #c9a86a, try #d4b97a for hover.</p>
+                      </div>
+                    </div>
+
+                    <h4>Status Colors</h4>
+                    <div className="help-expandable">
+                      <strong>Success, Warning, Error</strong>
+                      <div style={{ marginTop: '0.75rem', paddingLeft: '1rem', borderLeft: '3px solid var(--success-color)' }}>
+                        <p><strong>Where they appear:</strong></p>
+                        <ul>
+                          <li><strong>Success (Green):</strong> Booking confirmed, active status, success messages</li>
+                          <li><strong>Warning (Orange):</strong> Pending bookings, waitlist status, warning messages</li>
+                          <li><strong>Error (Red):</strong> Cancelled bookings, failed payments, error messages</li>
+                        </ul>
+                        <p><strong>Recommended:</strong> Use standard web conventions - green for success, yellow/orange for warnings, red for errors.</p>
+                      </div>
+                    </div>
+
+                    <h4>How to Use CSS Editor</h4>
+                    <div className="help-checklist">
+                      <li>Click any color box to open the color picker</li>
+                      <li>Choose your desired color</li>
+                      <li>Read the description below each color to see where it appears</li>
+                      <li>Make all desired changes before saving</li>
+                      <li>Click "Save Settings" at the bottom</li>
+                      <li>Page will automatically reload to apply changes</li>
+                      <li>Visit your live site to see the changes</li>
+                    </div>
+
+                    <h4>Reset to Defaults</h4>
+                    <p>
+                      If you want to start over, click "Reset to Defaults" button. This will:
+                    </p>
+                    <ul>
+                      <li>Restore all colors to their original values</li>
+                      <li>Save the defaults to the database</li>
+                      <li>Automatically reload the page</li>
+                      <li>Show default colors in all color pickers</li>
+                    </ul>
+
+                    <h4>Tips for Choosing Colors</h4>
+                    <div className="help-code-block">
+                      Color Harmony Tips:<br/>
+                      <br/>
+                      1. Contrast: Ensure text colors contrast well with backgrounds<br/>
+                      2. Consistency: Use your brand colors for primary elements<br/>
+                      3. Hierarchy: Headings should be more prominent than body text<br/>
+                      4. Accessibility: Test color combinations for readability<br/>
+                      5. Less is More: Don't use too many different colors<br/>
+                      <br/>
+                      Tools to Help:<br/>
+                      - contrast-ratio.com - Check text contrast<br/>
+                      - coolors.co - Generate color palettes<br/>
+                      - color.adobe.com - Adobe Color Wheel
                     </div>
                   </div>
                 )}
